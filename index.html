@@ -1,4 +1,671 @@
-<!-- ... existing code ... -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="J.A.R.V.I.S." />
+  <meta name="theme-color" content="#040b14" />
+  <title>J.A.R.V.I.S. — Stark Industries AI Assistant</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts: Orbitron (HUD), Inter (UI), Noto Sans Sinhala (Sinhala Script) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-deep: #040b14;
+      --bg-panel: rgba(8, 22, 38, 0.78);
+      --cyan: #00e5ff;
+      --cyan-dim: rgba(0, 229, 255, 0.22);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.22);
+      --emerald: #10b981;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background-color: var(--bg-deep);
+      color: #e2f5ff;
+      font-family: 'Inter', 'Noto Sans Sinhala', system-ui, -apple-system, sans-serif;
+      background-image:
+        radial-gradient(circle at 50% 24%, rgba(0, 229, 255, 0.12) 0%, transparent 55%),
+        linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 28px 28px, 28px 28px;
+    }
+
+    .font-hud {
+      font-family: 'Orbitron', 'Inter', sans-serif;
+      letter-spacing: 0.06em;
+    }
+
+    .hud-card {
+      background: var(--bg-panel);
+      border: 1px solid rgba(0, 229, 255, 0.24);
+      box-shadow: 0 0 24px rgba(0, 229, 255, 0.07), inset 0 0 12px rgba(0, 229, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .safe-app-shell {
+      height: 100dvh;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      padding-top: max(10px, env(safe-area-inset-top));
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      padding-left: max(10px, env(safe-area-inset-left));
+      padding-right: max(10px, env(safe-area-inset-right));
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Arc Reactor Core Animations */
+    @keyframes spinCW {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spinCCW {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+    @keyframes corePulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 18px rgba(0, 229, 255, 0.7), 0 0 36px rgba(0, 229, 255, 0.35); }
+      50% { transform: scale(1.08); box-shadow: 0 0 28px rgba(0, 229, 255, 0.95), 0 0 54px rgba(0, 229, 255, 0.55); }
+    }
+    @keyframes speakPulse {
+      0%, 100% { transform: scale(0.95); box-shadow: 0 0 22px rgba(0, 229, 255, 0.9), 0 0 48px rgba(0, 229, 255, 0.5); }
+      50% { transform: scale(1.16); box-shadow: 0 0 36px rgba(56, 189, 248, 1), 0 0 68px rgba(0, 229, 255, 0.75); }
+    }
+    @keyframes amberPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 18px rgba(245, 158, 11, 0.75), 0 0 36px rgba(245, 158, 11, 0.35); }
+      50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(245, 158, 11, 0.95), 0 0 54px rgba(245, 158, 11, 0.55); }
+    }
+
+    .reactor-wrap {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .reactor-ring-outer {
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      border: 2px dashed rgba(0, 229, 255, 0.6);
+      animation: spinCW 14s linear infinite;
+    }
+    .reactor-ring-mid {
+      position: absolute;
+      inset: 11px;
+      border-radius: 9999px;
+      border: 2px solid transparent;
+      border-top-color: #00e5ff;
+      border-bottom-color: #00e5ff;
+      animation: spinCCW 7s linear infinite;
+    }
+    .reactor-ring-inner {
+      position: absolute;
+      inset: 22px;
+      border-radius: 9999px;
+      border: 1.5px dotted rgba(245, 158, 11, 0.7);
+      animation: spinCW 10s linear infinite;
+    }
+    .reactor-core {
+      width: 44px;
+      height: 44px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, #ffffff 0%, #7df9ff 36%, #00b8d4 75%, #004e64 100%);
+      border: 2px solid #b2f5ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: corePulse 2.6s ease-in-out infinite;
+      transition: all 0.25s ease;
+    }
+
+    /* Reactor State Overrides */
+    .reactor-wrap.state-speaking .reactor-ring-outer { animation-duration: 3.5s; border-color: rgba(56, 189, 248, 0.9); }
+    .reactor-wrap.state-speaking .reactor-ring-mid { animation-duration: 2s; }
+    .reactor-wrap.state-speaking .reactor-core { animation: speakPulse 0.65s ease-in-out infinite; }
+
+    .reactor-wrap.state-processing .reactor-ring-outer { animation-duration: 2.2s; border-color: rgba(245, 158, 11, 0.85); }
+    .reactor-wrap.state-processing .reactor-core {
+      background: radial-gradient(circle, #fffbeb 0%, #fcd34d 40%, #d97706 85%);
+      border-color: #fde68a;
+      animation: amberPulse 0.9s ease-in-out infinite;
+    }
+
+    .reactor-wrap.state-sleeping .reactor-ring-outer,
+    .reactor-wrap.state-sleeping .reactor-ring-mid,
+    .reactor-wrap.state-sleeping .reactor-ring-inner {
+      animation-play-state: paused;
+      opacity: 0.35;
+    }
+    .reactor-wrap.state-sleeping .reactor-core {
+      animation: none;
+      opacity: 0.45;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+    }
+
+    .reactor-wrap.lang-si .reactor-ring-mid {
+      border-top-color: #f59e0b;
+      border-bottom-color: #f59e0b;
+    }
+
+    /* Hide Scrollbars cleanly */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Custom thin scrollbar for chat */
+    .hud-scroll::-webkit-scrollbar { width: 4px; }
+    .hud-scroll::-webkit-scrollbar-track { background: transparent; }
+    .hud-scroll::-webkit-scrollbar-thumb { background: rgba(0, 229, 255, 0.28); border-radius: 999px; }
+
+    /* Toggle Switch */
+    .hud-switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .hud-switch input { opacity: 0; width: 0; height: 0; }
+    .hud-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: rgba(100, 116, 139, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      transition: 0.25s;
+      border-radius: 999px;
+    }
+    .hud-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #e2f5ff;
+      transition: 0.25s;
+      border-radius: 50%;
+    }
+    .hud-switch input:checked + .hud-slider {
+      background-color: rgba(16, 185, 129, 0.65);
+      border-color: #34d399;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    }
+    .hud-switch input:checked + .hud-slider:before {
+      transform: translateX(20px);
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== BOOT OVERLAY (SYNCHRONOUS iOS AUDIO UNLOCK) ==================== -->
+  <div id="boot-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 text-center bg-[#040b14]/95 backdrop-blur-md">
+    <div id="boot-reactor-btn" onclick="initializeJarvisFromBoot()" class="reactor-wrap mb-6 scale-125" role="button" aria-label="Initialize J.A.R.V.I.S.">
+      <div class="reactor-ring-outer"></div>
+      <div class="reactor-ring-mid"></div>
+      <div class="reactor-ring-inner"></div>
+      <div class="reactor-core">
+        <div class="w-3.5 h-3.5 rounded-full bg-white shadow-[0_0_12px_#fff]"></div>
+      </div>
+    </div>
+
+    <h1 class="font-hud text-3xl font-bold text-[#00e5ff] drop-shadow-[0_0_14px_rgba(0,229,255,0.65)] tracking-widest mb-1.5">
+      J.A.R.V.I.S.
+    </h1>
+    <p class="font-hud text-[11px] text-cyan-200/80 tracking-[0.22em] mb-7">
+      STARK INDUSTRIES · IPHONE 15 PRO MAX EDITION
+    </p>
+
+    <button onclick="initializeJarvisFromBoot()" class="font-hud text-xs sm:text-sm font-semibold text-cyan-100 px-6 py-3.5 rounded-full border border-cyan-400/70 bg-cyan-500/15 shadow-[0_0_25px_rgba(0,229,255,0.3)] active:scale-95 transition">
+      TAP CORE TO INITIALIZE J.A.R.V.I.S.
+    </button>
+
+    <p class="mt-5 text-xs text-slate-400 max-w-xs leading-relaxed">
+      Tap once to unlock iOS Safari audio &amp; microphone, sync Colombo weather, and start continuous English &amp; සිංහල voice control.
+    </p>
+  </div>
+
+  <!-- ==================== MAIN HUD SHELL ==================== -->
+  <div class="safe-app-shell">
+
+    <!-- 1. TOP HUD BAR -->
+    <header class="hud-card rounded-2xl p-2.5 flex flex-col gap-2 shrink-0">
+      <!-- Row 1: Identity, FSM Badge, Key Badge, Lang Toggles -->
+      <div class="flex items-center justify-between gap-1.5">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span id="hud-dot" class="w-2.5 h-2.5 rounded-full bg-[#00e5ff] shadow-[0_0_8px_#00e5ff] shrink-0"></span>
+          <span class="font-hud text-xs font-bold text-[#00e5ff] truncate">J.A.R.V.I.S.</span>
+          <span id="fsm-badge" class="font-hud text-[9px] px-2 py-0.5 rounded-full border border-cyan-400/50 bg-cyan-500/15 text-cyan-200 uppercase shrink-0">
+            BOOT
+          </span>
+          <button id="api-key-badge" onclick="openModal('modal-setup')" class="font-hud text-[9px] px-2 py-0.5 rounded-full border border-amber-400/50 bg-amber-500/15 text-amber-200 uppercase truncate max-w-[115px] active:scale-95 transition">
+            🔑 Add API Key
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1 shrink-0">
+          <button id="btn-lang-en" onclick="switchLangManual('en')" class="font-hud text-[10px] font-bold px-2.5 py-1 rounded-lg border border-cyan-400 bg-cyan-500/25 text-cyan-100 active:scale-95 transition">
+            EN
+          </button>
+          <button id="btn-lang-si" onclick="switchLangManual('si')" class="text-[11px] font-bold px-2.5 py-1 rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-300 active:scale-95 transition">
+            සිං
+          </button>
+        </div>
+      </div>
+
+      <!-- Row 2: Live Clock, Date, Colombo Weather -->
+      <div class="flex items-center justify-between text-[11px] px-0.5 text-slate-300">
+        <div class="flex items-center gap-2 min-w-0">
+          <span id="hud-clock" class="font-hud text-cyan-300 font-semibold shrink-0">--:--:--</span>
+          <span class="text-slate-600">|</span>
+          <span id="hud-date" class="truncate text-slate-300">Syncing date...</span>
+        </div>
+        <div id="hud-weather" class="flex items-center gap-1 text-amber-300 font-semibold shrink-0 ml-2">
+          <span>🌤️</span><span>28°C</span>
+        </div>
+      </div>
+
+      <!-- Row 3: 4 Action Buttons -->
+      <div class="grid grid-cols-4 gap-1.5">
+        <button onclick="openModal('modal-contacts')" class="flex items-center justify-center gap-1 py-1.5 px-1.5 rounded-xl border border-cyan-500/30 bg-slate-900/70 text-[11px] font-medium text-cyan-100 active:scale-95 transition">
+          <span>📞</span><span class="truncate">Contacts</span>
+        </button>
+        <button onclick="openModal('modal-vault')" class="flex items-center justify-center gap-1 py-1.5 px-1.5 rounded-xl border border-cyan-500/30 bg-slate-900/70 text-[11px] font-medium text-cyan-100 active:scale-95 transition">
+          <span>🗂️</span><span class="truncate">Vault</span>
+          <span id="vault-count-badge" class="text-[9px] px-1.5 py-0.2 rounded-full bg-cyan-500/25 text-cyan-200 font-hud">0</span>
+        </button>
+        <button onclick="openModal('modal-social')" class="flex items-center justify-center gap-1 py-1.5 px-1.5 rounded-xl border border-cyan-500/30 bg-slate-900/70 text-[11px] font-medium text-cyan-100 active:scale-95 transition">
+          <span>📱</span><span class="truncate">Social</span>
+        </button>
+        <button onclick="openModal('modal-setup')" class="flex items-center justify-center gap-1 py-1.5 px-1.5 rounded-xl border border-amber-500/45 bg-amber-500/15 text-[11px] font-semibold text-amber-200 active:scale-95 transition">
+          <span>⚙️</span><span class="truncate">iOS Setup</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Sandbox Notice (only shown if inside iframe preview) -->
+    <div id="sandbox-banner" class="hidden px-3 py-1.5 rounded-xl border border-amber-400/40 bg-amber-500/10 text-[11px] text-amber-200 flex items-center justify-between gap-2 shrink-0">
+      <span>Preview Sandbox detected: Host on GitHub Pages &amp; open in Safari for native calls/apps.</span>
+      <button onclick="this.parentElement.classList.add('hidden')" class="text-amber-300 font-bold px-1">✕</button>
+    </div>
+
+    <!-- 2. CENTER ARC REACTOR & TELEMETRY -->
+    <section class="flex flex-col items-center gap-2 shrink-0 py-0.5">
+      <div id="main-reactor" onclick="handleReactorTap()" class="reactor-wrap" role="button" aria-label="Arc Reactor Control">
+        <div class="reactor-ring-outer"></div>
+        <div class="reactor-ring-mid"></div>
+        <div class="reactor-ring-inner"></div>
+        <div class="reactor-core">
+          <div class="w-4 h-4 rounded-full bg-white/90 shadow-[0_0_12px_#fff]"></div>
+        </div>
+      </div>
+
+      <p id="status-subtitle" class="font-hud text-[10px] text-cyan-300/90 text-center tracking-wider uppercase px-2">
+        SYSTEM READY · TAP CORE TO ACTIVATE
+      </p>
+
+      <!-- Live Transcript Bar with 1.2s Yellow Auto-Commit Progress -->
+      <div class="w-full hud-card rounded-xl px-3 py-2 relative overflow-hidden">
+        <p id="transcript-text" class="text-xs text-slate-400 truncate font-medium">
+          AWAITING VOICE INPUT...
+        </p>
+        <div class="absolute bottom-0 left-0 right-0 h-[3px] bg-slate-800/80">
+          <div id="commit-progress-bar" class="h-full w-0 bg-amber-400 shadow-[0_0_8px_#f59e0b]"></div>
+        </div>
+      </div>
+
+      <!-- Control Pills -->
+      <div class="flex flex-wrap items-center justify-center gap-1.5">
+        <button id="pill-sleep" onclick="toggleSleepButton()" class="font-hud text-[9px] px-2.5 py-1 rounded-full border border-cyan-400/40 bg-cyan-950/60 text-cyan-200 active:scale-95 transition">
+          ● Active • Sleep
+        </button>
+        <span id="pill-lang" class="font-hud text-[9px] px-2.5 py-1 rounded-full border border-cyan-400/35 bg-slate-900/70 text-cyan-200">
+          LANG: EN
+        </span>
+        <button id="pill-exec-mode" onclick="openModal('modal-setup')" class="font-hud text-[9px] px-2.5 py-1 rounded-full border border-emerald-400/45 bg-emerald-500/15 text-emerald-300 active:scale-95 transition">
+          ⚡ AUTO: DIRECT
+        </button>
+        <span id="pill-voice" class="font-hud text-[9px] px-2.5 py-1 rounded-full border border-sky-400/35 bg-sky-950/60 text-sky-200">
+          🔒 CHARON
+        </span>
+        <button id="btn-interrupt" onclick="bargeInInterrupt()" class="hidden font-hud text-[9px] font-bold px-3 py-1 rounded-full border border-rose-500/70 bg-rose-500/25 text-rose-200 shadow-[0_0_12px_rgba(244,63,94,0.35)] active:scale-95 transition">
+          ■ INTERRUPT
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. CHAT LOG -->
+    <main id="chat-log" class="flex-1 min-h-0 overflow-y-auto hud-scroll hud-card rounded-2xl p-3 flex flex-col gap-2.5">
+      <!-- Messages dynamically appended here -->
+    </main>
+
+    <!-- 4. BOTTOM QUICK CHIPS + INPUT BAR -->
+    <footer class="flex flex-col gap-2 shrink-0">
+      <!-- Quick Chips -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+        <button onclick="sendQuickCommand('Hey Jarvis')" class="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full border border-cyan-400/40 bg-cyan-950/60 text-cyan-100 active:scale-95 transition">
+          🎙️ Hey Jarvis
+        </button>
+        <button onclick="sendQuickCommand('මචන් Jarvis')" class="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full border border-amber-400/45 bg-amber-950/50 text-amber-200 active:scale-95 transition">
+          🎙️ මචන් Jarvis
+        </button>
+        <button onclick="sendQuickCommand('Call Amma')" class="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full border border-emerald-400/45 bg-emerald-950/50 text-emerald-200 active:scale-95 transition">
+          📞 Call Amma
+        </button>
+        <button onclick="sendQuickCommand('Open Facebook')" class="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full border border-blue-400/45 bg-blue-950/50 text-blue-200 active:scale-95 transition">
+          📱 Open Facebook
+        </button>
+        <button onclick="sendQuickCommand('Directions to Colombo')" class="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full border border-purple-400/45 bg-purple-950/50 text-purple-200 active:scale-95 transition">
+          📍 Directions
+        </button>
+      </div>
+
+      <!-- Input Form -->
+      <form id="chat-form" onsubmit="handleTextSubmit(event)" class="flex items-center gap-2">
+        <input
+          id="text-input"
+          type="text"
+          autocomplete="off"
+          placeholder="Speak naturally or type in English / සිංහල"
+          class="flex-1 min-w-0 rounded-xl border border-cyan-500/35 bg-slate-950/85 px-3.5 py-2.5 text-sm text-cyan-50 placeholder-slate-400 focus:outline-none focus:border-cyan-400"
+        />
+        <button type="submit" class="font-hud text-xs font-bold px-4 py-2.5 rounded-xl border border-cyan-400/60 bg-cyan-500/20 text-cyan-100 active:scale-95 transition shrink-0">
+          SEND
+        </button>
+      </form>
+    </footer>
+  </div>
+
+  <!-- ==================== MODAL 1: iOS SETUP & API KEY ==================== -->
+  <div id="modal-setup" class="hidden fixed inset-0 z-40 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="hud-card w-full max-w-md max-h-[88dvh] rounded-2xl flex flex-col overflow-hidden border-amber-400/40">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-500/20 shrink-0">
+        <div>
+          <h2 class="font-hud text-sm font-bold text-amber-300">⚙️ iOS SETUP &amp; API KEY</h2>
+          <p class="text-[10px] text-slate-400">AQ / AIza Header Auth · Auto-Model Discovery · Auto-Call</p>
+        </div>
+        <button onclick="closeModal('modal-setup')" class="w-8 h-8 rounded-lg border border-amber-400/40 bg-amber-500/10 text-amber-200 font-bold active:scale-95">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto hud-scroll flex flex-col gap-3.5 text-xs">
+        <!-- Gemini API Key Card -->
+        <div class="p-3 rounded-xl border border-cyan-400/35 bg-cyan-950/25 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-hud text-[11px] font-bold text-cyan-300">🔑 GEMINI API KEY (AQ.... &amp; AIza...)</span>
+            <span id="setup-key-status" class="font-hud text-[9px] px-2 py-0.5 rounded-full border border-amber-400/50 bg-amber-500/15 text-amber-200">NOT SET</span>
+          </div>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            Sent securely via <code class="text-cyan-300">x-goog-api-key</code> HTTP header &amp; stored privately on this iPhone (<code class="text-cyan-300">localStorage</code>). Get a free key at
+            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="text-amber-300 underline">aistudio.google.com/apikey</a>.
+          </p>
+          <div class="flex items-center gap-1.5">
+            <input id="input-gemini-key" type="password" placeholder="Paste AQ.... or AIza... API Key" class="flex-1 min-w-0 rounded-lg border border-cyan-500/40 bg-slate-950/90 px-3 py-2 text-xs text-cyan-100 focus:outline-none focus:border-cyan-400" />
+            <button type="button" onclick="toggleKeyVisibility()" class="px-2.5 py-2 rounded-lg border border-slate-600 bg-slate-900 text-slate-300 text-xs">👁️</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="saveGeminiKeyFromUI()" class="font-hud text-[10px] font-bold py-2.5 rounded-lg border border-cyan-400/60 bg-cyan-500/20 text-cyan-100 active:scale-95 transition">
+              💾 SAVE KEY
+            </button>
+            <button onclick="runApiAndVoiceDiagnostic()" class="font-hud text-[10px] font-bold py-2.5 rounded-lg border border-amber-400/60 bg-amber-500/20 text-amber-200 active:scale-95 transition">
+              🔊 TEST API &amp; VOICE
+            </button>
+          </div>
+          <div id="api-test-result" class="hidden p-2.5 rounded-lg text-[11px] leading-relaxed font-mono break-words"></div>
+        </div>
+
+        <!-- Live Gemini Model Selector -->
+        <div class="p-3 rounded-xl border border-cyan-500/25 bg-slate-900/60 flex flex-col gap-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-hud text-[10px] font-bold text-cyan-200">🧠 LIVE GEMINI MODEL</span>
+            <button onclick="refreshLiveModelsFromUI()" class="font-hud text-[9px] px-2.5 py-1 rounded-lg border border-cyan-400/40 bg-cyan-500/15 text-cyan-200 active:scale-95">
+              🔄 Refresh Models
+            </button>
+          </div>
+          <select id="select-live-model" onchange="handleModelSelectChange()" class="w-full rounded-lg border border-cyan-500/35 bg-slate-950 px-2.5 py-2 text-xs text-cyan-100 focus:outline-none">
+            <option value="">Auto-Discover Best Flash Model</option>
+          </select>
+          <p id="model-discovery-info" class="text-[10px] text-slate-400">
+            Auto-discovers live models via GET /v1beta/models and automatically fails over on HTTP 503/429/404.
+          </p>
+        </div>
+
+        <!-- Auto-Execute Actions -->
+        <div class="p-3 rounded-xl border border-emerald-500/30 bg-emerald-950/20 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <div class="font-hud text-[10px] font-bold text-emerald-300">⚡ AUTO-EXECUTE ACTIONS</div>
+              <p class="text-[10px] text-slate-300 mt-0.5">Auto-trigger Calls, Apps (FB/YT/TikTok/IG/WA), Maps &amp; Shortcuts</p>
+            </div>
+            <label class="hud-switch">
+              <input id="toggle-auto-exec" type="checkbox" onchange="saveSettingsFromUI()" />
+              <span class="hud-slider"></span>
+            </label>
+          </div>
+          <div>
+            <label class="font-hud text-[9px] text-slate-400 block mb-1">EXECUTION MODE</label>
+            <select id="select-exec-mode" onchange="saveSettingsFromUI()" class="w-full rounded-lg border border-emerald-500/35 bg-slate-950 px-2.5 py-2 text-xs text-emerald-100 focus:outline-none">
+              <option value="direct">Direct iOS Links (tel: / wa.me / Universal Links)</option>
+              <option value="shortcut">Apple Shortcut Bridge (JarvisBridge)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Voice Engine & Stark DSP -->
+        <div class="p-3 rounded-xl border border-sky-500/30 bg-sky-950/20 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-hud text-[10px] font-bold text-sky-300">🎙️ VOICE ENGINE</span>
+            <span class="font-hud text-[9px] px-2 py-0.5 rounded-full border border-sky-400/50 bg-sky-500/15 text-sky-200">LOCKED: CHARON (HD)</span>
+          </div>
+          <p class="text-[10px] text-slate-300">
+            Uses Gemini TTS (Charon) with automatic instant fallback to iOS Web Speech so voice never freezes.
+          </p>
+          <div class="flex items-center justify-between gap-3 pt-1 border-t border-sky-500/20">
+            <div>
+              <div class="font-hud text-[10px] font-bold text-cyan-200">STARK HUD AUDIO DSP</div>
+              <p class="text-[10px] text-slate-400">110Hz High-Pass · +2.5dB @ 2.8kHz · Compressor</p>
+            </div>
+            <label class="hud-switch">
+              <input id="toggle-dsp" type="checkbox" onchange="saveSettingsFromUI()" />
+              <span class="hud-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Optional ElevenLabs -->
+        <div class="p-3 rounded-xl border border-amber-500/25 bg-amber-950/15 flex flex-col gap-2">
+          <span class="font-hud text-[10px] font-bold text-amber-300">ELEVENLABS VOICE CLONE (OPTIONAL)</span>
+          <input id="input-eleven-key" type="password" placeholder="ElevenLabs API Key (optional)" onchange="saveSettingsFromUI()" class="w-full rounded-lg border border-amber-500/30 bg-slate-950 px-2.5 py-2 text-xs text-amber-100 focus:outline-none" />
+          <input id="input-eleven-voice" type="text" placeholder="ElevenLabs Voice ID (optional)" onchange="saveSettingsFromUI()" class="w-full rounded-lg border border-amber-500/30 bg-slate-950 px-2.5 py-2 text-xs text-amber-100 focus:outline-none" />
+        </div>
+
+        <!-- Built-in Setup Guide (EN + සිංහල) -->
+        <div class="p-3 rounded-xl border border-slate-700 bg-slate-950/75 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="font-hud text-[10px] font-bold text-cyan-300">📘 IPHONE 15 PRO MAX GUIDE (EN / සිංහල)</span>
+            <button onclick="copySetupGuide()" class="font-hud text-[9px] px-2 py-1 rounded-md border border-cyan-400/40 bg-cyan-500/15 text-cyan-200 active:scale-95">
+              📋 COPY
+            </button>
+          </div>
+          <div id="setup-guide-text" class="text-[11px] text-slate-300 space-y-1.5 leading-relaxed">
+            <p><strong class="text-cyan-300">1. Home Screen PWA:</strong> Open your GitHub Pages URL in Safari → Share (↑) → <em>Add to Home Screen</em>.</p>
+            <p><strong class="text-cyan-300">2. JarvisBridge Shortcut:</strong> Create a Shortcut named <code class="text-amber-300">JarvisBridge</code> → Split Shortcut Input by <code class="text-amber-300">|</code> → Item 1 = Action (<code class="text-emerald-300">CALL, WHATSAPP, NOTE, REMINDER, MAPS, APP</code>), Item 2 = Value.</p>
+            <p><strong class="text-cyan-300">3. Action Button:</strong> Create Shortcut <code class="text-amber-300">Launch Jarvis</code> (Open URLs → your GitHub Pages link) → iPhone Settings → Action Button → Shortcut.</p>
+            <p><strong class="text-amber-300">සිංහල උපදෙස්:</strong> API Key එක Settings වල Save කරලා, Contacts වල ඇත්ත +94 numbers දාගන්න. උදේ වරුවේ දවසට එක පාරක් විතරක් Date + Weather briefing එක දෙනවා; අනිත් හැම වෙලාවෙම කෙටියෙන් <em>"Hello sir, how can I help you?"</em> කියලා පටන් ගන්නවා.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: CONTACTS ==================== -->
+  <div id="modal-contacts" class="hidden fixed inset-0 z-40 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="hud-card w-full max-w-md max-h-[86dvh] rounded-2xl flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-500/20 shrink-0">
+        <div>
+          <h2 class="font-hud text-sm font-bold text-cyan-300">📞 CONTACTS &amp; SMART ALIASES</h2>
+          <p class="text-[10px] text-slate-400">Saved privately in this iPhone's localStorage</p>
+        </div>
+        <button onclick="closeModal('modal-contacts')" class="w-8 h-8 rounded-lg border border-cyan-400/40 bg-cyan-500/10 text-cyan-200 font-bold">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto hud-scroll flex flex-col gap-3">
+        <!-- Add / Edit Contact Form -->
+        <form id="contact-form" onsubmit="saveContactFromForm(event)" class="p-3 rounded-xl border border-cyan-500/30 bg-slate-900/70 flex flex-col gap-2">
+          <input id="contact-edit-id" type="hidden" value="" />
+          <div class="grid grid-cols-2 gap-2">
+            <input id="contact-name" type="text" required placeholder="Name (e.g. Amma)" class="rounded-lg border border-cyan-500/35 bg-slate-950 px-2.5 py-2 text-xs text-cyan-100 focus:outline-none" />
+            <input id="contact-phone" type="tel" required placeholder="+94771234567" class="rounded-lg border border-cyan-500/35 bg-slate-950 px-2.5 py-2 text-xs text-cyan-100 focus:outline-none" />
+          </div>
+          <input id="contact-aliases" type="text" placeholder="Aliases (comma separated: mother, mom, අම්මා)" class="rounded-lg border border-cyan-500/35 bg-slate-950 px-2.5 py-2 text-xs text-cyan-100 focus:outline-none" />
+          <div class="flex gap-2">
+            <button type="submit" id="contact-submit-btn" class="flex-1 font-hud text-[10px] font-bold py-2 rounded-lg border border-emerald-400/60 bg-emerald-500/20 text-emerald-200 active:scale-95">
+              + SAVE CONTACT
+            </button>
+            <button type="button" onclick="resetContactForm()" class="font-hud text-[10px] px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-slate-300">
+              CLEAR
+            </button>
+          </div>
+        </form>
+
+        <!-- Contact List -->
+        <div id="contacts-list" class="flex flex-col gap-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: VAULT (NOTES & REMINDERS) ==================== -->
+  <div id="modal-vault" class="hidden fixed inset-0 z-40 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="hud-card w-full max-w-md max-h-[86dvh] rounded-2xl flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-500/20 shrink-0">
+        <div>
+          <h2 class="font-hud text-sm font-bold text-cyan-300">🗂️ STARK VAULT</h2>
+          <p class="text-[10px] text-slate-400">Notes &amp; Reminders</p>
+        </div>
+        <button onclick="closeModal('modal-vault')" class="w-8 h-8 rounded-lg border border-cyan-400/40 bg-cyan-500/10 text-cyan-200 font-bold">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto hud-scroll flex flex-col gap-4">
+        <!-- Quick Add Form -->
+        <form onsubmit="addVaultItemFromForm(event)" class="p-3 rounded-xl border border-cyan-500/30 bg-slate-900/70 flex flex-col gap-2">
+          <div class="flex gap-2">
+            <select id="vault-type" class="rounded-lg border border-cyan-500/35 bg-slate-950 px-2.5 py-2 text-xs text-cyan-100 focus:outline-none">
+              <option value="note">📝 Note</option>
+              <option value="reminder">⏰ Reminder</option>
+            </select>
+            <input id="vault-text" type="text" required placeholder="Type note or reminder..." class="flex-1 min-w-0 rounded-lg border border-cyan-500/35 bg-slate-950 px-2.5 py-2 text-xs text-cyan-100 focus:outline-none" />
+          </div>
+          <button type="submit" class="font-hud text-[10px] font-bold py-2 rounded-lg border border-cyan-400/60 bg-cyan-500/20 text-cyan-100 active:scale-95">
+            + ADD TO VAULT
+          </button>
+        </form>
+
+        <div>
+          <h3 class="font-hud text-[11px] font-bold text-amber-300 mb-2">⏰ REMINDERS</h3>
+          <div id="vault-reminders-list" class="flex flex-col gap-2"></div>
+        </div>
+
+        <div>
+          <h3 class="font-hud text-[11px] font-bold text-cyan-300 mb-2">📝 NOTES</h3>
+          <div id="vault-notes-list" class="flex flex-col gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 4: SOCIAL COMPOSER ==================== -->
+  <div id="modal-social" class="hidden fixed inset-0 z-40 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="hud-card w-full max-w-md max-h-[86dvh] rounded-2xl flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-cyan-500/20 shrink-0">
+        <div>
+          <h2 class="font-hud text-sm font-bold text-cyan-300">📱 SOCIAL COMPOSER</h2>
+          <p class="text-[10px] text-slate-400">Draft captions for Facebook, TikTok, Instagram &amp; YouTube</p>
+        </div>
+        <button onclick="closeModal('modal-social')" class="w-8 h-8 rounded-lg border border-cyan-400/40 bg-cyan-500/10 text-cyan-200 font-bold">✕</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto hud-scroll flex flex-col gap-3 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-hud text-[9px] text-slate-400 block mb-1">PLATFORM</label>
+            <select id="social-platform" class="w-full rounded-lg border border-cyan-500/35 bg-slate-950 px-2.5 py-2 text-xs text-cyan-100">
+              <option value="facebook">Facebook</option>
+              <option value="tiktok">TikTok</option>
+              <option value="instagram">Instagram</option>
+              <option value="youtube">YouTube</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-hud text-[9px] text-slate-400 block mb-1">LANGUAGE</label>
+            <select id="social-lang" class="w-full rounded-lg border border-cyan-500/35 bg-slate-950 px-2.5 py-2 text-xs text-cyan-100">
+              <option value="en">English</option>
+              <option value="si">සිංහල</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-hud text-[9px] text-slate-400 block mb-1">POST IDEA / TOPIC</label>
+          <input id="social-topic" type="text" placeholder="e.g. Fresh harvest update or weekend special..." class="w-full rounded-lg border border-cyan-500/35 bg-slate-950 px-3 py-2 text-xs text-cyan-100 focus:outline-none" />
+        </div>
+
+        <button id="btn-generate-social" onclick="generateSocialDraft()" class="font-hud text-[10px] font-bold py-2.5 rounded-lg border border-cyan-400/60 bg-cyan-500/20 text-cyan-100 active:scale-95 transition">
+          ✨ GENERATE DRAFT WITH J.A.R.V.I.S.
+        </button>
+
+        <div>
+          <label class="font-hud text-[9px] text-slate-400 block mb-1">GENERATED CAPTION</label>
+          <textarea id="social-output" rows="5" placeholder="Your caption will appear here..." class="w-full rounded-lg border border-cyan-500/35 bg-slate-950 p-2.5 text-xs text-cyan-50 focus:outline-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="copySocialDraft()" class="font-hud text-[10px] font-bold py-2 rounded-lg border border-emerald-400/50 bg-emerald-500/15 text-emerald-200 active:scale-95">
+            📋 COPY CAPTION
+          </button>
+          <button onclick="openSocialPlatformApp()" class="font-hud text-[10px] font-bold py-2 rounded-lg border border-amber-400/50 bg-amber-500/15 text-amber-200 active:scale-95">
+            🚀 OPEN APP
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div id="toast" class="hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full border border-cyan-400/60 bg-slate-950/95 text-cyan-100 text-xs font-medium shadow-[0_0_20px_rgba(0,229,255,0.35)] text-center max-w-[90vw]"></div>
+
+  <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
+  <script>
+    'use strict';
+
+    /* =========================================================================
+       1. CONSTANTS, STORAGE KEYS & STATE
+    ========================================================================= */
     const STORAGE_KEYS = {
       GEMINI_KEY: 'jarvis_gemini_key',
       SELECTED_MODEL: 'jarvis_selected_model',
@@ -9,27 +676,339 @@
       REMINDERS: 'jarvis_v8_reminders',
       SETTINGS: 'jarvis_v8_settings'
     };
-// ... existing code ... -->
-    function getTimeOfDayGreeting(lang) {
-      const hr = new Date().getHours();
-      if (lang === 'si') {
-        if (hr >= 5 && hr < 12) return 'සුභ උදෑසනක්';
-        if (hr >= 12 && hr < 17) return 'සුභ දහවලක්';
-        if (hr >= 17 && hr < 21) return 'සුභ සන්ධ්‍යාවක්';
-        return 'සුභ රාත්‍රියක්';
+
+    const FSM = {
+      BOOT: 'BOOT',
+      ACTIVE_LISTENING: 'LISTENING',
+      PROCESSING: 'PROCESSING',
+      SPEAKING: 'SPEAKING',
+      SLEEPING: 'SLEEP'
+    };
+
+    const DAYS_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const DAYS_SI = ['ඉරිදා', 'සඳුදා', 'අඟහරුවාදා', 'බදාදා', 'බ්‍රහස්පතින්දා', 'සිකුරාදා', 'සෙනසුරාදා'];
+    const MONTHS_SI = ['ජනවාරි', 'පෙබරවාරි', 'මාර්තු', 'අප්‍රේල්', 'මැයි', 'ජූනි', 'ජූලි', 'අගෝස්තු', 'සැප්තැම්බර්', 'ඔක්තෝබර්', 'නොවැම්බර්', 'දෙසැම්බර්'];
+
+    const DEFAULT_CONTACTS = [
+      { id: 'c1', name: 'Amma', phone: '+94771234567', aliases: ['mother', 'mom', 'amma', 'අම්මා', 'අම්මට'] },
+      { id: 'c2', name: 'Thatha', phone: '+94771234568', aliases: ['father', 'dad', 'thatha', 'තාත්තා', 'තාත්තට'] },
+      { id: 'c3', name: 'Wife', phone: '+94771234569', aliases: ['harshani', 'wife', 'නෝනා', 'නෝනට', 'බිරිඳ'] },
+      { id: 'c4', name: 'Malli', phone: '+94771234570', aliases: ['brother', 'malli', 'ravindra', 'මල්ලි', 'මල්ලිට'] }
+    ];
+
+    const PLACEHOLDER_NUMBERS = new Set(['+94771234567', '+94771234568', '+94771234569', '+94771234570']);
+
+    const SUPPORTED_APPS = {
+      facebook: { label: 'Facebook', icon: '📘', universal: 'https://www.facebook.com', scheme: 'fb://', shortcutVal: 'Facebook' },
+      youtube: { label: 'YouTube', icon: '▶️', universal: 'https://www.youtube.com', scheme: 'youtube://', shortcutVal: 'YouTube' },
+      tiktok: { label: 'TikTok', icon: '🎵', universal: 'https://www.tiktok.com', scheme: 'snssdk1233://', shortcutVal: 'TikTok' },
+      instagram: { label: 'Instagram', icon: '📸', universal: 'https://www.instagram.com', scheme: 'instagram://', shortcutVal: 'Instagram' },
+      whatsapp: { label: 'WhatsApp', icon: '💬', universal: 'https://wa.me/', scheme: 'whatsapp://', shortcutVal: 'WhatsApp' },
+      maps: { label: 'Google Maps', icon: '📍', universal: 'https://maps.google.com', scheme: 'comgooglemaps://', shortcutVal: 'Google Maps' },
+      comera: { label: 'Comera', icon: '📞', universal: 'https://comera.me', scheme: 'comera://', shortcutVal: 'Comera' },
+      botim: { label: 'Botim', icon: '📞', universal: 'https://botim.me', scheme: 'botim://', shortcutVal: 'Botim' },
+      gochat: { label: 'GoChat', icon: '💬', universal: 'https://www.gochat247.com', scheme: 'gochat://', shortcutVal: 'GoChat' }
+    };
+
+    const state = {
+      fsm: FSM.BOOT,
+      activeLang: 'en',
+      audioCtx: null,
+      activeAudioSource: null,
+      activeAudioEl: null,
+      speechWatchdogTimer: null,
+      speechPollInterval: null,
+      currentSpeakAbort: null,
+
+      // Speech Recognition
+      recognition: null,
+      micActive: false,
+      micBlocked: false,
+      transcriptBuffer: '',
+      silenceTimer: null,
+      lastCommittedText: '',
+      lastCommitTime: 0,
+      micWatchdogInterval: null,
+
+      // Weather
+      weather: { temp: 28, condEn: 'partly cloudy', condSi: 'මඳක් වළාකුළු සහිත', emoji: '🌤️' },
+
+      // Gemini API & Models
+      selectedModel: '',
+      discoveredChatModels: [],
+      discoveredTtsModel: 'gemini-2.5-flash-preview-tts',
+      discoveryCompleted: false,
+      chatHistory: [],
+
+      // User Data
+      contacts: [],
+      notes: [],
+      reminders: [],
+      settings: {
+        autoExecute: true,
+        executionMode: 'direct',
+        starkDsp: true,
+        elevenKey: '',
+        elevenVoiceId: ''
       }
-      if (hr >= 5 && hr < 12) return 'Good morning';
-      if (hr >= 12 && hr < 17) return 'Good afternoon';
-      if (hr >= 17 && hr < 21) return 'Good evening';
-      return 'Good night';
+    };
+
+    /* =========================================================================
+       2. INITIALIZATION & LOCAL STORAGE HELPERS
+    ========================================================================= */
+    function loadStoredData() {
+      try {
+        const savedContacts = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTACTS) || 'null');
+        state.contacts = Array.isArray(savedContacts) && savedContacts.length ? savedContacts : JSON.parse(JSON.stringify(DEFAULT_CONTACTS));
+      } catch (e) {
+        state.contacts = JSON.parse(JSON.stringify(DEFAULT_CONTACTS));
+      }
+
+      try {
+        state.notes = JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTES) || '[]');
+        if (!Array.isArray(state.notes)) state.notes = [];
+      } catch (e) { state.notes = []; }
+
+      try {
+        state.reminders = JSON.parse(localStorage.getItem(STORAGE_KEYS.REMINDERS) || '[]');
+        if (!Array.isArray(state.reminders)) state.reminders = [];
+      } catch (e) { state.reminders = []; }
+
+      try {
+        const s = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS) || '{}');
+        state.settings = Object.assign({
+          autoExecute: true,
+          executionMode: 'direct',
+          starkDsp: true,
+          elevenKey: '',
+          elevenVoiceId: ''
+        }, s);
+      } catch (e) {}
+
+      try {
+        state.selectedModel = localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || '';
+        const savedTts = localStorage.getItem(STORAGE_KEYS.DISCOVERED_TTS);
+        if (savedTts) state.discoveredTtsModel = savedTts;
+      } catch (e) {}
     }
 
+    function saveStoredContacts() {
+      try { localStorage.setItem(STORAGE_KEYS.CONTACTS, JSON.stringify(state.contacts)); } catch (e) {}
+    }
+    function saveStoredVault() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(state.notes));
+        localStorage.setItem(STORAGE_KEYS.REMINDERS, JSON.stringify(state.reminders));
+      } catch (e) {}
+      updateVaultBadge();
+    }
+    function saveStoredSettings() {
+      try { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(state.settings)); } catch (e) {}
+    }
+
+    function getActiveGeminiKey() {
+      try {
+        return (localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '').trim();
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function hasGeminiKey() {
+      return getActiveGeminiKey().length > 10;
+    }
+
+    function setSelectedModel(modelId) {
+      state.selectedModel = modelId || '';
+      try {
+        if (modelId) localStorage.setItem(STORAGE_KEYS.SELECTED_MODEL, modelId);
+        else localStorage.removeItem(STORAGE_KEYS.SELECTED_MODEL);
+      } catch (e) {}
+      populateModelDropdown();
+    }
+
+    function showToast(msg, duration = 2600) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => el.classList.add('hidden'), duration);
+    }
+
+    function copyTextToClipboard(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    /* =========================================================================
+       3. UI UPDATES, CLOCK, WEATHER & MODALS
+    ========================================================================= */
+    function updateClockAndDate() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('hud-clock').textContent = `${hh}:${mm}:${ss}`;
+      document.getElementById('hud-date').textContent = `${DAYS_EN[now.getDay()]}, ${now.getDate()} ${MONTHS_EN[now.getMonth()]} ${now.getFullYear()}`;
+    }
+
+    function updateApiKeyBadges() {
+      const key = getActiveGeminiKey();
+      const topBadge = document.getElementById('api-key-badge');
+      const setupBadge = document.getElementById('setup-key-status');
+
+      if (key.length > 10) {
+        const isAuth = key.startsWith('AQ.');
+        const label = isAuth ? 'AUTH KEY ACTIVE' : 'KEY ACTIVE';
+        topBadge.textContent = label;
+        topBadge.className = 'font-hud text-[9px] px-2 py-0.5 rounded-full border border-emerald-400/55 bg-emerald-500/15 text-emerald-300 uppercase truncate max-w-[125px] active:scale-95 transition';
+        setupBadge.textContent = label;
+        setupBadge.className = 'font-hud text-[9px] px-2 py-0.5 rounded-full border border-emerald-400/55 bg-emerald-500/15 text-emerald-300';
+      } else {
+        topBadge.textContent = '🔑 Add API Key';
+        topBadge.className = 'font-hud text-[9px] px-2 py-0.5 rounded-full border border-amber-400/50 bg-amber-500/15 text-amber-200 uppercase truncate max-w-[115px] active:scale-95 transition';
+        setupBadge.textContent = 'NOT SET';
+        setupBadge.className = 'font-hud text-[9px] px-2 py-0.5 rounded-full border border-amber-400/50 bg-amber-500/15 text-amber-200';
+      }
+    }
+
+    function updateVaultBadge() {
+      document.getElementById('vault-count-badge').textContent = String(state.notes.length + state.reminders.length);
+    }
+
+    function updateSettingsUI() {
+      document.getElementById('input-gemini-key').value = getActiveGeminiKey();
+      document.getElementById('toggle-auto-exec').checked = !!state.settings.autoExecute;
+      document.getElementById('select-exec-mode').value = state.settings.executionMode || 'direct';
+      document.getElementById('toggle-dsp').checked = !!state.settings.starkDsp;
+      document.getElementById('input-eleven-key').value = state.settings.elevenKey || '';
+      document.getElementById('input-eleven-voice').value = state.settings.elevenVoiceId || '';
+
+      const modePill = document.getElementById('pill-exec-mode');
+      if (!state.settings.autoExecute) {
+        modePill.textContent = '⚡ AUTO: OFF';
+        modePill.className = 'font-hud text-[9px] px-2.5 py-1 rounded-full border border-slate-500/50 bg-slate-800/70 text-slate-300 active:scale-95 transition';
+      } else if (state.settings.executionMode === 'shortcut') {
+        modePill.textContent = '⚡ AUTO: SHORTCUT';
+        modePill.className = 'font-hud text-[9px] px-2.5 py-1 rounded-full border border-amber-400/50 bg-amber-500/15 text-amber-200 active:scale-95 transition';
+      } else {
+        modePill.textContent = '⚡ AUTO: DIRECT';
+        modePill.className = 'font-hud text-[9px] px-2.5 py-1 rounded-full border border-emerald-400/45 bg-emerald-500/15 text-emerald-300 active:scale-95 transition';
+      }
+      updateApiKeyBadges();
+    }
+
+    function setActiveLanguage(lang) {
+      state.activeLang = lang === 'si' ? 'si' : 'en';
+      const btnEn = document.getElementById('btn-lang-en');
+      const btnSi = document.getElementById('btn-lang-si');
+      const pillLang = document.getElementById('pill-lang');
+      const reactor = document.getElementById('main-reactor');
+
+      if (state.activeLang === 'si') {
+        btnSi.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg border border-amber-400 bg-amber-500/30 text-amber-100 active:scale-95 transition';
+        btnEn.className = 'font-hud text-[10px] font-bold px-2.5 py-1 rounded-lg border border-cyan-500/30 bg-slate-900/60 text-slate-400 active:scale-95 transition';
+        pillLang.textContent = 'LANG: සිං';
+        pillLang.className = 'font-hud text-[9px] px-2.5 py-1 rounded-full border border-amber-400/50 bg-amber-950/50 text-amber-200';
+        reactor.classList.add('lang-si');
+      } else {
+        btnEn.className = 'font-hud text-[10px] font-bold px-2.5 py-1 rounded-lg border border-cyan-400 bg-cyan-500/25 text-cyan-100 active:scale-95 transition';
+        btnSi.className = 'text-[11px] font-bold px-2.5 py-1 rounded-lg border border-amber-500/35 bg-slate-900/60 text-amber-300/70 active:scale-95 transition';
+        pillLang.textContent = 'LANG: EN';
+        pillLang.className = 'font-hud text-[9px] px-2.5 py-1 rounded-full border border-cyan-400/35 bg-slate-900/70 text-cyan-200';
+        reactor.classList.remove('lang-si');
+      }
+    }
+
+    function transitionFSM(nextState, subtitleText) {
+      state.fsm = nextState;
+      const badge = document.getElementById('fsm-badge');
+      const reactor = document.getElementById('main-reactor');
+      const sub = document.getElementById('status-subtitle');
+      const btnInt = document.getElementById('btn-interrupt');
+      const pillSleep = document.getElementById('pill-sleep');
+      const hudDot = document.getElementById('hud-dot');
+
+      badge.textContent = nextState;
+      reactor.classList.remove('state-speaking', 'state-processing', 'state-sleeping');
+      btnInt.classList.add('hidden');
+
+      if (nextState === FSM.SPEAKING) {
+        reactor.classList.add('state-speaking');
+        btnInt.classList.remove('hidden');
+        badge.className = 'font-hud text-[9px] px-2 py-0.5 rounded-full border border-sky-400/70 bg-sky-500/25 text-sky-100 uppercase shrink-0';
+        hudDot.className = 'w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_10px_#38bdf8] shrink-0';
+        sub.textContent = subtitleText || `J.A.R.V.I.S. SPEAKING (${state.activeLang === 'si' ? 'සිංහල' : 'EN'}) · TAP CORE TO INTERRUPT`;
+      } else if (nextState === FSM.PROCESSING) {
+        reactor.classList.add('state-processing');
+        badge.className = 'font-hud text-[9px] px-2 py-0.5 rounded-full border border-amber-400/70 bg-amber-500/25 text-amber-100 uppercase shrink-0';
+        hudDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_10px_#f59e0b] shrink-0';
+        sub.textContent = subtitleText || 'PROCESSING NEURAL LINK...';
+      } else if (nextState === FSM.SLEEPING) {
+        reactor.classList.add('state-sleeping');
+        badge.className = 'font-hud text-[9px] px-2 py-0.5 rounded-full border border-slate-500/60 bg-slate-800/80 text-slate-300 uppercase shrink-0';
+        hudDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500 shrink-0';
+        pillSleep.textContent = '○ Sleeping • Wake';
+        sub.textContent = subtitleText || 'STANDBY MODE · TAP CORE TO WAKE';
+      } else {
+        badge.className = 'font-hud text-[9px] px-2 py-0.5 rounded-full border border-cyan-400/60 bg-cyan-500/20 text-cyan-100 uppercase shrink-0';
+        hudDot.className = 'w-2.5 h-2.5 rounded-full bg-[#00e5ff] shadow-[0_0_8px_#00e5ff] shrink-0';
+        pillSleep.textContent = '● Active • Sleep';
+        sub.textContent = subtitleText || `LISTENING CONTINUOUSLY (${state.activeLang === 'si' ? 'සිංහල' : 'EN'})`;
+      }
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+      if (id === 'modal-contacts') renderContactsList();
+      if (id === 'modal-vault') renderVaultLists();
+      if (id === 'modal-setup') {
+        updateSettingsUI();
+        populateModelDropdown();
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    async function fetchLiveWeather() {
+      try {
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=6.9271&longitude=79.8612&current_weather=true');
+        if (!res.ok) return;
+        const data = await res.json();
+        const cw = data && data.current_weather;
+        if (!cw) return;
+        const temp = Math.round(cw.temperature);
+        const code = cw.weathercode;
+        let condEn = 'clear skies', condSi = 'පැහැදිලි අහසක්', emoji = '☀️';
+        if (code >= 1 && code <= 3) { condEn = 'partly cloudy'; condSi = 'මඳක් වළාකුළු සහිත'; emoji = '⛅'; }
+        else if (code >= 45 && code <= 48) { condEn = 'misty'; condSi = 'මීදුම් සහිත'; emoji = '🌫️'; }
+        else if (code >= 51 && code <= 67) { condEn = 'rainy'; condSi = 'වැසි සහිත'; emoji = '🌧️'; }
+        else if (code >= 71 && code <= 82) { condEn = 'showers'; condSi = 'වැසි'; emoji = '🌦️'; }
+        else if (code >= 95) { condEn = 'thunderstorms'; condSi = 'ගිගුරුම් සහිත වැසි'; emoji = '⛈️'; }
+
+        state.weather = { temp, condEn, condSi, emoji };
+        document.getElementById('hud-weather').innerHTML = `<span>${emoji}</span><span>${temp}°C</span>`;
+      } catch (e) {}
+    }
+
+    /* =========================================================================
+       4. ONCE-A-DAY MORNING BRIEFING & CONCISE GREETING LOGIC
+    ========================================================================= */
     function getLocalTodayDateStr() {
       const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
 
     function shouldPlayMorningBriefing() {
@@ -39,6 +1018,20 @@
       let lastDate = '';
       try { lastDate = localStorage.getItem(STORAGE_KEYS.LAST_BRIEFING_DATE) || ''; } catch (e) {}
       return lastDate !== todayStr;
+    }
+
+    function getTimeOfDayGreeting(lang) {
+      const hr = new Date().getHours();
+      if (lang === 'si') {
+        if (hr >= 4 && hr < 12) return 'සුභ උදෑසනක්';
+        if (hr >= 12 && hr < 17) return 'සුභ දහවලක්';
+        if (hr >= 17 && hr < 21) return 'සුභ සන්ධ්‍යාවක්';
+        return 'සුභ රාත්‍රියක්';
+      }
+      if (hr >= 4 && hr < 12) return 'Good morning';
+      if (hr >= 12 && hr < 17) return 'Good afternoon';
+      if (hr >= 17 && hr < 21) return 'Good evening';
+      return 'Good night';
     }
 
     function buildStandardGreetingText(lang) {
@@ -53,28 +1046,1077 @@
       if (lang === 'si') {
         const greet = getTimeOfDayGreeting('si');
         const dateStr = `${now.getFullYear()} ${MONTHS_SI[now.getMonth()]} ${now.getDate()} ${DAYS_SI[now.getDay()]}`;
-        return `${greet} මචන්! අද ${dateStr}. දැන් කාලගුණය අංශක ${state.weather.temp}යි, ${state.weather.condSi}යි. කියන්න මචන්, මොනවද කරන්න ඕනේ?`;
+        return `${greet} මචන්! අද ${dateStr}. දැන් කොළඹ කාලගුණය අංශක ${state.weather.temp}යි, ${state.weather.condSi}යි. මොකද කරන්න ඕනේ?`;
       }
       const greet = getTimeOfDayGreeting('en');
       const dateStr = `${DAYS_EN[now.getDay()]}, ${now.getDate()} ${MONTHS_EN[now.getMonth()]} ${now.getFullYear()}`;
       return `${greet}, sir. Today is ${dateStr}, and it's ${state.weather.temp} degrees with ${state.weather.condEn}. What can I do for you?`;
     }
-// ... existing code ...
-    function switchLangAndBrief(lang) {
+
+    /* =========================================================================
+       5. SYNCHRONOUS iOS AUDIO UNLOCK, STARK DSP & ANTI-FREEZE VOICE ENGINE
+    ========================================================================= */
+    function unlockIosAudioSynchronously() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!state.audioCtx && AudioCtx) {
+          state.audioCtx = new AudioCtx();
+        }
+        if (state.audioCtx) {
+          if (state.audioCtx.state === 'suspended') {
+            state.audioCtx.resume();
+          }
+          // Play 1-sample silent buffer synchronously inside user gesture
+          const silentBuf = state.audioCtx.createBuffer(1, 1, 22050);
+          const src = state.audioCtx.createBufferSource();
+          src.buffer = silentBuf;
+          src.connect(state.audioCtx.destination);
+          src.start(0);
+        }
+      } catch (e) {}
+
+      try {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance('');
+          u.volume = 0;
+          window.speechSynthesis.speak(u);
+        }
+      } catch (e) {}
+    }
+
+    function playSfx(type) {
+      try {
+        if (!state.audioCtx) return;
+        if (state.audioCtx.state === 'suspended') state.audioCtx.resume();
+        const now = state.audioCtx.currentTime;
+        const osc = state.audioCtx.createOscillator();
+        const gain = state.audioCtx.createGain();
+        osc.type = 'sine';
+        if (type === 'wake') {
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(980, now + 0.14);
+        } else if (type === 'sleep') {
+          osc.frequency.setValueAtTime(640, now);
+          osc.frequency.exponentialRampToValueAtTime(280, now + 0.18);
+        } else {
+          osc.frequency.setValueAtTime(840, now);
+          osc.frequency.exponentialRampToValueAtTime(1060, now + 0.08);
+        }
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.connect(gain);
+        gain.connect(state.audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.19);
+      } catch (e) {}
+    }
+
+    function stopAllSpeech() {
+      clearTimeout(state.speechWatchdogTimer);
+      clearInterval(state.speechPollInterval);
+      if (state.currentSpeakAbort) {
+        try { state.currentSpeakAbort(); } catch (e) {}
+        state.currentSpeakAbort = null;
+      }
+      if (state.activeAudioSource) {
+        try { state.activeAudioSource.stop(); } catch (e) {}
+        state.activeAudioSource = null;
+      }
+      if (state.activeAudioEl) {
+        try { state.activeAudioEl.pause(); state.activeAudioEl.src = ''; } catch (e) {}
+        state.activeAudioEl = null;
+      }
+      try {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
+
+    function base64ToUint8Array(base64) {
+      const bin = atob(base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes;
+    }
+
+    async function playPcm16WithStarkDsp(base64Pcm, sampleRate = 24000) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!state.audioCtx && AudioCtx) state.audioCtx = new AudioCtx();
+      if (!state.audioCtx) throw new Error('No AudioContext');
+      if (state.audioCtx.state === 'suspended') await state.audioCtx.resume();
+
+      const bytes = base64ToUint8Array(base64Pcm);
+      const pcm16 = new Int16Array(bytes.buffer, bytes.byteOffset, Math.floor(bytes.byteLength / 2));
+      const audioBuf = state.audioCtx.createBuffer(1, pcm16.length, sampleRate);
+      const channel = audioBuf.getChannelData(0);
+      for (let i = 0; i < pcm16.length; i++) {
+        channel[i] = pcm16[i] / 32768.0;
+      }
+
+      return new Promise((resolve) => {
+        const src = state.audioCtx.createBufferSource();
+        src.buffer = audioBuf;
+        state.activeAudioSource = src;
+
+        let lastNode = src;
+        if (state.settings.starkDsp) {
+          // 110Hz High-Pass Filter
+          const hp = state.audioCtx.createBiquadFilter();
+          hp.type = 'highpass';
+          hp.frequency.value = 110;
+          lastNode.connect(hp);
+          lastNode = hp;
+
+          // +2.5dB Presence Boost @ 2.8kHz
+          const peak = state.audioCtx.createBiquadFilter();
+          peak.type = 'peaking';
+          peak.frequency.value = 2800;
+          peak.Q.value = 1.2;
+          peak.gain.value = 2.5;
+          lastNode.connect(peak);
+          lastNode = peak;
+
+          // Dynamics Compressor for crisp HUD clarity
+          const comp = state.audioCtx.createDynamicsCompressor();
+          comp.threshold.value = -18;
+          comp.ratio.value = 4;
+          comp.attack.value = 0.005;
+          comp.release.value = 0.12;
+          lastNode.connect(comp);
+          lastNode = comp;
+        }
+
+        lastNode.connect(state.audioCtx.destination);
+        src.onended = () => {
+          state.activeAudioSource = null;
+          resolve();
+        };
+        src.start(0);
+      });
+    }
+
+    async function speakViaElevenLabs(text) {
+      const apiKey = (state.settings.elevenKey || '').trim();
+      const voiceId = (state.settings.elevenVoiceId || '').trim();
+      if (!apiKey || !voiceId) return false;
+
+      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text,
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: { stability: 0.5, similarity_boost: 0.78 }
+        })
+      });
+      if (!res.ok) return false;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      return new Promise((resolve) => {
+        const audio = new Audio(url);
+        state.activeAudioEl = audio;
+        const finish = () => {
+          URL.revokeObjectURL(url);
+          state.activeAudioEl = null;
+          resolve(true);
+        };
+        audio.onended = finish;
+        audio.onerror = () => { URL.revokeObjectURL(url); state.activeAudioEl = null; resolve(false); };
+        audio.play().catch(() => { URL.revokeObjectURL(url); state.activeAudioEl = null; resolve(false); });
+      });
+    }
+
+    async function speakViaGeminiCharon(text, lang) {
+      const apiKey = getActiveGeminiKey();
+      if (!apiKey || !navigator.onLine) return false;
+
+      const ttsModel = state.discoveredTtsModel || 'gemini-2.5-flash-preview-tts';
+      const promptPrefix = lang === 'si'
+        ? 'Speak warmly in natural Sri Lankan Sinhala: '
+        : 'Speak as a calm, refined British AI assistant: ';
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(ttsModel)}:generateContent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: promptPrefix + text }] }],
+          generationConfig: {
+            responseModalities: ['AUDIO'],
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: { voiceName: 'Charon' }
+              }
+            }
+          }
+        })
+      });
+
+      if (!res.ok) return false;
+      const data = await res.json();
+      const part = data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData?.data);
+      if (!part?.inlineData?.data) return false;
+
+      const mime = part.inlineData.mimeType || 'audio/L16;rate=24000';
+      const rateMatch = mime.match(/rate=(\d+)/);
+      const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+
+      await playPcm16WithStarkDsp(part.inlineData.data, sampleRate);
+      return true;
+    }
+
+    function pickBestIosVoice(lang) {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = window.speechSynthesis.getVoices() || [];
+      if (!voices.length) return null;
+
+      if (lang === 'si') {
+        return voices.find(v => /^si/i.test(v.lang)) || voices.find(v => /en-GB/i.test(v.lang)) || voices[0];
+      }
+      // Prefer British male Jarvis-like voices on iOS
+      const preferredNames = ['Daniel', 'Arthur', 'Oliver', 'Google UK English Male'];
+      for (const name of preferredNames) {
+        const found = voices.find(v => v.name.includes(name));
+        if (found) return found;
+      }
+      return voices.find(v => /en-GB/i.test(v.lang)) || voices.find(v => /^en/i.test(v.lang)) || voices[0];
+    }
+
+    function speakViaIosWebSpeech(text, lang) {
+      return new Promise((resolve) => {
+        if (!('speechSynthesis' in window)) {
+          resolve();
+          return;
+        }
+        try {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = lang === 'si' ? 'si-LK' : 'en-GB';
+          utter.rate = lang === 'si' ? 0.96 : 1.02;
+          utter.pitch = 0.94;
+          const v = pickBestIosVoice(lang);
+          if (v) utter.voice = v;
+
+          let finished = false;
+          const done = () => {
+            if (finished) return;
+            finished = true;
+            clearInterval(state.speechPollInterval);
+            resolve();
+          };
+
+          utter.onend = done;
+          utter.onerror = done;
+
+          // 1.5s poll guard in case iOS Safari drops onend
+          let startedAt = Date.now();
+          state.speechPollInterval = setInterval(() => {
+            if (Date.now() - startedAt > 1800 && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+              done();
+            }
+          }, 1500);
+
+          window.speechSynthesis.speak(utter);
+        } catch (e) {
+          resolve();
+        }
+      });
+    }
+
+    async function speakLocked(text, lang = 'en', nextFsm = FSM.ACTIVE_LISTENING) {
+      stopMicRecognition();
+      stopAllSpeech();
+      transitionFSM(FSM.SPEAKING);
+
+      const cleanText = String(text || '').replace(/[*_#`]/g, '').trim();
+      if (!cleanText) {
+        finishSpeakingCycle(nextFsm);
+        return;
+      }
+
+      const hardTimeoutMs = Math.max(5000, cleanText.length * 100);
+
+      await new Promise((resolve) => {
+        let settled = false;
+        const finish = () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(state.speechWatchdogTimer);
+          clearInterval(state.speechPollInterval);
+          state.currentSpeakAbort = null;
+          resolve();
+        };
+
+        state.currentSpeakAbort = finish;
+        state.speechWatchdogTimer = setTimeout(() => {
+          stopAllSpeech();
+          finish();
+        }, hardTimeoutMs);
+
+        (async () => {
+          try {
+            let played = false;
+            if (state.settings.elevenKey && state.settings.elevenVoiceId) {
+              played = await speakViaElevenLabs(cleanText).catch(() => false);
+            }
+            if (!played && !settled && hasGeminiKey() && navigator.onLine) {
+              played = await speakViaGeminiCharon(cleanText, lang).catch(() => false);
+            }
+            if (!played && !settled) {
+              await speakViaIosWebSpeech(cleanText, lang);
+            }
+          } catch (e) {
+            if (!settled) await speakViaIosWebSpeech(cleanText, lang);
+          } finally {
+            finish();
+          }
+        })();
+      });
+
+      finishSpeakingCycle(nextFsm);
+    }
+
+    function finishSpeakingCycle(nextFsm) {
+      if (state.fsm === FSM.SLEEPING && nextFsm !== FSM.ACTIVE_LISTENING) return;
+      transitionFSM(nextFsm);
+      if (nextFsm === FSM.ACTIVE_LISTENING) {
+        setTimeout(() => {
+          if (state.fsm === FSM.ACTIVE_LISTENING && !state.micActive) {
+            startMicRecognition();
+          }
+        }, 250);
+      }
+    }
+
+    function bargeInInterrupt() {
+      stopAllSpeech();
+      playSfx('ack');
+      transitionFSM(FSM.ACTIVE_LISTENING);
+      setTimeout(() => startMicRecognition(), 180);
+    }
+
+    /* =========================================================================
+       6. GEMINI API WITH x-goog-api-key HEADER & LIVE AUTO-MODEL DISCOVERY
+    ========================================================================= */
+    function sleepMs(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function scoreChatModel(id) {
+      const lower = id.toLowerCase();
+      if (/tts|embed|imagen|veo|aqa|bison|gecko|learnlm|robotics|computer-use|audio|live/i.test(lower)) return -100;
+      let score = 0;
+      if (lower.includes('flash')) score += 50;
+      if (lower.includes('gemini-3')) score += 45;
+      else if (lower.includes('gemini-2.5')) score += 35;
+      else if (lower.includes('gemini-2.0')) score += 20;
+      if (lower.includes('lite')) score -= 5;
+      if (lower.includes('pro')) score += 10;
+      if (lower.includes('latest')) score += 8;
+      return score;
+    }
+
+    async function discoverLiveModels(forceSelect = false, excludeModel = '') {
+      const apiKey = getActiveGeminiKey();
+      if (!apiKey) throw new Error('No Gemini API key configured.');
+
+      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models', {
+        method: 'GET',
+        headers: { 'x-goog-api-key': apiKey }
+      });
+
+      if (!res.ok) {
+        let msg = `HTTP ${res.status}`;
+        try {
+          const errJson = await res.json();
+          if (errJson?.error?.message) msg = `HTTP ${res.status}: ${errJson.error.message}`;
+        } catch (e) {}
+        const err = new Error(msg);
+        err.httpStatus = res.status;
+        throw err;
+      }
+
+      const data = await res.json();
+      const rawModels = Array.isArray(data.models) ? data.models : [];
+
+      const chatModels = [];
+      let foundTts = '';
+
+      for (const m of rawModels) {
+        const methods = m.supportedGenerationMethods || [];
+        if (!methods.includes('generateContent')) continue;
+        const id = (m.name || '').replace(/^models\//, '');
+        if (!id) continue;
+
+        if (/tts/i.test(id)) {
+          if (!foundTts || id.includes('flash')) foundTts = id;
+          continue;
+        }
+
+        const score = scoreChatModel(id);
+        if (score >= 0) {
+          chatModels.push({ id, displayName: m.displayName || id, score });
+        }
+      }
+
+      chatModels.sort((a, b) => b.score - a.score);
+      state.discoveredChatModels = chatModels;
+      state.discoveryCompleted = true;
+
+      if (foundTts) {
+        state.discoveredTtsModel = foundTts;
+        try { localStorage.setItem(STORAGE_KEYS.DISCOVERED_TTS, foundTts); } catch (e) {}
+      }
+
+      const validIds = chatModels.map(m => m.id).filter(id => id !== excludeModel);
+      if ((forceSelect || !state.selectedModel || !validIds.includes(state.selectedModel)) && validIds.length > 0) {
+        setSelectedModel(validIds[0]);
+      } else {
+        populateModelDropdown();
+      }
+
+      return { chatModels, ttsModel: foundTts };
+    }
+
+    function populateModelDropdown() {
+      const sel = document.getElementById('select-live-model');
+      const info = document.getElementById('model-discovery-info');
+      if (!sel) return;
+
+      const models = state.discoveredChatModels;
+      sel.innerHTML = '';
+
+      if (!models.length) {
+        const opt = document.createElement('option');
+        opt.value = state.selectedModel || '';
+        opt.textContent = state.selectedModel ? `${state.selectedModel} (Saved)` : 'Auto-Discover Best Flash Model';
+        sel.appendChild(opt);
+      } else {
+        for (const m of models) {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          opt.textContent = `${m.id}`;
+          if (m.id === state.selectedModel) opt.selected = true;
+          sel.appendChild(opt);
+        }
+        info.textContent = `Discovered ${models.length} live models. Active: ${state.selectedModel || models[0].id}`;
+      }
+    }
+
+    async function fetchGenerateContent(modelId, payload, apiKey) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelId)}:generateContent`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        let msg = `HTTP ${res.status}`;
+        try {
+          const errJson = await res.json();
+          if (errJson?.error?.message) msg = `HTTP ${res.status}: ${errJson.error.message}`;
+        } catch (e) {}
+        const err = new Error(msg);
+        err.httpStatus = res.status;
+        throw err;
+      }
+
+      const data = await res.json();
+      return { data, modelId };
+    }
+
+    async function requestGeminiLive(payload) {
+      const apiKey = getActiveGeminiKey();
+      if (!apiKey) {
+        const err = new Error('NO_API_KEY');
+        err.code = 'NO_API_KEY';
+        throw err;
+      }
+
+      if (!state.selectedModel) {
+        await discoverLiveModels(true);
+      }
+
+      const attemptWithRetry = async (modelId) => {
+        try {
+          return await fetchGenerateContent(modelId, payload, apiKey);
+        } catch (err) {
+          if (err.httpStatus === 503 || err.httpStatus === 429) {
+            await sleepMs(1000);
+            return await fetchGenerateContent(modelId, payload, apiKey);
+          }
+          throw err;
+        }
+      };
+
+      const firstModel = state.selectedModel;
+      try {
+        return await attemptWithRetry(firstModel);
+      } catch (err) {
+        // HTTP 503 / 429 Failover across remaining discovered Flash models
+        if (err.httpStatus === 503 || err.httpStatus === 429) {
+          if (state.discoveredChatModels.length <= 1) {
+            try { await discoverLiveModels(false); } catch (e) {}
+          }
+          const flashBackups = state.discoveredChatModels.map(m => m.id).filter(id => id !== firstModel && /flash/i.test(id));
+          const otherBackups = state.discoveredChatModels.map(m => m.id).filter(id => id !== firstModel && !/flash/i.test(id));
+          const failoverQueue = [...flashBackups, ...otherBackups].slice(0, 4);
+
+          let lastErr = err;
+          for (const backup of failoverQueue) {
+            try {
+              const res = await fetchGenerateContent(backup, payload, apiKey);
+              setSelectedModel(backup);
+              return res;
+            } catch (bErr) {
+              lastErr = bErr;
+              if (bErr.httpStatus !== 503 && bErr.httpStatus !== 429 && bErr.httpStatus !== 404) throw bErr;
+            }
+          }
+          throw lastErr;
+        }
+
+        // HTTP 404 Auto-Heal: re-discover live models and retry
+        if (err.httpStatus === 404) {
+          const discovered = await discoverLiveModels(true, firstModel);
+          const candidates = discovered.chatModels.map(m => m.id).filter(id => id !== firstModel).slice(0, 3);
+          let lastErr = err;
+          for (const cand of candidates) {
+            try {
+              const res = await attemptWithRetry(cand);
+              setSelectedModel(cand);
+              return res;
+            } catch (rErr) {
+              lastErr = rErr;
+              if (rErr.httpStatus !== 404 && rErr.httpStatus !== 503 && rErr.httpStatus !== 429) throw rErr;
+            }
+          }
+          throw lastErr;
+        }
+        throw err;
+      }
+    }
+
+    function pushChatHistory(role, text) {
+      state.chatHistory.push({ role, parts: [{ text }] });
+      if (state.chatHistory.length > 14) {
+        state.chatHistory = state.chatHistory.slice(-14);
+      }
+    }
+
+    async function callGeminiAssistant(userText, lang) {
+      const contactSummary = state.contacts
+        .map(c => `${c.name} (${(c.aliases || []).join('/')})`)
+        .join(', ');
+
+      const personaRule = lang === 'si'
+        ? `Reply ONLY in natural, friendly SPOKEN Sri Lankan Sinhala (කතා කරන සිංහල like "හරි මචන්", "ඔව් මචන් කියන්න"). NEVER use stiff formal Sinhala. If user simply greets or says "මචන් Jarvis", reply concisely with "හෙලෝ මචන්, කොහොමද? මොකද උදව්වක් ඕනේ?". Understand phonetic Singlish naturally.`
+        : `Reply ONLY as Iron Man's J.A.R.V.I.S. — warm, sharp, refined British AI assistant addressing the user as "sir". If user simply says "Jarvis", "Hey Jarvis", "Hello Jarvis", or "Hi Jarvis", reply concisely with "Hello sir, how can I help you?".`;
+
+      const systemPrompt = `You are J.A.R.V.I.S., a live continuous voice AI personal assistant on iPhone 15 Pro Max in Sri Lanka.
+${personaRule}
+CRITICAL: Keep replies short (1-2 natural spoken sentences max), zero markdown, zero bullet points.
+NEVER repeat the date, time, or weather briefing unless the user explicitly asks for date, time, weather, or a briefing.
+Contacts: [${contactSummary}]. Map mother/mom/අම්මා -> Amma, father/dad/තාත්තා -> Thatha, wife/harshani/නෝනා -> Wife, brother/මල්ලි -> Malli.
+Supported apps for open_app: "facebook", "youtube", "tiktok", "instagram", "whatsapp", "maps", "comera", "botim", "gochat".
+Output strict JSON only:
+{"reply":"spoken reply","language":"${lang}","action":"chat|call|whatsapp|maps|open_app|note|reminder|briefing","payload":{"contactName":"","destination":"","app":"","content":""}}`;
+
+      const contents = [
+        ...state.chatHistory.slice(-8),
+        { role: 'user', parts: [{ text: userText }] }
+      ];
+
+      const payload = {
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents,
+        generationConfig: {
+          temperature: 0.5,
+          responseMimeType: 'application/json'
+        }
+      };
+
+      const { data, modelId } = await requestGeminiLive(payload);
+      const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      let parsed;
+      try {
+        const cleaned = rawText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+        parsed = JSON.parse(cleaned);
+      } catch (e) {
+        parsed = { reply: rawText || buildStandardGreetingText(lang), language: lang, action: 'chat', payload: {} };
+      }
+      parsed.modelId = modelId;
+      return parsed;
+    }
+
+    /* =========================================================================
+       7. LOCAL SMART FALLBACK ENGINE & DIRECT APP / ACTION EXECUTOR
+    ========================================================================= */
+    function detectLanguageFromInput(text) {
+      if (/[\u0D80-\u0DFF]/.test(text)) return 'si';
+      if (/\b(machan|machang|koheda|kohomada|arinna|danna|ganna|katha|karanna|amma|thatha|malli|nona)\b/i.test(text)) {
+        if (/මචන්|machan/i.test(text)) return 'si';
+      }
+      return state.activeLang;
+    }
+
+    function parseWakeWord(text) {
+      const t = text.trim();
+      // Sinhala wake word
+      const siWake = /^(මචන්\s*jarvis|machan\s*jarvis|මචන්\s*ජාවිස්)[,.\s!?]*(.*)$/i.exec(t);
+      if (siWake) return { wake: true, lang: 'si', rest: (siWake[2] || '').trim() };
+
+      // English wake word
+      const enWake = /^(hey\s+jarvis|hello\s+jarvis|hi\s+jarvis|ok\s+jarvis|jarvis)[,.\s!?]*(.*)$/i.exec(t);
+      if (enWake) return { wake: true, lang: 'en', rest: (enWake[2] || '').trim() };
+
+      return { wake: false, lang: detectLanguageFromInput(t), rest: t };
+    }
+
+    function findContactByText(query) {
+      const q = (query || '').toLowerCase();
+      for (const c of state.contacts) {
+        if (q.includes(c.name.toLowerCase())) return c;
+        for (const alias of (c.aliases || [])) {
+          if (alias && q.includes(alias.toLowerCase())) return c;
+        }
+      }
+      return null;
+    }
+
+    function detectAppInText(text) {
+      const t = text.toLowerCase();
+      if (/facebook|fb\b|ෆේස්බුක්/i.test(t)) return 'facebook';
+      if (/youtube|yt\b|යූටියුබ්/i.test(t)) return 'youtube';
+      if (/tiktok|tik tok|ටික්ටොක්/i.test(t)) return 'tiktok';
+      if (/instagram|insta\b|ඉන්ස්ටග්‍රෑම්/i.test(t)) return 'instagram';
+      if (/whatsapp|වට්ස්ඇප්/i.test(t)) return 'whatsapp';
+      if (/google\s*maps|maps\b|මැප්/i.test(t)) return 'maps';
+      if (/comera/i.test(t)) return 'comera';
+      if (/botim/i.test(t)) return 'botim';
+      if (/gochat/i.test(t)) return 'gochat';
+      return null;
+    }
+
+    function runLocalSmartEngine(text, lang) {
+      const t = text.trim();
+
+      // 1. Sleep command
+      if (/\b(go to sleep|sleep mode|standby|goodbye jarvis|bye jarvis)\b|නිදාගන්න|නවත්තන්න/i.test(t)) {
+        return {
+          reply: lang === 'si' ? 'හරි මචන්, මම standby ඉන්නම්. ඕන වෙලාවක කතා කරන්න.' : 'Standing by, sir. Tap the core whenever you need me.',
+          language: lang,
+          action: 'sleep',
+          payload: {}
+        };
+      }
+
+      // 2. Call command
+      if (/\b(call|dial|phone|ring)\b|කෝල්|ගන්න|අමතන්න/i.test(t)) {
+        const contact = findContactByText(t);
+        if (contact) {
+          return {
+            reply: lang === 'si' ? `හරි මචන්, ${contact.name} ට කෝල් එක ගන්නම්.` : `Placing a call to ${contact.name}, sir.`,
+            language: lang,
+            action: 'call',
+            payload: { contactName: contact.name }
+          };
+        }
+      }
+
+      // 3. WhatsApp message command
+      if (/\b(whatsapp|message|msg|text)\b|මැසේජ්/i.test(t) && findContactByText(t)) {
+        const contact = findContactByText(t);
+        return {
+          reply: lang === 'si' ? `හරි මචන්, ${contact.name} ගේ WhatsApp chat එක අරින්නම්.` : `Opening WhatsApp chat with ${contact.name}, sir.`,
+          language: lang,
+          action: 'whatsapp',
+          payload: { contactName: contact.name }
+        };
+      }
+
+      // 4. Google Maps / Directions
+      const dirMatch = t.match(/(?:directions?\s+to|navigate\s+to|route\s+to|go\s+to|පාර\s+පෙන්නන්න|යන්න)\s+(.+)/i)
+        || t.match(/(.+?)\s+(?:වලට|ට)\s+(?:පාර|directions|maps)/i);
+      if (dirMatch && dirMatch[1]) {
+        const dest = dirMatch[1].replace(/[?.!]+$/, '').trim();
+        return {
+          reply: lang === 'si' ? `හරි මචන්, ${dest} වලට Google Maps දාන්නම්.` : `Pulling up Google Maps directions to ${dest}, sir.`,
+          language: lang,
+          action: 'maps',
+          payload: { destination: dest }
+        };
+      }
+
+      // 5. Direct App Launcher (EN / සිංහල / Singlish)
+      const appKey = detectAppInText(t);
+      if (appKey && /\b(open|launch|start|run|arinna|danna|karanna)\b|අරින්න|දාන්න|ඕපන්/i.test(t)) {
+        const appObj = SUPPORTED_APPS[appKey];
+        return {
+          reply: lang === 'si' ? `හරි මචන්, ${appObj.label} open කරන්නම්.` : `Opening ${appObj.label} for you, sir.`,
+          language: lang,
+          action: 'open_app',
+          payload: { app: appKey }
+        };
+      }
+
+      // 6. Save Note
+      const noteMatch = t.match(/(?:take\s+a\s+note|save\s+note|note\s+down|නෝට්\s+එකක්\s+දාන්න)[:\s]*(.+)/i);
+      if (noteMatch && noteMatch[1]) {
+        return {
+          reply: lang === 'si' ? 'හරි මචන්, ඒක Vault එකේ note එකක් විදිහට save කළා.' : 'Noted and saved to your Stark Vault, sir.',
+          language: lang,
+          action: 'note',
+          payload: { content: noteMatch[1].trim() }
+        };
+      }
+
+      // 7. Save Reminder
+      const remMatch = t.match(/(?:remind\s+me\s+to|add\s+reminder|reminder|මතක්\s+කරන්න)[:\s]*(.+)/i);
+      if (remMatch && remMatch[1]) {
+        return {
+          reply: lang === 'si' ? 'හරි මචන්, reminder එක Vault එකට දැම්මා.' : 'Reminder logged in your Vault, sir.',
+          language: lang,
+          action: 'reminder',
+          payload: { content: remMatch[1].trim() }
+        };
+      }
+
+      // 8. Explicit Weather / Date / Time / Briefing
+      if (/\b(weather|temperature|forecast|කාලගුණය)\b/i.test(t)) {
+        return {
+          reply: lang === 'si'
+            ? `දැන් කොළඹ උෂ්ණත්වය අංශක ${state.weather.temp}යි, ${state.weather.condSi}යි මචන්.`
+            : `It is currently ${state.weather.temp} degrees with ${state.weather.condEn} in Colombo, sir.`,
+          language: lang,
+          action: 'chat',
+          payload: {}
+        };
+      }
+      if (/\b(what\s+time|time\s+now|වෙලාව)\b/i.test(t)) {
+        const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return {
+          reply: lang === 'si' ? `දැන් වෙලාව ${nowStr}යි මචන්.` : `The time is ${nowStr}, sir.`,
+          language: lang,
+          action: 'chat',
+          payload: {}
+        };
+      }
+      if (/\b(briefing|today's date|what day)\b|අද\s+දිනය/i.test(t)) {
+        return {
+          reply: buildBriefingText(lang),
+          language: lang,
+          action: 'chat',
+          payload: {}
+        };
+      }
+
+      // 9. Concise Greeting (never repeats date/weather)
+      if (/(good\s+morning|good\s+afternoon|good\s+evening|hello|hi\b|hey\b|how\s+are\s+you|කොහොමද|හෙලෝ)/i.test(t)) {
+        return {
+          reply: buildStandardGreetingText(lang),
+          language: lang,
+          action: 'chat',
+          payload: {}
+        };
+      }
+
+      // Default fallback
+      return {
+        reply: hasGeminiKey()
+          ? (lang === 'si' ? 'හරි මචන්, දැනට local command mode එකෙන් Calls, WhatsApp, Apps, Maps, සහ Notes වැඩ කරනවා.' : 'I am running in local command mode right now, sir. Calls, WhatsApp, Apps, Google Maps, Notes, and Reminders are ready.')
+          : (lang === 'si' ? 'මචන්, සම්පූර්ණ AI කතාබහට iOS Setup වලට Gemini API key එක දාන්න. දැනට Calls, Apps, Maps, Notes වැඩ!' : 'Local command mode is active, sir. Add your free Gemini API key in iOS Setup for full AI conversation.'),
+        language: lang,
+        action: 'chat',
+        payload: {}
+      };
+    }
+
+    /* =========================================================================
+       8. ACTION EXECUTION (DIRECT iOS LINKS & APPLE SHORTCUT BRIDGE)
+    ========================================================================= */
+    function buildShortcutUrl(actionType, value) {
+      const payload = `${actionType}|${value}`;
+      return `shortcuts://run-shortcut?name=JarvisBridge&input=text&text=${encodeURIComponent(payload)}`;
+    }
+
+    function triggerUrlNavigation(url) {
+      if (!url) return;
+      try {
+        const a = document.createElement('a');
+        a.href = url;
+        if (/^https?:\/\//i.test(url)) {
+          a.target = '_blank';
+          a.rel = 'noopener';
+        }
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } catch (e) {
+        window.location.href = url;
+      }
+    }
+
+    function executeActionResult(result) {
+      const action = result.action || 'chat';
+      const p = result.payload || {};
+      const useShortcut = state.settings.executionMode === 'shortcut';
+      const autoExec = !!state.settings.autoExecute;
+      let actionHtml = '';
+
+      if (action === 'call') {
+        const contact = findContactByText(p.contactName || '') || state.contacts[0];
+        if (contact) {
+          const cleanNum = contact.phone.replace(/\s+/g, '');
+          const waNum = cleanNum.replace(/[^\d]/g, '');
+          const isPlaceholder = PLACEHOLDER_NUMBERS.has(cleanNum);
+          const targetUrl = useShortcut ? buildShortcutUrl('CALL', cleanNum) : `tel:${cleanNum}`;
+
+          actionHtml = `
+            <div class="mt-2.5 flex flex-wrap gap-1.5">
+              <a href="${targetUrl}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-400/60 bg-emerald-500/20 text-emerald-200 text-xs font-semibold active:scale-95">
+                📞 Call ${escapeHtml(contact.name)} (${escapeHtml(cleanNum)})
+              </a>
+              <a href="https://wa.me/${waNum}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-cyan-400/50 bg-cyan-500/15 text-cyan-200 text-xs font-medium active:scale-95">
+                💬 WhatsApp
+              </a>
+              ${isPlaceholder ? `<button onclick="editContactById('${contact.id}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-amber-400/60 bg-amber-500/20 text-amber-200 text-xs font-semibold">✏️ Edit Demo Number</button>` : ''}
+            </div>
+          `;
+          if (autoExec && !isPlaceholder) {
+            setTimeout(() => triggerUrlNavigation(targetUrl), 600);
+          }
+        }
+      } else if (action === 'whatsapp') {
+        const contact = findContactByText(p.contactName || '');
+        if (contact) {
+          const waNum = contact.phone.replace(/[^\d]/g, '');
+          const targetUrl = useShortcut ? buildShortcutUrl('WHATSAPP', waNum) : `https://wa.me/${waNum}`;
+          actionHtml = `
+            <div class="mt-2.5 flex flex-wrap gap-1.5">
+              <a href="${targetUrl}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-400/60 bg-emerald-500/20 text-emerald-200 text-xs font-semibold">
+                💬 Open WhatsApp (${escapeHtml(contact.name)})
+              </a>
+            </div>
+          `;
+          if (autoExec) setTimeout(() => triggerUrlNavigation(targetUrl), 600);
+        }
+      } else if (action === 'maps') {
+        const dest = (p.destination || 'Colombo').trim();
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`;
+        const targetUrl = useShortcut ? buildShortcutUrl('MAPS', dest) : mapsUrl;
+        actionHtml = `
+          <div class="mt-2.5 flex flex-wrap gap-1.5">
+            <a href="${targetUrl}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-cyan-400/60 bg-cyan-500/20 text-cyan-100 text-xs font-semibold">
+              📍 Directions to ${escapeHtml(dest)}
+            </a>
+          </div>
+        `;
+        if (autoExec) setTimeout(() => triggerUrlNavigation(targetUrl), 600);
+      } else if (action === 'open_app') {
+        const appKey = (p.app || '').toLowerCase();
+        const appObj = SUPPORTED_APPS[appKey];
+        if (appObj) {
+          const targetUrl = useShortcut ? buildShortcutUrl('APP', appObj.shortcutVal) : appObj.universal;
+          actionHtml = `
+            <div class="mt-2.5 flex flex-wrap gap-1.5">
+              <a href="${appObj.universal}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-400/60 bg-blue-500/20 text-blue-100 text-xs font-semibold">
+                ${appObj.icon} Open ${escapeHtml(appObj.label)}
+              </a>
+              <a href="${appObj.scheme}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-cyan-400/45 bg-cyan-500/15 text-cyan-200 text-xs font-medium">
+                🚀 Native App
+              </a>
+              <a href="${buildShortcutUrl('APP', appObj.shortcutVal)}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-amber-400/45 bg-amber-500/15 text-amber-200 text-xs font-medium">
+                ⚡ Shortcut
+              </a>
+            </div>
+          `;
+          if (autoExec) setTimeout(() => triggerUrlNavigation(targetUrl), 600);
+        }
+      } else if (action === 'note' && p.content) {
+        state.notes.unshift({ id: 'n' + Date.now(), text: p.content, created: new Date().toLocaleString() });
+        saveStoredVault();
+        if (autoExec && useShortcut) {
+          setTimeout(() => triggerUrlNavigation(buildShortcutUrl('NOTE', p.content)), 600);
+        }
+        actionHtml = `
+          <div class="mt-2 text-[11px] text-cyan-300">📝 Saved to Stark Vault: "${escapeHtml(p.content)}"</div>
+        `;
+      } else if (action === 'reminder' && p.content) {
+        state.reminders.unshift({ id: 'r' + Date.now(), text: p.content, created: new Date().toLocaleString() });
+        saveStoredVault();
+        if (autoExec && useShortcut) {
+          setTimeout(() => triggerUrlNavigation(buildShortcutUrl('REMINDER', p.content)), 600);
+        }
+        actionHtml = `
+          <div class="mt-2 text-[11px] text-amber-300">⏰ Reminder saved: "${escapeHtml(p.content)}"</div>
+        `;
+      }
+
+      return actionHtml;
+    }
+
+    /* =========================================================================
+       9. CHAT LOG RENDERING
+    ========================================================================= */
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function scrollChatToBottom() {
+      const log = document.getElementById('chat-log');
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function appendUserBubble(text) {
+      const log = document.getElementById('chat-log');
+      const div = document.createElement('div');
+      div.className = 'self-end max-w-[85%] px-3.5 py-2 rounded-2xl rounded-tr-sm border border-cyan-400/45 bg-cyan-500/20 text-cyan-50 text-sm leading-snug';
+      div.textContent = text;
+      log.appendChild(div);
+      scrollChatToBottom();
+    }
+
+    function appendJarvisBubble(text, actionHtml = '', badgeLabel = '', diagnosticError = '') {
+      const log = document.getElementById('chat-log');
+      const div = document.createElement('div');
+      div.className = 'self-start max-w-[92%] px-3.5 py-2.5 rounded-2xl rounded-tl-sm border border-cyan-500/30 bg-slate-900/85 text-slate-100 text-sm leading-relaxed';
+
+      const badgeHtml = badgeLabel
+        ? `<span class="font-hud text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 ml-2">${escapeHtml(badgeLabel)}</span>`
+        : '';
+
+      const diagHtml = diagnosticError
+        ? `<div class="mt-2.5 p-2.5 rounded-xl border border-rose-500/50 bg-rose-950/55 text-rose-200 text-[11px] font-mono leading-snug break-words">⚠️ ${escapeHtml(diagnosticError)}</div>`
+        : '';
+
+      div.innerHTML = `
+        <div class="flex items-center mb-1">
+          <span class="font-hud text-[10px] font-bold text-[#00e5ff]">J.A.R.V.I.S.</span>
+          ${badgeHtml}
+        </div>
+        <div>${escapeHtml(text)}</div>
+        ${actionHtml}
+        ${diagHtml}
+      `;
+      log.appendChild(div);
+      scrollChatToBottom();
+    }
+
+    /* =========================================================================
+       10. MAIN COMMAND PROCESSING PIPELINE
+    ========================================================================= */
+    async function processUserInput(rawText) {
+      const text = (rawText || '').trim();
+      if (!text) return;
+
+      stopMicRecognition();
+      appendUserBubble(text);
+
+      const parsed = parseWakeWord(text);
+      const lang = parsed.lang;
+      setActiveLanguage(lang);
+
+      // Pure wake word ("Hey Jarvis" / "Jarvis" / "මචන් Jarvis") -> concise greeting only
+      if (parsed.wake && !parsed.rest) {
+        await deliverStandardGreeting(lang, true);
+        return;
+      }
+
+      const commandText = parsed.rest || text;
+      transitionFSM(FSM.PROCESSING, 'ANALYZING COMMAND...');
+
+      // Try local fast-path for explicit sleep
+      const localPreview = runLocalSmartEngine(commandText, lang);
+      if (localPreview.action === 'sleep') {
+        appendJarvisBubble(localPreview.reply, '', 'LOCAL');
+        await speakLocked(localPreview.reply, lang, FSM.SLEEPING);
+        return;
+      }
+
+      // If Gemini API key is configured and online, use Live Gemini AI
+      if (hasGeminiKey() && navigator.onLine) {
+        try {
+          const aiRes = await callGeminiAssistant(commandText, lang);
+          const replyLang = aiRes.language === 'si' ? 'si' : lang;
+          setActiveLanguage(replyLang);
+
+          if (aiRes.action === 'briefing') {
+            aiRes.reply = buildBriefingText(replyLang);
+          }
+
+          const actionHtml = executeActionResult(aiRes);
+          pushChatHistory('user', commandText);
+          pushChatHistory('model', aiRes.reply);
+
+          appendJarvisBubble(aiRes.reply, actionHtml, '');
+          await speakLocked(aiRes.reply, replyLang, FSM.ACTIVE_LISTENING);
+          return;
+        } catch (err) {
+          // Real error diagnostic box + smooth local engine fallback
+          const diagMsg = `Gemini API Error (${err.message || 'Connection failed'}) — local engine active`;
+          const fallback = runLocalSmartEngine(commandText, lang);
+          const actionHtml = executeActionResult(fallback);
+          appendJarvisBubble(fallback.reply, actionHtml, 'LOCAL', diagMsg);
+          await speakLocked(fallback.reply, lang, FSM.ACTIVE_LISTENING);
+          return;
+        }
+      }
+
+      // Offline or no API key -> Local Smart Fallback Engine
+      const actionHtml = executeActionResult(localPreview);
+      appendJarvisBubble(localPreview.reply, actionHtml, 'LOCAL');
+      await speakLocked(localPreview.reply, lang, FSM.ACTIVE_LISTENING);
+    }
+
+    function handleTextSubmit(event) {
+      event.preventDefault();
+      unlockIosAudioSynchronously();
+      const inp = document.getElementById('text-input');
+      const val = inp.value.trim();
+      if (!val) return;
+      inp.value = '';
+      processUserInput(val);
+    }
+
+    function sendQuickCommand(cmd) {
       unlockIosAudioSynchronously();
       if (state.fsm === FSM.BOOT) {
         document.getElementById('boot-overlay').classList.add('hidden');
       }
-      deliverStandardGreeting(lang, true);
+      processUserInput(cmd);
     }
-// ... existing code ...
-    async function runBootSequence() {
+
+    /* =========================================================================
+       11. BOOT SEQUENCE, GREETINGS & REACTOR CONTROLS
+    ========================================================================= */
+    async function initializeJarvisFromBoot() {
+      unlockIosAudioSynchronously();
+      playSfx('wake');
+      document.getElementById('boot-overlay').classList.add('hidden');
+
       transitionFSM(FSM.PROCESSING, 'SYNCING TELEMETRY & LIVE MODELS...');
       const tasks = [fetchLiveWeather()];
       if (navigator.onLine && hasGeminiKey() && !state.discoveryCompleted) {
         tasks.push(discoverLiveModels(false).catch(() => {}));
       }
       await Promise.all(tasks);
+
+      startMicWatchdog();
       await deliverStartupGreeting('en');
     }
 
@@ -92,7 +2134,7 @@
     async function deliverStandardGreeting(lang = 'en', addToLog = true) {
       setActiveLanguage(lang);
       const text = buildStandardGreetingText(lang);
-      if (addToLog) appendJarvisBubble(text, '', !hasGeminiKey() || !navigator.onLine, '');
+      if (addToLog) appendJarvisBubble(text, '', hasGeminiKey() ? '' : 'LOCAL');
       pushChatHistory('model', text);
       await speakLocked(text, lang, FSM.ACTIVE_LISTENING);
     }
@@ -100,11 +2142,19 @@
     async function deliverBriefing(lang = 'en', addToLog = true) {
       setActiveLanguage(lang);
       const text = buildBriefingText(lang);
-      if (addToLog) appendJarvisBubble(text, '', !hasGeminiKey() || !navigator.onLine, '');
+      if (addToLog) appendJarvisBubble(text, '', hasGeminiKey() ? '' : 'LOCAL');
       pushChatHistory('model', text);
       await speakLocked(text, lang, FSM.ACTIVE_LISTENING);
     }
-// ... existing code ...
+
+    function switchLangManual(lang) {
+      unlockIosAudioSynchronously();
+      if (state.fsm === FSM.BOOT) {
+        document.getElementById('boot-overlay').classList.add('hidden');
+      }
+      deliverStandardGreeting(lang, true);
+    }
+
     function handleReactorTap() {
       unlockIosAudioSynchronously();
       state.micBlocked = false;
@@ -130,141 +2180,450 @@
         playSfx('wake');
         deliverStandardGreeting(state.activeLang, true);
       } else {
-        enterExplicitSleep(state.activeLang);
-      }
-    }
-// ... existing code ...
-    function sleepMs(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    /**
-     * Core Gemini request wrapper with Live Auto-Model Discovery,
-     * HTTP 503/429 Auto-Retry + Multi-Model Flash Failover, and HTTP 404 Auto-Heal:
-     * 1. If no live model is selected yet, runs discoverLiveModels() first.
-     * 2. Sends POST generateContent with 'x-goog-api-key' header.
-     * 3. On HTTP 503 (high demand) or HTTP 429 (rate limit):
-     *    - Automatically retries once after 1000ms on the same model.
-     *    - If still 503/429, fails over through remaining discovered Flash models.
-     * 4. On HTTP 404 (retired/stale model):
-     *    - Re-fetches /v1beta/models and retries with the freshest available Flash model.
-     */
-    async function requestGeminiLive(payload) {
-      const apiKey = getActiveGeminiKey();
-      if (!apiKey) {
-        const err = new Error('NO_API_KEY');
-        err.code = 'NO_API_KEY';
-        throw err;
-      }
-
-      if (!state.selectedModel) {
-        await discoverLiveModels(true);
-      }
-
-      const attemptModelWithRetry = async (modelId) => {
-        try {
-          return await fetchGenerateContent(modelId, payload, apiKey);
-        } catch (err) {
-          if (err.httpStatus === 503 || err.httpStatus === 429) {
-            await sleepMs(1000);
-            return await fetchGenerateContent(modelId, payload, apiKey);
-          }
-          throw err;
-        }
-      };
-
-      const firstModel = state.selectedModel;
-      try {
-        return await attemptModelWithRetry(firstModel);
-      } catch (err) {
-        // Auto-failover on HTTP 503 (High Demand) or HTTP 429 (Rate Limit)
-        if (err.httpStatus === 503 || err.httpStatus === 429) {
-          if (state.discoveredChatModels.length <= 1) {
-            try { await discoverLiveModels(false); } catch (e) {}
-          }
-
-          const flashBackups = state.discoveredChatModels
-            .map(m => m.id)
-            .filter(id => id !== firstModel && /flash/i.test(id));
-          const otherBackups = state.discoveredChatModels
-            .map(m => m.id)
-            .filter(id => id !== firstModel && !/flash/i.test(id));
-          const failoverQueue = [...flashBackups, ...otherBackups].slice(0, 4);
-
-          let lastErr = err;
-          for (const backupModel of failoverQueue) {
-            try {
-              const res = await fetchGenerateContent(backupModel, payload, apiKey);
-              setSelectedModel(backupModel);
-              return res;
-            } catch (backupErr) {
-              lastErr = backupErr;
-              if (backupErr.httpStatus !== 503 && backupErr.httpStatus !== 429 && backupErr.httpStatus !== 404) {
-                throw backupErr;
-              }
-            }
-          }
-          throw lastErr;
-        }
-
-        // Auto-heal on HTTP 404: re-discover live models and retry top Flash candidates
-        if (err.httpStatus === 404) {
-          const discovered = await discoverLiveModels(true, firstModel);
-          const candidates = discovered.chatModels
-            .map(m => m.id)
-            .filter(id => id !== firstModel)
-            .slice(0, 3);
-
-          let lastErr = err;
-          for (const candidateModel of candidates) {
-            try {
-              const res = await attemptModelWithRetry(candidateModel);
-              setSelectedModel(candidateModel);
-              return res;
-            } catch (retryErr) {
-              lastErr = retryErr;
-              if (retryErr.httpStatus !== 404 && retryErr.httpStatus !== 503 && retryErr.httpStatus !== 429) {
-                throw retryErr;
-              }
-            }
-          }
-          throw lastErr;
-        }
-        throw err;
+        stopMicRecognition();
+        stopAllSpeech();
+        playSfx('sleep');
+        transitionFSM(FSM.SLEEPING);
       }
     }
 
-    async function callGeminiFast(userText, lang) {
-      const contactSummary = state.contacts
-        .map(c => `${c.name} (${(c.aliases || []).join('/')})`)
-        .join(', ');
+    /* =========================================================================
+       12. iOS SAFARI SPEECH RECOGNITION (1.2s AUTO-COMMIT + BUFFER FLUSH)
+    ========================================================================= */
+    function resetSilenceBar() {
+      clearTimeout(state.silenceTimer);
+      const bar = document.getElementById('commit-progress-bar');
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+    }
 
-      const personaRule = lang === 'si'
-        ? `Reply ONLY in natural, friendly SPOKEN Sri Lankan Sinhala (කතා කරන සිංහල like "හරි මචන්", "ඔව් මචන් කියන්න", "වැඩේ හරි"). NEVER use stiff formal textbook Sinhala. If the user simply greets or says "මචන් Jarvis", reply concisely with "හෙලෝ මචන්, කොහොමද? මොකද උදව්වක් ඕනේ?". Note: user input may be phonetic Singlish or English-transcribed Sinhala — understand it naturally and reply in Sinhala script.`
-        : `Reply ONLY as Iron Man's J.A.R.V.I.S. — warm, sharp, refined British AI companion chatting naturally with Tony Stark. Address the user as "sir" naturally. If the user simply says "Jarvis", "Hey Jarvis", "Hello Jarvis", or "Hi Jarvis" without asking for date or weather, reply concisely with "Hello sir, how can I help you?".`;
+    function armSilenceAutoCommit() {
+      resetSilenceBar();
+      const bar = document.getElementById('commit-progress-bar');
+      void bar.offsetWidth; // force reflow
+      bar.style.transition = 'width 1200ms linear';
+      bar.style.width = '100%';
 
-      const systemPrompt = `You are J.A.R.V.I.S., a live continuous voice AI personal assistant on iPhone 15 Pro Max in Sri Lanka.
-${personaRule}
-CRITICAL: Keep replies very short (1-2 natural spoken sentences max), zero bullet points, zero markdown, like two humans chatting.
-NEVER repeat the date, time, or weather briefing unless the user explicitly asks for the date, time, weather, or a full briefing.
-Contacts: [${contactSummary}]. Map mother/mom/අම්මා -> Amma, father/dad/තාත්තා -> Thatha, wife/harshani/නෝනා -> Wife, brother/මල්ලි -> Malli.
-Supported apps for open_app: "facebook", "youtube", "tiktok", "instagram", "whatsapp", "maps", "comera", "botim", "gochat".
-Output strict JSON only:
-{"reply":"spoken reply","language":"${lang}","action":"chat|call|whatsapp|maps|open_app|note|reminder|social_post|briefing","payload":{"contactName":"","destination":"","app":"","title":"","content":"","task":"","time":"","platform":"","caption":""}}`;
-// ... existing code ...
-      // 8. Greetings (concise — never repeats date/weather unless asked)
-      if (/(good\s+morning|good\s+afternoon|good\s+evening|hello|hi|hey|how\s+are\s+you|කොහොමද|සුභ\s+)/i.test(t)) {
-        return {
-          reply: buildStandardGreetingText(lang),
-          language: lang,
-          action: 'chat',
-          payload: {}
-        };
-      }
-// ... existing code ...
-      // 2. Pure Wake Word ("Hey Jarvis" / "Jarvis" / "මචන් Jarvis")
-      if (parsed.wake && !parsed.rest) {
-        await deliverStandardGreeting(lang, true);
+      state.silenceTimer = setTimeout(() => {
+        commitBufferedTranscript('silence-timer');
+      }, 1200);
+    }
+
+    function commitBufferedTranscript(source) {
+      const candidate = (state.transcriptBuffer || '').trim();
+      state.transcriptBuffer = '';
+      resetSilenceBar();
+
+      const tEl = document.getElementById('transcript-text');
+      tEl.textContent = 'AWAITING VOICE INPUT...';
+      tEl.className = 'text-xs text-slate-400 truncate font-medium';
+
+      if (!candidate) return;
+
+      // Duplicate-Commit Guard (prevents double firing on iOS onresult + onend)
+      const now = Date.now();
+      if (candidate.toLowerCase() === state.lastCommittedText.toLowerCase() && (now - state.lastCommitTime) < 2500) {
         return;
       }
-// ... existing code ... -->
+      state.lastCommittedText = candidate;
+      state.lastCommitTime = now;
+
+      processUserInput(candidate);
+    }
+
+    function startMicRecognition() {
+      if (state.fsm !== FSM.ACTIVE_LISTENING || state.micActive || state.micBlocked) return;
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) return;
+
+      try {
+        const rec = new SpeechRec();
+        state.recognition = rec;
+        rec.lang = state.activeLang === 'si' ? 'si-LK' : 'en-US';
+        rec.interimResults = true;
+        rec.continuous = false;
+        rec.maxAlternatives = 1;
+
+        rec.onstart = () => {
+          state.micActive = true;
+          state.transcriptBuffer = '';
+        };
+
+        rec.onresult = (event) => {
+          if (state.fsm !== FSM.ACTIVE_LISTENING) return;
+          let fullTranscript = '';
+          let hasFinal = false;
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const seg = event.results[i][0]?.transcript || '';
+            fullTranscript += seg;
+            if (event.results[i].isFinal) hasFinal = true;
+          }
+
+          fullTranscript = fullTranscript.trim();
+          if (fullTranscript) {
+            state.transcriptBuffer = fullTranscript;
+            const tEl = document.getElementById('transcript-text');
+            tEl.textContent = `🎙️ "${fullTranscript}"`;
+            tEl.className = 'text-xs text-cyan-200 truncate font-medium';
+
+            if (hasFinal) {
+              commitBufferedTranscript('final');
+            } else {
+              armSilenceAutoCommit();
+            }
+          }
+        };
+
+        rec.onerror = (event) => {
+          state.micActive = false;
+          if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+            state.micBlocked = true;
+            document.getElementById('status-subtitle').textContent = 'MIC BLOCKED · ALLOW MICROPHONE OR TYPE BELOW';
+          }
+        };
+
+        rec.onend = () => {
+          state.micActive = false;
+          // iOS Safari onend Buffer Flush: never lose captured words if iOS cuts mic early
+          if (state.transcriptBuffer.trim() && state.fsm === FSM.ACTIVE_LISTENING) {
+            commitBufferedTranscript('onend-flush');
+            return;
+          }
+          resetSilenceBar();
+          if (state.fsm === FSM.ACTIVE_LISTENING && !state.micBlocked) {
+            setTimeout(() => {
+              if (state.fsm === FSM.ACTIVE_LISTENING && !state.micActive) {
+                startMicRecognition();
+              }
+            }, 350);
+          }
+        };
+
+        rec.start();
+      } catch (e) {
+        state.micActive = false;
+      }
+    }
+
+    function stopMicRecognition() {
+      resetSilenceBar();
+      state.transcriptBuffer = '';
+      if (state.recognition) {
+        try {
+          state.recognition.onend = null;
+          state.recognition.onerror = null;
+          state.recognition.abort();
+        } catch (e) {}
+        state.recognition = null;
+      }
+      state.micActive = false;
+    }
+
+    function startMicWatchdog() {
+      clearInterval(state.micWatchdogInterval);
+      state.micWatchdogInterval = setInterval(() => {
+        if (state.fsm === FSM.ACTIVE_LISTENING && !state.micActive && !state.micBlocked) {
+          startMicRecognition();
+        }
+      }, 1500);
+    }
+
+    /* =========================================================================
+       13. SETTINGS, DIAGNOSTICS, CONTACTS, VAULT & SOCIAL MODAL HANDLERS
+    ========================================================================= */
+    function toggleKeyVisibility() {
+      const inp = document.getElementById('input-gemini-key');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    async function saveGeminiKeyFromUI() {
+      const key = document.getElementById('input-gemini-key').value.trim();
+      try {
+        if (key) localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, key);
+        else localStorage.removeItem(STORAGE_KEYS.GEMINI_KEY);
+      } catch (e) {}
+      state.discoveryCompleted = false;
+      updateApiKeyBadges();
+      showToast(key ? 'API Key saved privately on this iPhone!' : 'API Key cleared.');
+      if (key && navigator.onLine) {
+        try {
+          await discoverLiveModels(true);
+          showToast(`Live model ready: ${state.selectedModel}`);
+        } catch (e) {}
+      }
+    }
+
+    function handleModelSelectChange() {
+      const val = document.getElementById('select-live-model').value;
+      setSelectedModel(val);
+      showToast(`Active model set to ${val || 'Auto'}`);
+    }
+
+    async function refreshLiveModelsFromUI() {
+      const box = document.getElementById('api-test-result');
+      box.classList.remove('hidden');
+      box.className = 'p-2.5 rounded-lg text-[11px] font-mono bg-cyan-950/60 border border-cyan-400/40 text-cyan-200';
+      box.textContent = 'Querying GET /v1beta/models...';
+
+      try {
+        const { chatModels } = await discoverLiveModels(true);
+        box.className = 'p-2.5 rounded-lg text-[11px] font-mono bg-emerald-950/60 border border-emerald-400/50 text-emerald-200';
+        box.textContent = `✓ Found ${chatModels.length} live models. Selected: ${state.selectedModel}`;
+      } catch (err) {
+        box.className = 'p-2.5 rounded-lg text-[11px] font-mono bg-rose-950/65 border border-rose-500/50 text-rose-200';
+        box.textContent = `✕ ${err.message}`;
+      }
+    }
+
+    async function runApiAndVoiceDiagnostic() {
+      unlockIosAudioSynchronously();
+      await saveGeminiKeyFromUI();
+
+      const box = document.getElementById('api-test-result');
+      box.classList.remove('hidden');
+      box.className = 'p-2.5 rounded-lg text-[11px] font-mono bg-cyan-950/60 border border-cyan-400/40 text-cyan-200';
+      box.textContent = 'Testing x-goog-api-key header, live model & voice...';
+
+      if (!hasGeminiKey()) {
+        box.className = 'p-2.5 rounded-lg text-[11px] font-mono bg-amber-950/60 border border-amber-400/50 text-amber-200';
+        box.textContent = 'No API key set. Testing iPhone offline voice...';
+        await speakLocked('Systems online in offline voice mode, sir.', 'en', state.fsm === FSM.BOOT ? FSM.BOOT : FSM.ACTIVE_LISTENING);
+        return;
+      }
+
+      try {
+        const { data, modelId } = await requestGeminiLive({
+          contents: [{ role: 'user', parts: [{ text: 'Reply in 6 words: Confirm J.A.R.V.I.S. neural link online.' }] }]
+        });
+        const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || 'J.A.R.V.I.S. neural link is online, sir.';
+        box.className = 'p-2.5 rounded-lg text-[11px] font-mono bg-emerald-950/60 border border-emerald-400/50 text-emerald-200';
+        box.textContent = `✓ API Connected (${modelId}): "${reply}"`;
+        await speakLocked(reply, 'en', state.fsm === FSM.BOOT ? FSM.BOOT : FSM.ACTIVE_LISTENING);
+      } catch (err) {
+        box.className = 'p-2.5 rounded-lg text-[11px] font-mono bg-rose-950/65 border border-rose-500/50 text-rose-200';
+        box.textContent = `✕ ${err.message}`;
+      }
+    }
+
+    function saveSettingsFromUI() {
+      state.settings.autoExecute = document.getElementById('toggle-auto-exec').checked;
+      state.settings.executionMode = document.getElementById('select-exec-mode').value;
+      state.settings.starkDsp = document.getElementById('toggle-dsp').checked;
+      state.settings.elevenKey = document.getElementById('input-eleven-key').value.trim();
+      state.settings.elevenVoiceId = document.getElementById('input-eleven-voice').value.trim();
+      saveStoredSettings();
+      updateSettingsUI();
+    }
+
+    function copySetupGuide() {
+      const text = document.getElementById('setup-guide-text').innerText;
+      if (copyTextToClipboard(text)) showToast('Setup guide copied!');
+    }
+
+    // Contacts CRUD
+    function renderContactsList() {
+      const container = document.getElementById('contacts-list');
+      container.innerHTML = '';
+      for (const c of state.contacts) {
+        const isDemo = PLACEHOLDER_NUMBERS.has(c.phone.replace(/\s+/g, ''));
+        const row = document.createElement('div');
+        row.className = 'p-2.5 rounded-xl border border-cyan-500/25 bg-slate-900/75 flex items-center justify-between gap-2';
+        row.innerHTML = `
+          <div class="min-w-0">
+            <div class="text-xs font-bold text-cyan-100 flex items-center gap-1.5">
+              <span>${escapeHtml(c.name)}</span>
+              ${isDemo ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">DEMO</span>' : ''}
+            </div>
+            <div class="text-[11px] text-emerald-300 font-mono">${escapeHtml(c.phone)}</div>
+            <div class="text-[10px] text-slate-400 truncate">${escapeHtml((c.aliases || []).join(', '))}</div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="editContactById('${c.id}')" class="px-2 py-1 rounded-lg border border-cyan-400/40 bg-cyan-500/15 text-cyan-200 text-[11px]">✏️</button>
+            <button onclick="deleteContactById('${c.id}')" class="px-2 py-1 rounded-lg border border-rose-400/40 bg-rose-500/15 text-rose-200 text-[11px]">🗑️</button>
+          </div>
+        `;
+        container.appendChild(row);
+      }
+    }
+
+    function editContactById(id) {
+      const c = state.contacts.find(x => x.id === id);
+      if (!c) return;
+      openModal('modal-contacts');
+      document.getElementById('contact-edit-id').value = c.id;
+      document.getElementById('contact-name').value = c.name;
+      document.getElementById('contact-phone').value = c.phone;
+      document.getElementById('contact-aliases').value = (c.aliases || []).join(', ');
+      document.getElementById('contact-submit-btn').textContent = '💾 UPDATE CONTACT';
+    }
+
+    function resetContactForm() {
+      document.getElementById('contact-edit-id').value = '';
+      document.getElementById('contact-name').value = '';
+      document.getElementById('contact-phone').value = '';
+      document.getElementById('contact-aliases').value = '';
+      document.getElementById('contact-submit-btn').textContent = '+ SAVE CONTACT';
+    }
+
+    function saveContactFromForm(event) {
+      event.preventDefault();
+      const id = document.getElementById('contact-edit-id').value;
+      const name = document.getElementById('contact-name').value.trim();
+      const phone = document.getElementById('contact-phone').value.trim();
+      const aliases = document.getElementById('contact-aliases').value.split(',').map(s => s.trim()).filter(Boolean);
+      if (!name || !phone) return;
+
+      if (id) {
+        const idx = state.contacts.findIndex(x => x.id === id);
+        if (idx !== -1) state.contacts[idx] = { id, name, phone, aliases };
+      } else {
+        state.contacts.push({ id: 'c' + Date.now(), name, phone, aliases });
+      }
+      saveStoredContacts();
+      resetContactForm();
+      renderContactsList();
+      showToast(`Contact "${name}" saved!`);
+    }
+
+    function deleteContactById(id) {
+      state.contacts = state.contacts.filter(x => x.id !== id);
+      saveStoredContacts();
+      renderContactsList();
+      showToast('Contact removed.');
+    }
+
+    // Vault CRUD
+    function renderVaultLists() {
+      const rList = document.getElementById('vault-reminders-list');
+      const nList = document.getElementById('vault-notes-list');
+
+      rList.innerHTML = state.reminders.length ? '' : '<p class="text-[11px] text-slate-500">No reminders saved yet.</p>';
+      for (const r of state.reminders) {
+        const div = document.createElement('div');
+        div.className = 'p-2.5 rounded-xl border border-amber-500/25 bg-amber-950/15 flex items-center justify-between gap-2';
+        div.innerHTML = `
+          <div class="min-w-0">
+            <div class="text-xs text-amber-100">${escapeHtml(r.text)}</div>
+            <div class="text-[9px] text-slate-400">${escapeHtml(r.created || '')}</div>
+          </div>
+          <button onclick="deleteVaultItem('reminder','${r.id}')" class="text-rose-300 px-2 py-1 text-xs">🗑️</button>
+        `;
+        rList.appendChild(div);
+      }
+
+      nList.innerHTML = state.notes.length ? '' : '<p class="text-[11px] text-slate-500">No notes saved yet.</p>';
+      for (const n of state.notes) {
+        const div = document.createElement('div');
+        div.className = 'p-2.5 rounded-xl border border-cyan-500/25 bg-slate-900/75 flex items-center justify-between gap-2';
+        div.innerHTML = `
+          <div class="min-w-0">
+            <div class="text-xs text-cyan-100">${escapeHtml(n.text)}</div>
+            <div class="text-[9px] text-slate-400">${escapeHtml(n.created || '')}</div>
+          </div>
+          <button onclick="deleteVaultItem('note','${n.id}')" class="text-rose-300 px-2 py-1 text-xs">🗑️</button>
+        `;
+        nList.appendChild(div);
+      }
+    }
+
+    function addVaultItemFromForm(event) {
+      event.preventDefault();
+      const type = document.getElementById('vault-type').value;
+      const text = document.getElementById('vault-text').value.trim();
+      if (!text) return;
+      const item = { id: type[0] + Date.now(), text, created: new Date().toLocaleString() };
+      if (type === 'reminder') state.reminders.unshift(item);
+      else state.notes.unshift(item);
+      document.getElementById('vault-text').value = '';
+      saveStoredVault();
+      renderVaultLists();
+      showToast('Added to Stark Vault!');
+    }
+
+    function deleteVaultItem(type, id) {
+      if (type === 'reminder') state.reminders = state.reminders.filter(x => x.id !== id);
+      else state.notes = state.notes.filter(x => x.id !== id);
+      saveStoredVault();
+      renderVaultLists();
+    }
+
+    // Social Composer
+    async function generateSocialDraft() {
+      const platform = document.getElementById('social-platform').value;
+      const lang = document.getElementById('social-lang').value;
+      const topic = document.getElementById('social-topic').value.trim();
+      const out = document.getElementById('social-output');
+      const btn = document.getElementById('btn-generate-social');
+
+      if (!topic) {
+        showToast('Enter a post topic first!');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ GENERATING...';
+
+      try {
+        if (hasGeminiKey() && navigator.onLine) {
+          const prompt = lang === 'si'
+            ? `Write an engaging, natural Sri Lankan Sinhala ${platform} caption about "${topic}" with 4 relevant hashtags.`
+            : `Write an engaging ${platform} post caption about "${topic}" with 4 relevant hashtags.`;
+          const { data } = await requestGeminiLive({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }]
+          });
+          out.value = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+        } else {
+          out.value = lang === 'si'
+            ? `✨ ${topic}\n\nඅදම බලන්න, අදහස් comment කරන්න!\n#${platform} #SriLanka #Update`
+            : `✨ ${topic}\n\nCheck it out and drop your thoughts below!\n#${platform} #Trending #Update`;
+        }
+      } catch (err) {
+        out.value = `✨ ${topic}\n\n(Offline fallback draft — API error: ${err.message})\n#${platform} #Update`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '✨ GENERATE DRAFT WITH J.A.R.V.I.S.';
+      }
+    }
+
+    function copySocialDraft() {
+      const val = document.getElementById('social-output').value.trim();
+      if (!val) return showToast('Nothing to copy yet.');
+      if (copyTextToClipboard(val)) showToast('Caption copied to clipboard!');
+    }
+
+    function openSocialPlatformApp() {
+      const platform = document.getElementById('social-platform').value;
+      const appObj = SUPPORTED_APPS[platform];
+      if (appObj) triggerUrlNavigation(appObj.universal);
+    }
+
+    /* =========================================================================
+       14. WINDOW BOOTSTRAP
+    ========================================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadStoredData();
+      updateClockAndDate();
+      setInterval(updateClockAndDate, 1000);
+      updateSettingsUI();
+      updateVaultBadge();
+      setActiveLanguage('en');
+
+      // Detect iframe sandbox
+      try {
+        if (window.self !== window.top) {
+          document.getElementById('sandbox-banner').classList.remove('hidden');
+        }
+      } catch (e) {
+        document.getElementById('sandbox-banner').classList.remove('hidden');
+      }
+
+      // Preload iOS Web Speech voices list
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+      }
+    });
+  </script>
+</body>
+</html>

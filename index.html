@@ -192,7 +192,7 @@
   <!-- Subtle Scanline Overlay -->
   <div class="scanline-overlay fixed inset-0 z-0"></div>
 
-  <!-- Hidden anchor used for clean top-level iOS tel:/whatsapp:/shortcuts:/maps auto-execution -->
+  <!-- Hidden anchor used for clean top-level iOS tel:/whatsapp:/shortcuts:/app auto-execution -->
   <a id="auto-exec-link" href="#" target="_top" rel="noopener" class="hidden" aria-hidden="true"></a>
 
   <!-- ===================================================================== -->
@@ -390,6 +390,10 @@
         class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-sinhala font-bold bg-amber-500/20 border border-amber-400/55 text-amber-100 active:scale-95 transition">
         🎙️ මචන් Jarvis
       </button>
+      <button onclick="sendQuickCommand('Hey Jarvis open Facebook')"
+        class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium bg-blue-950/75 border border-blue-400/50 text-blue-200 active:scale-95 transition">
+        📱 Open Facebook
+      </button>
       <button onclick="sendQuickCommand('Hey Jarvis call Amma')"
         class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium bg-emerald-950/70 border border-emerald-400/45 text-emerald-200 active:scale-95 transition">
         📞 Call Amma
@@ -524,34 +528,35 @@
     <div class="flex items-center justify-between pb-3 border-b border-amber-400/30">
       <div>
         <h2 class="font-hud text-sm tracking-widest text-amber-300">⚙️ iOS SETUP &amp; API KEY</h2>
-        <p class="text-[11px] text-amber-200/70">GitHub Pages Key • Auto-Call • JarvisBridge</p>
+        <p class="text-[11px] text-amber-200/70">AQ / AIza Header Auth • Auto-Call • App Launcher</p>
       </div>
       <button onclick="closeAllModals()" class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-200 font-bold">✕</button>
     </div>
 
     <div class="mt-3 overflow-y-auto flex-1 space-y-3 text-xs text-amber-50/90 leading-relaxed pr-1 no-scrollbar font-sinhala">
 
-      <!-- 1. PROMINENT GEMINI API KEY SECTION AT THE VERY TOP -->
+      <!-- 1. GEMINI API KEY SECTION (x-goog-api-key HEADER — SUPPORTS AQ.... & AIza...) -->
       <form onsubmit="saveGeminiKeyOnly(event)" class="p-3 rounded-xl bg-cyan-950/45 border-2 border-cyan-400/65 space-y-2 shadow-[0_0_18px_rgba(0,240,255,0.12)]">
         <div class="flex items-center justify-between gap-2">
-          <div class="font-hud text-[11px] text-cyan-300">🔑 GEMINI API KEY (REQUIRED FOR GITHUB PAGES)</div>
+          <div class="font-hud text-[11px] text-cyan-300">🔑 GEMINI API KEY (AQ.... &amp; AIza...)</div>
           <span id="gemini-key-status" class="text-[9px] font-hud px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-200 shrink-0">NOT SET</span>
         </div>
         <p class="text-[11px] text-cyan-100/80 leading-snug">
-          Stored privately on this iPhone only (<code class="font-mono text-cyan-300">localStorage</code>). Get a free API key at
-          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="text-amber-300 underline font-semibold">aistudio.google.com/apikey</a>
-          to enable Gemini 2.5 Flash AI chat &amp; HD Charon voice. Without a key, J.A.R.V.I.S. runs smoothly offline using your iPhone's built-in voice.
+          Sent securely via <code class="font-mono text-cyan-300">x-goog-api-key</code> header &amp; stored privately on this iPhone (<code class="font-mono text-cyan-300">localStorage</code>). Get a free key at
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="text-amber-300 underline font-semibold">aistudio.google.com/apikey</a>.
         </p>
-        <input id="input-gemini-key" type="password" placeholder="Paste Gemini API Key (AIza...)" autocomplete="off"
+        <input id="input-gemini-key" type="password" placeholder="Paste Gemini Key (AQ.... or AIza...)" autocomplete="off"
           class="w-full rounded-lg bg-[#040d1c] border border-cyan-400/50 px-3 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-cyan-300" />
         <div class="grid grid-cols-2 gap-2 pt-0.5">
           <button type="submit" class="py-2 rounded-lg bg-cyan-500/30 border border-cyan-400/75 text-cyan-50 font-hud text-[11px] font-bold active:scale-95 transition">
             💾 SAVE KEY
           </button>
-          <button type="button" onclick="testJarvisVoice()" class="py-2 rounded-lg bg-amber-500/25 border border-amber-400/65 text-amber-100 font-hud text-[11px] font-bold active:scale-95 transition">
-            🔊 TEST VOICE
+          <button id="btn-test-api-voice" type="button" onclick="testApiAndVoice()" class="py-2 rounded-lg bg-amber-500/25 border border-amber-400/65 text-amber-100 font-hud text-[11px] font-bold active:scale-95 transition">
+            🔊 TEST API &amp; VOICE
           </button>
         </div>
+        <!-- Live Inline API Diagnostic Badge -->
+        <div id="api-test-result" class="hidden px-2.5 py-1.5 rounded-lg text-[11px] font-mono break-words leading-snug"></div>
       </form>
 
       <!-- 2. AUTO-EXECUTE ACTIONS ENGINE -->
@@ -559,7 +564,7 @@
         <div class="flex items-center justify-between gap-2">
           <div>
             <div class="font-hud text-[11px] text-emerald-300">⚡ AUTO-EXECUTE ACTIONS</div>
-            <p class="text-[11px] text-emerald-100/75 mt-0.5">Auto-trigger Calls, WhatsApp, Maps &amp; Shortcuts immediately after voice recognition</p>
+            <p class="text-[11px] text-emerald-100/75 mt-0.5">Auto-launch Calls, Apps (Facebook/YouTube/TikTok/IG/WhatsApp), Maps &amp; Shortcuts</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer shrink-0">
             <input type="checkbox" id="toggle-auto-exec" onchange="toggleAutoExecute(this.checked)" checked class="sr-only peer" />
@@ -571,12 +576,12 @@
           <label class="block text-[10px] font-hud text-emerald-200/80 mb-1">EXECUTION MODE</label>
           <select id="select-exec-mode" onchange="changeExecMode(this.value)"
             class="w-full rounded-lg bg-[#051020] border border-emerald-400/45 px-2.5 py-2 text-xs text-emerald-100 focus:outline-none">
-            <option value="direct">Direct iOS Links (tel: / wa.me / Google Maps)</option>
-            <option value="shortcut">Apple Shortcut Bridge (JarvisBridge • Native Calls/Notes/Maps)</option>
+            <option value="direct">Direct iOS Links (Universal Links / tel: / wa.me / Maps)</option>
+            <option value="shortcut">Apple Shortcut Bridge (JarvisBridge • Native Calls/Apps/Notes/Maps)</option>
           </select>
         </div>
         <div id="sandbox-status-note" class="hidden text-[11px] px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-amber-400/40 text-amber-200">
-          ⚠️ Currently running in Preview Sandbox iframe. Host on GitHub Pages &amp; open via Safari Home Screen for live auto-dialing.
+          ⚠️ Currently running in Preview Sandbox iframe. Host on GitHub Pages &amp; open via Safari Home Screen for live auto-launching.
         </div>
       </div>
 
@@ -629,8 +634,8 @@
 
         <div class="space-y-1 p-2 rounded-lg bg-cyan-950/35 border border-cyan-500/20">
           <div class="font-bold text-cyan-300">Step 1: Host on GitHub Pages &amp; Add to Home Screen</div>
-          <p>Upload this file as <code class="px-1 rounded bg-cyan-500/20 font-mono">index.html</code> to GitHub Pages. Open your HTTPS link in <strong>Safari</strong> → tap <strong>Share</strong> → <strong>Add to Home Screen</strong>. Then paste your free Gemini API Key above.</p>
-          <p class="text-cyan-200/80"><em>සිංහල:</em> GitHub Pages වල <code class="font-mono">index.html</code> විදිහට upload කරලා, Safari වලින් open කරලා <strong>Add to Home Screen</strong> දාගන්න. ඉන්පසු උඩ තියෙන Gemini API Key එක save කරන්න.</p>
+          <p>Upload this file as <code class="px-1 rounded bg-cyan-500/20 font-mono">index.html</code> to GitHub Pages. Open your HTTPS link in <strong>Safari</strong> → tap <strong>Share</strong> → <strong>Add to Home Screen</strong>. Then paste your Gemini Key (<code class="font-mono">AQ....</code> or <code class="font-mono">AIza...</code>) above and tap <strong>TEST API &amp; VOICE</strong>.</p>
+          <p class="text-cyan-200/80"><em>සිංහල:</em> GitHub Pages වල <code class="font-mono">index.html</code> විදිහට update කරලා, Safari Home Screen app එකෙන් open කරලා Gemini API Key එක save කරලා <strong>TEST API &amp; VOICE</strong> ඔබන්න.</p>
         </div>
 
         <div class="space-y-1 p-2 rounded-lg bg-emerald-950/35 border border-emerald-500/25">
@@ -642,6 +647,7 @@
             <li><strong>Get Item from List</strong>: Item at Index 2 → set variable <code class="font-mono">Payload</code></li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">CALL</code> → <strong>Call</strong> <code class="font-mono">Payload</code></li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">WHATSAPP</code> → <strong>Open URLs</strong> <code class="font-mono">https://wa.me/Payload</code></li>
+            <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">OPEN_APP</code> → <strong>Open App</strong> (match <code class="font-mono">Payload</code>: Facebook, YouTube, TikTok, Instagram, WhatsApp, Comera, Botim, GoChat)</li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">NOTE</code> → <strong>Create Note</strong> with <code class="font-mono">Payload</code></li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">REMINDER</code> → <strong>Add New Reminder</strong> <code class="font-mono">Payload</code></li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">MAPS</code> → <strong>Show Directions</strong> to <code class="font-mono">Payload</code> using <em>Google Maps</em></li>
@@ -657,13 +663,14 @@
       <!-- Hidden textarea for clean clipboard copy -->
       <textarea id="shortcut-guide-copy-buf" class="sr-only" aria-hidden="true">J.A.R.V.I.S. iPhone 15 Pro Max Setup Guide:
 1. Host jarvis_assistant.html as index.html on GitHub Pages, open in Safari -> Share -> Add to Home Screen.
-2. Get a free Gemini API Key at https://aistudio.google.com/apikey and save it in J.A.R.V.I.S. -> iOS Setup.
+2. Get a free Gemini API Key (AQ.... or AIza...) at https://aistudio.google.com/apikey, save it in J.A.R.V.I.S. -> iOS Setup, and tap TEST API & VOICE.
 3. Create Apple Shortcut named "JarvisBridge":
    - Split Shortcut Input by Custom "|"
    - Get First Item -> Action
    - Get Item at Index 2 -> Payload
    - If Action is CALL -> Call Payload
    - If Action is WHATSAPP -> Open URL https://wa.me/Payload
+   - If Action is OPEN_APP -> Open App matching Payload (Facebook, YouTube, TikTok, Instagram, WhatsApp, Comera, Botim, GoChat)
    - If Action is NOTE -> Create Note with Payload
    - If Action is REMINDER -> Add New Reminder Payload
    - If Action is MAPS -> Show Directions to Payload in Google Maps
@@ -672,13 +679,14 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- J.A.R.V.I.S. CORE ENGINE (iOS AUDIO UNLOCK + ANTI-FREEZE WATCHDOG)    -->
+  <!-- J.A.R.V.I.S. CORE ENGINE (x-goog-api-key HEADER + DIRECT APP LAUNCHER)-->
   <!-- ===================================================================== -->
   <script>
     // =========================================================================
-    // 1. CONSTANTS, API KEY RESOLUTION, PLATFORM DETECTION & 5-STATE FSM
+    // 1. CONSTANTS, ENDPOINTS, APP LAUNCHER REGISTRY & 5-STATE FSM
     // =========================================================================
-    const GEMINI_CHAT_MODEL = "gemini-2.5-flash";
+    const GEMINI_CHAT_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    const GEMINI_TTS_URL  = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent";
     const GEMINI_TTS_MODEL = "gemini-2.5-flash-preview-tts";
 
     // Fixed, unchanging TTS voice lock — guarantees zero vocal drift
@@ -701,6 +709,91 @@
       '+94719876543',
       '+94763456789'
     ]);
+
+    // Direct iOS App Launcher Registry (Universal Links + Native URL Schemes + Shortcut Bridge)
+    const APP_LAUNCHER_REGISTRY = {
+      facebook: {
+        key: 'facebook',
+        label: 'Facebook',
+        icon: '📘',
+        universalUrl: 'https://www.facebook.com/',
+        schemeUrl: 'fb://',
+        shortcutName: 'Facebook',
+        aliases: ['facebook', 'fb', 'ෆේස්බුක්', 'ෆෙස්බුක්', 'පේස්බුක්']
+      },
+      youtube: {
+        key: 'youtube',
+        label: 'YouTube',
+        icon: '▶️',
+        universalUrl: 'https://www.youtube.com/',
+        schemeUrl: 'youtube://',
+        shortcutName: 'YouTube',
+        aliases: ['youtube', 'yt', 'යූටියුබ්', 'යුටියුබ්']
+      },
+      tiktok: {
+        key: 'tiktok',
+        label: 'TikTok',
+        icon: '🎵',
+        universalUrl: 'https://www.tiktok.com/',
+        schemeUrl: 'snssdk1233://',
+        shortcutName: 'TikTok',
+        aliases: ['tiktok', 'tik tok', 'ටික්ටොක්', 'ටික් ටොක්']
+      },
+      instagram: {
+        key: 'instagram',
+        label: 'Instagram',
+        icon: '📸',
+        universalUrl: 'https://www.instagram.com/',
+        schemeUrl: 'instagram://',
+        shortcutName: 'Instagram',
+        aliases: ['instagram', 'insta', 'ig', 'ඉන්ස්ටග්‍රෑම්', 'ඉන්ස්ටා']
+      },
+      whatsapp: {
+        key: 'whatsapp',
+        label: 'WhatsApp',
+        icon: '💬',
+        universalUrl: 'https://wa.me/',
+        schemeUrl: 'whatsapp://',
+        shortcutName: 'WhatsApp',
+        aliases: ['whatsapp', 'whats app', 'වට්ස්ඇප්', 'වට්සැප්']
+      },
+      maps: {
+        key: 'maps',
+        label: 'Google Maps',
+        icon: '🗺️',
+        universalUrl: 'https://maps.google.com/',
+        schemeUrl: 'comgooglemaps://',
+        shortcutName: 'Google Maps',
+        aliases: ['google maps', 'maps', 'ගූගල් මැප්', 'මැප්', 'මැප්ස්']
+      },
+      comera: {
+        key: 'comera',
+        label: 'Comera',
+        icon: '📞',
+        universalUrl: null,
+        schemeUrl: null,
+        shortcutName: 'Comera',
+        aliases: ['comera', 'කොමේරා', 'කොමෙරා']
+      },
+      botim: {
+        key: 'botim',
+        label: 'Botim',
+        icon: '📞',
+        universalUrl: null,
+        schemeUrl: null,
+        shortcutName: 'Botim',
+        aliases: ['botim', 'බොටිම්']
+      },
+      gochat: {
+        key: 'gochat',
+        label: 'GoChat',
+        icon: '📞',
+        universalUrl: null,
+        schemeUrl: null,
+        shortcutName: 'GoChat',
+        aliases: ['gochat', 'go chat', 'ගෝචැට්', 'ගොචැට්']
+      }
+    };
 
     const FSM = {
       BOOT: 'BOOT',
@@ -766,8 +859,7 @@
     };
 
     /**
-     * Resolves the active Gemini API key strictly per GitHub Pages specification:
-     * localStorage.getItem('jarvis_gemini_key') || (typeof __gemini_api_key !== 'undefined' ? __gemini_api_key : '')
+     * Resolves the active Gemini API key cleanly (always trimmed).
      */
     function getActiveGeminiKey() {
       let stored = '';
@@ -788,7 +880,6 @@
 
     function loadState() {
       try {
-        // Migrate contacts from earlier version if present
         const c = localStorage.getItem(STORAGE_KEYS.CONTACTS) || localStorage.getItem('jarvis_v7_contacts');
         state.contacts = c ? JSON.parse(c) : JSON.parse(JSON.stringify(DEFAULT_CONTACTS));
         localStorage.setItem(STORAGE_KEYS.CONTACTS, JSON.stringify(state.contacts));
@@ -830,7 +921,7 @@
 
     function syncSettingsUI() {
       const keyPresent = hasGeminiKey();
-      const storedKey = (() => { try { return localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || ''; } catch (e) { return ''; } })();
+      const storedKey = (() => { try { return (localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '').trim(); } catch (e) { return ''; } })();
 
       const dsp = document.getElementById('toggle-dsp');
       const autoEx = document.getElementById('toggle-auto-exec');
@@ -854,7 +945,6 @@
       if (ekey) ekey.value = state.elevenLabsKey;
       if (evid) evid.value = state.elevenLabsVoiceId;
 
-      // Show or hide the subtle tappable "🔑 Add API Key" badge in the HUD
       if (hudKeyBadge) {
         if (keyPresent) hudKeyBadge.classList.add('hidden');
         else hudKeyBadge.classList.remove('hidden');
@@ -862,11 +952,11 @@
 
       if (gStatus) {
         if (keyPresent) {
-          gStatus.textContent = 'KEY ACTIVE';
+          gStatus.textContent = storedKey.startsWith('AQ.') ? 'AUTH KEY ACTIVE' : 'KEY ACTIVE';
           gStatus.className = 'text-[9px] font-hud px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/55 text-emerald-200 shrink-0';
         } else {
-          gStatus.textContent = 'NOT SET (LOCAL MODE)';
-          gStatus.className = 'text-[9px] font-hud px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/55 text-amber-200 shrink-0';
+          gStatus.textContent = 'NOT SET (LOCAL)';
+          gStatus.className = 'text-[9px] font-hud px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-200 shrink-0';
         }
       }
 
@@ -1100,11 +1190,6 @@
       return audioCtx;
     }
 
-    /**
-     * MUST be called synchronously inside a user tap/click handler on iOS Safari.
-     * Unlocks BOTH Web AudioContext (1-sample silent buffer) AND window.speechSynthesis
-     * (zero-volume silent utterance) so iOS grants persistent playback permission.
-     */
     function unlockIosAudioSynchronously() {
       const ctx = getAudioCtx();
       if (ctx) {
@@ -1202,11 +1287,11 @@
     }
 
     // =========================================================================
-    // 5. BULLETPROOF VOICE ENGINE WITH HARD TIMEOUT ANTI-FREEZE WATCHDOG
+    // 5. BULLETPROOF VOICE ENGINE (x-goog-api-key HEADER + WATCHDOG)
     // =========================================================================
     let lockedNativeMaleVoice = null;
-    let activeSpeechCancel = null; // Function to cancel & resolve any in-flight speech promise
-    let speechTurnToken = 0;       // Prevents stale speech completions from overwriting FSM
+    let activeSpeechCancel = null;
+    let speechTurnToken = 0;
 
     function resolveLockedNativeVoice() {
       if (!window.speechSynthesis) return null;
@@ -1242,10 +1327,6 @@
       stopActiveBufferSource();
     }
 
-    /**
-     * Plays an AudioBuffer through the Stark HUD DSP filter wrapped in a Promise
-     * with a HARD TIMEOUT WATCHDOG so SPEAKING can never freeze on iOS Safari.
-     */
     function playBufferWithWatchdog(audioBuffer, maxDurationMs) {
       return new Promise((resolve) => {
         const ctx = getAudioCtx();
@@ -1336,11 +1417,6 @@
       });
     }
 
-    /**
-     * Speaks via window.speechSynthesis wrapped in a bulletproof Promise with:
-     * 1. Hard timeout watchdog: Math.max(5000, text.length * 100) ms
-     * 2. iOS Safari speaking-poll after 1500ms (resolves if onend never fires)
-     */
     function speakNativeWithWatchdog(text, isSi, maxDurationMs) {
       return new Promise((resolve) => {
         if (!window.speechSynthesis || !text) { resolve(); return; }
@@ -1393,8 +1469,6 @@
           u.onerror = finish;
           window.speechSynthesis.speak(u);
 
-          // iOS Safari PWA Watchdog: after 1500ms, poll speechSynthesis.speaking
-          // If iOS silently dropped or finished speech without firing onend, unlock cleanly
           pollDelayTimer = setTimeout(() => {
             if (settled) return;
             pollInterval = setInterval(() => {
@@ -1414,12 +1488,6 @@
       });
     }
 
-    /**
-     * Master Speech Router:
-     * - If NO Gemini API key: skips Gemini TTS completely -> uses unlocked iOS Web Speech immediately.
-     * - If Gemini API key IS set: uses locked Charon HD TTS (+ Stark DSP) or Ultra-Fast iOS mode.
-     * - ALWAYS resolves via watchdog and transitions cleanly back to ACTIVE_LISTENING or SLEEPING.
-     */
     async function speakLocked(text, langCode, afterSpeechState = FSM.ACTIVE_LISTENING) {
       const myToken = ++speechTurnToken;
 
@@ -1449,7 +1517,7 @@
           }
         }
 
-        // Tier 2: Locked Gemini TTS ('Charon') — ONLY when API key is set, online, and not instant EN mode
+        // Tier 2: Locked Gemini TTS ('Charon') using x-goog-api-key header
         if (!playedAudioBuffer && keyAvailable && navigator.onLine && (isSi || state.speedMode !== 'instant')) {
           const buf = await fetchLockedCharonAudio(text);
           if (myToken !== speechTurnToken) return;
@@ -1459,12 +1527,11 @@
           }
         }
 
-        // Tier 3: Unlocked iOS Web Speech API (used immediately if no API key, instant mode, or TTS fallback)
+        // Tier 3: Unlocked iOS Web Speech API
         if (!playedAudioBuffer && myToken === speechTurnToken) {
           await speakNativeWithWatchdog(text, isSi, maxDurationMs);
         }
       } catch (e) {
-        // Watchdog guarantees recovery even on unexpected exceptions
       } finally {
         if (myToken === speechTurnToken) {
           finishSpeaking(afterSpeechState);
@@ -1514,13 +1581,16 @@
       }
     }
 
+    /**
+     * Fetches Gemini TTS ('Charon') using the x-goog-api-key HTTP header
+     * (never passes key in URL) so both AQ.... and AIza... keys work seamlessly.
+     */
     async function fetchLockedCharonAudio(text) {
       const apiKey = getActiveGeminiKey();
-      if (!apiKey) return null; // Never call endpoint without a valid key
+      if (!apiKey) return null;
       const ctx = getAudioCtx();
       if (!ctx) return null;
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_TTS_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
       const payload = {
         contents: [{ parts: [{ text: `${LOCKED_TTS_DIRECTIVE} ${text}` }] }],
         generationConfig: {
@@ -1539,17 +1609,18 @@
         try {
           const controller = new AbortController();
           const tid = setTimeout(() => controller.abort(), 7500);
-          const res = await fetch(url, {
+          const res = await fetch(GEMINI_TTS_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': apiKey
+            },
             body: JSON.stringify(payload),
             signal: controller.signal
           });
           clearTimeout(tid);
 
-          // Immediately bail on 401/403 (bad key) — never hang retrying
           if (res.status === 401 || res.status === 403) {
-            showToast('Gemini API Key rejected (403). Check key in ⚙️ iOS Setup.', 'warn');
             return null;
           }
           if (!res.ok) {
@@ -1587,8 +1658,6 @@
 
     // =========================================================================
     // 6. ROCK-SOLID iOS SAFARI SPEECH RECOGNITION ENGINE
-    //    - Single-utterance loop (continuous = false) + 1.2s Silence Auto-Commit
-    //    - onend Buffer Flush + Duplicate-Commit Guard + 1.5s Restart Watchdog
     // =========================================================================
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
@@ -1673,7 +1742,7 @@
         recognition = new SpeechRec();
         const desiredLang = (state.activeLang === 'si' && !state.forcePhoneticSiMic) ? 'si-LK' : 'en-GB';
         recognition.lang = desiredLang;
-        recognition.continuous = false; // Single-utterance loop for rock-solid iOS Safari reliability
+        recognition.continuous = false; // Single-utterance loop for iOS Safari reliability
         recognition.interimResults = true;
         recognition.maxAlternatives = 1;
 
@@ -1785,7 +1854,6 @@
     // =========================================================================
     function bootJarvis() {
       if (state.fsm !== FSM.BOOT) return;
-      // SYNCHRONOUS iOS Safari audio & speechSynthesis unlock inside user tap gesture
       unlockIosAudioSynchronously();
       playSfx('boot');
       document.getElementById('boot-overlay').classList.add('hidden');
@@ -1801,13 +1869,13 @@
     async function deliverBriefing(lang = 'en', addToLog = true) {
       setActiveLanguage(lang);
       const text = buildBriefingText(lang);
-      if (addToLog) appendJarvisBubble(text, '', !hasGeminiKey() || !navigator.onLine);
+      if (addToLog) appendJarvisBubble(text, '', !hasGeminiKey() || !navigator.onLine, '');
       pushChatHistory('model', text);
       await speakLocked(text, lang, FSM.ACTIVE_LISTENING);
     }
 
     function bargeInInterrupt() {
-      ++speechTurnToken; // Invalidate any pending speech promise
+      ++speechTurnToken;
       getAudioCtx();
       stopAllAudioPlayback();
       playSfx('ack');
@@ -1854,7 +1922,7 @@
       const reply = lang === 'si'
         ? "හරි මචන්, මම standby යනවා. ආයෙ ඕන වුණාම මචන් Jarvis කියලා කතා කරන්න."
         : "Very well, sir. Entering standby mode. Say Hey Jarvis whenever you need me.";
-      appendJarvisBubble(reply, '', false);
+      appendJarvisBubble(reply, '', false, '');
       speakLocked(reply, lang, FSM.SLEEPING);
     }
 
@@ -1875,7 +1943,8 @@
     }
 
     // =========================================================================
-    // 8. GEMINI 2.5 FLASH BRAIN + 12-TURN MEMORY + LOCAL SMART COMMAND ENGINE
+    // 8. GEMINI 2.5 FLASH BRAIN (x-goog-api-key HEADER) + REAL ERROR DIAGNOSTICS
+    //    + FULL LOCAL SMART COMMAND ENGINE (WITH DIRECT APP LAUNCHER)
     // =========================================================================
     function pushChatHistory(role, text) {
       if (!text) return;
@@ -1885,9 +1954,29 @@
       }
     }
 
+    /**
+     * Parses structured Gemini API error body into a clean human-readable diagnostic string.
+     */
+    async function extractGeminiErrorMessage(res) {
+      try {
+        const errJson = await res.json();
+        const msg = errJson?.error?.message || errJson?.message;
+        if (msg) return `HTTP ${res.status}: ${msg}`;
+      } catch (e) {}
+      return `HTTP ${res.status} (${res.statusText || 'Request Rejected'})`;
+    }
+
+    /**
+     * Calls Gemini 2.5 Flash using the x-goog-api-key HTTP header (NEVER ?key= in URL).
+     * Throws an Error with exact HTTP/network diagnostics on failure.
+     */
     async function callGeminiFast(userText, lang) {
       const apiKey = getActiveGeminiKey();
-      if (!apiKey) throw new Error('NO_API_KEY');
+      if (!apiKey) {
+        const err = new Error('NO_API_KEY');
+        err.code = 'NO_API_KEY';
+        throw err;
+      }
 
       const contactSummary = state.contacts
         .map(c => `${c.name} (${(c.aliases || []).join('/')})`)
@@ -1901,55 +1990,102 @@
 ${personaRule}
 CRITICAL: Keep replies very short (1-2 natural spoken sentences max), zero bullet points, zero markdown, like two humans chatting.
 Contacts: [${contactSummary}]. Map mother/mom/අම්මා -> Amma, father/dad/තාත්තා -> Thatha, wife/harshani/නෝනා -> Wife, brother/මල්ලි -> Malli.
+Supported apps for open_app: "facebook", "youtube", "tiktok", "instagram", "whatsapp", "maps", "comera", "botim", "gochat".
 Output strict JSON only:
-{"reply":"spoken reply","language":"${lang}","action":"chat|call|whatsapp|maps|note|reminder|social_post|briefing","payload":{"contactName":"","destination":"","title":"","content":"","task":"","time":"","platform":"","caption":""}}`;
+{"reply":"spoken reply","language":"${lang}","action":"chat|call|whatsapp|maps|open_app|note|reminder|social_post|briefing","payload":{"contactName":"","destination":"","app":"","title":"","content":"","task":"","time":"","platform":"","caption":""}}`;
 
       const contents = [
         ...state.chatHistory,
         { role: 'user', parts: [{ text: userText }] }
       ];
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
       const payload = {
         contents,
         systemInstruction: { parts: [{ text: systemPrompt }] },
         generationConfig: {
           responseMimeType: 'application/json',
-          maxOutputTokens: 160,
+          maxOutputTokens: 180,
           temperature: 0.7
         }
       };
 
       const controller = new AbortController();
-      const tid = setTimeout(() => controller.abort(), 7000);
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      });
+      const tid = setTimeout(() => controller.abort(), 8000);
+      let res;
+      try {
+        res = await fetch(GEMINI_CHAT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+      } catch (netErr) {
+        clearTimeout(tid);
+        const err = new Error(netErr.name === 'AbortError' ? 'Request timed out (8s)' : `Network error: ${netErr.message}`);
+        err.code = 'NETWORK_ERROR';
+        throw err;
+      }
       clearTimeout(tid);
 
-      if (res.status === 401 || res.status === 403) {
-        showToast('Gemini API Key invalid (403). Falling back to Local Mode.', 'warn');
-        throw new Error('INVALID_KEY');
+      if (!res.ok) {
+        const detail = await extractGeminiErrorMessage(res);
+        const err = new Error(detail);
+        err.code = 'HTTP_ERROR';
+        err.httpStatus = res.status;
+        throw err;
       }
-      if (!res.ok) throw new Error('Gemini HTTP ' + res.status);
 
       const data = await res.json();
       const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!raw) throw new Error('Empty JSON');
+      if (!raw) throw new Error('Empty JSON response from Gemini');
       return JSON.parse(raw);
     }
 
     /**
-     * Full Local Smart Command Engine (used immediately when NO API key is set or offline).
-     * Handles Calls, WhatsApp, Google Maps, Notes, Reminders, Time, Weather, and Greetings.
+     * Resolves an app key from English, Sinhala, or Singlish text.
      */
-    function localSmartCommandRouter(text, lang) {
+    function detectAppInText(text) {
+      const t = (text || '').toLowerCase();
+      for (const appKey of Object.keys(APP_LAUNCHER_REGISTRY)) {
+        const app = APP_LAUNCHER_REGISTRY[appKey];
+        if (app.aliases.some(alias => t.includes(alias.toLowerCase()))) {
+          return app;
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Full Local Smart Command Engine (handles Open App, Calls, WhatsApp, Maps,
+     * Notes, Reminders, Time, Weather, Greetings).
+     * `apiErrorDetail` ensures we NEVER show the misleading "Add API key" text
+     * when a key IS saved and encountered a real HTTP/network error.
+     */
+    function localSmartCommandRouter(text, lang, apiErrorDetail = '') {
       const t = text.toLowerCase();
 
-      // 1. Google Maps Directions
+      // 1. Direct App Launcher (English, Sinhala, Singlish)
+      //    e.g. "open Facebook", "launch YouTube", "Facebook එක open කරන්න", "YouTube අරින්න", "TikTok දාන්න"
+      const hasOpenVerb = /(open|launch|start|go\s+to|run|show\s+me|අරින්න|දාන්න|ඕපන්|open\s*කරන්න|දාලා\s*දෙන්න)/i.test(t);
+      const hasCallVerb = /(call|dial|phone|ring|කෝල්|අමතන්න)/i.test(t);
+      const hasDirectionVerb = /(direction|navigate|route|way\s+to|පාර)/i.test(t);
+      const detectedApp = detectAppInText(text);
+
+      if (detectedApp && (hasOpenVerb || (!hasCallVerb && !hasDirectionVerb && t.trim().length <= 28))) {
+        return {
+          reply: lang === 'si'
+            ? `හරි මචන්, ${detectedApp.label} දැන් open කරනවා.`
+            : `Opening ${detectedApp.label} now, sir.`,
+          language: lang,
+          action: 'open_app',
+          payload: { app: detectedApp.key }
+        };
+      }
+
+      // 2. Google Maps Directions
       const mapMatch = text.match(/(?:directions?\s+to|navigate\s+to|route\s+to|take\s+me\s+to|way\s+to|පාර\s+කියන්න|යන\s+පාර)\s+(?:the\s+)?(.+)/i);
       if (mapMatch || (/(colombo|kandy|kurunegala|galle|negombo|rideegama|airport)/i.test(t) && /(direction|map|route|go\s+to|පාර)/i.test(t))) {
         const dest = mapMatch ? mapMatch[1].trim() : (text.match(/(colombo|kandy|kurunegala|galle|negombo|rideegama|airport)/i)?.[0] || 'Colombo');
@@ -1961,8 +2097,8 @@ Output strict JSON only:
         };
       }
 
-      // 2. Calls & WhatsApp
-      if (/(call|dial|phone|ring|whatsapp|කෝල්|අමතන්න)/i.test(t)) {
+      // 3. Calls & WhatsApp
+      if (hasCallVerb || (/whatsapp/i.test(t) && findContactInText(text))) {
         const isWa = /whatsapp/i.test(t);
         const matched = findContactInText(text);
         const target = matched ? matched.name : 'Amma';
@@ -1974,7 +2110,7 @@ Output strict JSON only:
         };
       }
 
-      // 3. Reminders
+      // 4. Reminders
       if (/(remind|reminder|මතක්\s+කරන්න)/i.test(t)) {
         const cleanedTask = text.replace(/^(?:remind\s+me\s+(?:to\s+)?|add\s+a?\s*reminder\s+(?:to\s+)?|මතක්\s+කරන්න\s*)/i, '').trim() || text;
         return {
@@ -1985,7 +2121,7 @@ Output strict JSON only:
         };
       }
 
-      // 4. Notes
+      // 5. Notes
       if (/(take\s+a\s+note|note\s+down|write\s+down|save\s+a?\s*note|සටහනක්)/i.test(t)) {
         const cleanedNote = text.replace(/^(?:take\s+a\s+note\s*(?:that\s+)?|note\s+down\s*|write\s+down\s*|සටහනක්\s*)/i, '').trim() || text;
         return {
@@ -1996,7 +2132,7 @@ Output strict JSON only:
         };
       }
 
-      // 5. Time & Date
+      // 6. Time & Date
       if (/(what\s+time|time\s+is\s+it|current\s+time|what\s+day|today'?s\s+date|වෙලාව|දිනය)/i.test(t)) {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -2011,7 +2147,7 @@ Output strict JSON only:
         };
       }
 
-      // 6. Weather
+      // 7. Weather
       if (/(weather|temperature|forecast|rain|කාලගුණය)/i.test(t)) {
         return {
           reply: lang === 'si'
@@ -2023,7 +2159,7 @@ Output strict JSON only:
         };
       }
 
-      // 7. Greetings & Casual Chat
+      // 8. Greetings & Casual Chat
       if (/(good\s+morning|good\s+afternoon|good\s+evening|hello|hi|how\s+are\s+you|කොහොමද|සුභ\s+)/i.test(t)) {
         return {
           reply: lang === 'si'
@@ -2046,11 +2182,34 @@ Output strict JSON only:
         };
       }
 
-      // Default Local Mode Guidance
+      // 9. Fallback: STRICTLY differentiate between "Key is Empty" vs "Key Saved but API Failed"
+      if (apiErrorDetail) {
+        return {
+          reply: lang === 'si'
+            ? `මචන්, Gemini AI සම්බන්ධතාවයේ පොඩි ගැටලුවක් ආවා. Calls, Apps, Maps, Notes සහ Reminders local engine එකෙන් වැඩ කරනවා.`
+            : `I ran into a temporary Gemini API issue, sir, so I'm handling commands locally. Check the diagnostic below or run Test API & Voice in iOS Setup.`,
+          language: lang,
+          action: 'chat',
+          payload: {}
+        };
+      }
+
+      if (!navigator.onLine) {
+        return {
+          reply: lang === 'si'
+            ? `දැන් offline ඉන්නේ මචන්. Calls, Apps, Notes සහ Reminders local engine එකෙන් වැඩ කරනවා.`
+            : `You are currently offline, sir. Calls, app launching, notes, and reminders are still available locally.`,
+          language: lang,
+          action: 'chat',
+          payload: {}
+        };
+      }
+
+      // Only show "Add your free Gemini API key" when jarvis_gemini_key is genuinely empty
       return {
         reply: lang === 'si'
-          ? `මචන් දැන් Local Mode එකේ ඉන්නේ. Calls, Maps, Notes සහ Reminders දැන්ම වැඩ. Full AI chat සඳහා Settings වලට free Gemini API key එක දාන්න.`
-          : `I'm in local command mode, sir. Calls, WhatsApp, Google Maps, Notes, Reminders, time, and weather are ready. Add your free Gemini API key in iOS Setup for full AI conversation.`,
+          ? `මචන් දැන් Local Mode එකේ ඉන්නේ. Calls, Apps (Facebook/YouTube/TikTok), Maps, Notes සහ Reminders දැන්ම වැඩ. Full AI chat සඳහා iOS Setup වලට free Gemini API key එක දාන්න.`
+          : `I'm in local command mode, sir. Calls, App Launcher, Google Maps, Notes, and Reminders are ready. Add your free Gemini API key in iOS Setup for full AI conversation.`,
         language: lang,
         action: 'chat',
         payload: {}
@@ -2058,15 +2217,21 @@ Output strict JSON only:
     }
 
     // =========================================================================
-    // 9. AUTO-CALL & APPLE SHORTCUT BRIDGE EXECUTION ENGINE
+    // 9. AUTO-CALL, DIRECT APP LAUNCHER & APPLE SHORTCUT BRIDGE ENGINE
     // =========================================================================
     function buildJarvisBridgeUrl(actionType, payloadText) {
       const combined = `${actionType}|${payloadText}`;
       return `shortcuts://run-shortcut?name=JarvisBridge&input=text&text=${encodeURIComponent(combined)}`;
     }
 
-    function triggerIosUrl(url) {
+    function triggerIosUrl(url, preferWindowOpen = false) {
       if (!url) return false;
+      if (preferWindowOpen && /^https?:\/\//i.test(url)) {
+        try {
+          const w = window.open(url, '_blank', 'noopener,noreferrer');
+          if (w) return true;
+        } catch (e) {}
+      }
       try {
         const a = document.getElementById('auto-exec-link');
         if (a) {
@@ -2092,7 +2257,7 @@ Output strict JSON only:
     function getSandboxNoticeHtml() {
       if (!IS_PREVIEW_SANDBOX) return '';
       return `<div class="mt-2 px-2.5 py-1.5 rounded-lg bg-amber-950/55 border border-amber-400/35 text-[10px] text-amber-200/90 leading-snug">
-        🛡️ Preview Sandbox detected — open from your Safari Home Screen PWA for live auto-dialing.
+        🛡️ Preview Sandbox detected — open from your Safari Home Screen PWA for live auto-launching.
       </div>`;
     }
 
@@ -2126,18 +2291,19 @@ Output strict JSON only:
 
       let result = null;
       let usedLocal = false;
+      let apiDiagnostic = '';
 
-      // Only hit Gemini API when BOTH online AND a valid API key is present
       if (navigator.onLine && hasGeminiKey()) {
         try {
           result = await callGeminiFast(query, lang);
-        } catch (e) {
+        } catch (err) {
           usedLocal = true;
-          result = localSmartCommandRouter(query, lang);
+          apiDiagnostic = `Gemini API Error (${err.message}) — using local engine`;
+          result = localSmartCommandRouter(query, lang, err.message);
         }
       } else {
         usedLocal = true;
-        result = localSmartCommandRouter(query, lang);
+        result = localSmartCommandRouter(query, lang, '');
       }
 
       pushChatHistory('user', query);
@@ -2148,13 +2314,13 @@ Output strict JSON only:
         return;
       }
 
-      const { html: actionHtml, autoUrl } = executeAction(result);
-      appendJarvisBubble(result.reply, actionHtml, usedLocal);
+      const { html: actionHtml, autoUrl, isWebAppLink } = executeAction(result);
+      appendJarvisBubble(result.reply, actionHtml, usedLocal, apiDiagnostic);
 
       if (state.autoExecute && autoUrl) {
         setTimeout(() => {
-          triggerIosUrl(autoUrl);
-        }, 320);
+          triggerIosUrl(autoUrl, isWebAppLink);
+        }, 300);
       }
 
       await speakLocked(result.reply, lang, FSM.ACTIVE_LISTENING);
@@ -2177,11 +2343,68 @@ Output strict JSON only:
       }) || null;
     }
 
+    function resolveAppEntry(appRaw) {
+      if (!appRaw) return null;
+      const q = String(appRaw).toLowerCase().trim();
+      if (APP_LAUNCHER_REGISTRY[q]) return APP_LAUNCHER_REGISTRY[q];
+      return detectAppInText(q);
+    }
+
     function executeAction(res) {
       const p = res.payload || {};
       const act = res.action;
       const useShortcut = state.execMode === 'shortcut';
       const sandboxNotice = getSandboxNoticeHtml();
+
+      // DIRECT APP LAUNCHER
+      if (act === 'open_app') {
+        const app = resolveAppEntry(p.app || res.app || '');
+        if (!app) {
+          return { html: '', autoUrl: null, isWebAppLink: false };
+        }
+
+        const bridgeUrl = buildJarvisBridgeUrl('OPEN_APP', app.shortcutName);
+
+        // Comera / Botim / GoChat (no reliable public universal link — use JarvisBridge)
+        if (!app.universalUrl) {
+          const html = `
+            ${state.autoExecute ? `<div class="mt-1.5 text-[10px] font-hud text-amber-300/90">⚡ JARVISBRIDGE OPEN_APP (${escapeHtml(app.shortcutName)})</div>` : ''}
+            <div class="mt-2 flex flex-wrap gap-1.5">
+              <a href="${escapeHtml(bridgeUrl)}" target="_top"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/60 text-amber-100 text-xs font-semibold">
+                ${app.icon} Launch ${escapeHtml(app.label)} via JarvisBridge
+              </a>
+            </div>
+            ${sandboxNotice}`;
+          return { html, autoUrl: bridgeUrl, isWebAppLink: false };
+        }
+
+        // Standard apps (Facebook, YouTube, TikTok, Instagram, WhatsApp, Google Maps)
+        const primaryUrl = useShortcut ? bridgeUrl : app.universalUrl;
+        const autoTag = state.autoExecute
+          ? `<div class="mt-1.5 text-[10px] font-hud text-cyan-300/90">⚡ ${useShortcut ? 'JARVISBRIDGE OPEN_APP' : 'iOS APP LAUNCHER'} TRIGGERED</div>`
+          : '';
+
+        const html = `
+          ${autoTag}
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            <a href="${escapeHtml(primaryUrl)}" target="_top" rel="noopener"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/25 border border-blue-400/65 text-blue-100 text-xs font-semibold">
+              ${app.icon} Open ${escapeHtml(app.label)}
+            </a>
+            ${app.schemeUrl ? `<a href="${escapeHtml(app.schemeUrl)}" target="_top"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-400/40 text-cyan-200 text-xs">
+              🚀 Native App
+            </a>` : ''}
+            ${!useShortcut ? `<a href="${escapeHtml(bridgeUrl)}" target="_top"
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-amber-400/40 text-amber-200 text-xs">
+              ⚡ Shortcut
+            </a>` : ''}
+          </div>
+          ${sandboxNotice}`;
+
+        return { html, autoUrl: primaryUrl, isWebAppLink: !useShortcut };
+      }
 
       if (act === 'call' || act === 'whatsapp') {
         const contact = findContact(p.contactName);
@@ -2227,12 +2450,13 @@ Output strict JSON only:
             ${demoBanner}
             ${sandboxNotice}`;
 
-          return { html, autoUrl: primaryUrl };
+          return { html, autoUrl: primaryUrl, isWebAppLink: false };
         }
 
         return {
           html: `<button onclick="openModal('contacts')" class="mt-2 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-200 text-xs font-semibold">⚠️ Add ${escapeHtml(name)} in Contacts</button>`,
-          autoUrl: null
+          autoUrl: null,
+          isWebAppLink: false
         };
       }
 
@@ -2249,7 +2473,7 @@ Output strict JSON only:
           </div>
           ${sandboxNotice}`;
 
-        return { html, autoUrl: primaryUrl };
+        return { html, autoUrl: primaryUrl, isWebAppLink: !useShortcut };
       }
 
       if (act === 'reminder') {
@@ -2266,7 +2490,7 @@ Output strict JSON only:
           </div>
           ${sandboxNotice}`;
 
-        return { html, autoUrl: useShortcut ? scUrl : null };
+        return { html, autoUrl: useShortcut ? scUrl : null, isWebAppLink: false };
       }
 
       if (act === 'note') {
@@ -2284,18 +2508,19 @@ Output strict JSON only:
           </div>
           ${sandboxNotice}`;
 
-        return { html, autoUrl: useShortcut ? scUrl : null };
+        return { html, autoUrl: useShortcut ? scUrl : null, isWebAppLink: false };
       }
 
       if (act === 'social_post') {
         const cap = p.caption || res.reply;
         return {
           html: `<button onclick="openSocialWithText(${JSON.stringify(cap).replace(/"/g, '&quot;')})" class="mt-2 px-3 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-400/60 text-cyan-100 text-xs font-semibold">📱 Open in Social Composer</button>`,
-          autoUrl: null
+          autoUrl: null,
+          isWebAppLink: false
         };
       }
 
-      return { html: '', autoUrl: null };
+      return { html: '', autoUrl: null, isWebAppLink: false };
     }
 
     // =========================================================================
@@ -2314,16 +2539,20 @@ Output strict JSON only:
       log.scrollTop = log.scrollHeight;
     }
 
-    function appendJarvisBubble(text, actionHtml = '', localMode = false) {
+    function appendJarvisBubble(text, actionHtml = '', localMode = false, diagnosticText = '') {
       const log = document.getElementById('chat-log');
       const div = document.createElement('div');
       div.className = 'flex justify-start';
       const tag = localMode ? '<span class="ml-1.5 text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-hud">LOCAL</span>' : '';
+      const diagHtml = diagnosticText
+        ? `<div class="mt-2 px-2.5 py-1.5 rounded-lg bg-rose-950/60 border border-rose-400/45 text-[10px] font-mono text-rose-200 break-words leading-snug">⚠️ ${escapeHtml(diagnosticText)}</div>`
+        : '';
       div.innerHTML = `
         <div class="max-w-[92%] rounded-2xl rounded-tl-sm px-3 py-2 bg-[#071930]/90 border border-cyan-500/30 text-cyan-100 font-sinhala">
           <div class="text-[9px] font-hud tracking-widest text-cyan-400 mb-0.5">J.A.R.V.I.S.${tag}</div>
           <div class="leading-relaxed">${escapeHtml(text)}</div>
           ${actionHtml}
+          ${diagHtml}
         </div>`;
       log.appendChild(div);
       log.scrollTop = log.scrollHeight;
@@ -2530,14 +2759,18 @@ Output strict JSON only:
       let output = '';
       if (navigator.onLine && hasGeminiKey()) {
         try {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_CHAT_MODEL}:generateContent?key=${encodeURIComponent(getActiveGeminiKey())}`;
           const prompt = `Write a catchy ${platform} post caption with hashtags about "${topic}". Language: ${lang === 'si' ? 'Natural spoken Sinhala + English mix' : 'English'}. Return only the ready-to-post text.`;
-          const res = await fetch(url, {
+          const res = await fetch(GEMINI_CHAT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': getActiveGeminiKey()
+            },
             body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
           });
-          output = (await res.json())?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+          if (res.ok) {
+            output = (await res.json())?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+          }
         } catch (err) {}
       }
 
@@ -2592,7 +2825,86 @@ Output strict JSON only:
       } catch (err) {}
       syncSettingsUI();
       playSfx('ack');
+      const resBox = document.getElementById('api-test-result');
+      if (resBox) resBox.classList.add('hidden');
       showToast(val ? 'Gemini API Key Saved Privately!' : 'Gemini API Key Cleared (Local Mode)', 'info');
+    }
+
+    /**
+     * Live API & Voice Tester:
+     * Saves any typed key first, runs a real gemini-2.5-flash request with x-goog-api-key header,
+     * shows green "✓ API Connected" or red "✗ HTTP <status>: <exact error message>",
+     * and then speaks a confirmation line.
+     */
+    async function testApiAndVoice() {
+      unlockIosAudioSynchronously();
+      const inputEl = document.getElementById('input-gemini-key');
+      const typedKey = (inputEl ? inputEl.value : '').trim();
+      if (typedKey) {
+        try { localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, typedKey); } catch (e) {}
+        syncSettingsUI();
+      }
+
+      const apiKey = getActiveGeminiKey();
+      const resBox = document.getElementById('api-test-result');
+      const btn = document.getElementById('btn-test-api-voice');
+
+      if (!apiKey) {
+        resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-amber-950/70 border border-amber-400/55 text-amber-200';
+        resBox.textContent = '⚠️ No Gemini API Key saved. Testing local iOS voice only.';
+        resBox.classList.remove('hidden');
+        const returnState = state.fsm === FSM.SLEEPING ? FSM.SLEEPING : FSM.ACTIVE_LISTENING;
+        speakLocked('Local voice test active, sir. Add a Gemini API key for full AI conversation.', 'en', returnState);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ TESTING...';
+      resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-cyan-950/70 border border-cyan-400/45 text-cyan-200';
+      resBox.textContent = 'Testing gemini-2.5-flash via x-goog-api-key header...';
+      resBox.classList.remove('hidden');
+
+      let apiOk = false;
+      try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(GEMINI_CHAT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: 'Reply with two words: Systems online.' }] }],
+            generationConfig: { maxOutputTokens: 16 }
+          }),
+          signal: controller.signal
+        });
+        clearTimeout(tid);
+
+        if (res.ok) {
+          apiOk = true;
+          resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-emerald-950/80 border border-emerald-400/65 text-emerald-200';
+          resBox.textContent = '✓ API Connected (gemini-2.5-flash + x-goog-api-key)';
+        } else {
+          const detail = await extractGeminiErrorMessage(res);
+          resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-rose-950/85 border border-rose-400/65 text-rose-200 break-words';
+          resBox.textContent = `✗ ${detail}`;
+        }
+      } catch (err) {
+        resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-rose-950/85 border border-rose-400/65 text-rose-200 break-words';
+        resBox.textContent = `✗ Network Error: ${err.name === 'AbortError' ? 'Timed out (8s)' : err.message}`;
+      }
+
+      btn.disabled = false;
+      btn.textContent = '🔊 TEST API & VOICE';
+
+      const returnState = state.fsm === FSM.SLEEPING ? FSM.SLEEPING : FSM.ACTIVE_LISTENING;
+      const spokenLine = state.activeLang === 'si'
+        ? (apiOk ? 'හෙලෝ මචන්, Gemini API එකයි කටහඬයි දෙකම සුපිරියටම සම්බන්ධ වුණා.' : 'මචන්, API connection එකේ error එකක් තියෙනවා, ඒත් local voice එක වැඩ.')
+        : (apiOk ? 'All systems nominal, sir. Gemini API and voice engine are connected.' : 'Voice engine active, sir, but the Gemini API returned an error. Please check the message on screen.');
+
+      speakLocked(spokenLine, state.activeLang, returnState);
     }
 
     function saveElevenLabsSettings(e) {
@@ -2615,7 +2927,7 @@ Output strict JSON only:
       state.execMode = (val === 'shortcut') ? 'shortcut' : 'direct';
       saveSettings();
       playSfx('ack');
-      showToast(state.execMode === 'shortcut' ? 'Mode: Apple Shortcut Bridge (JarvisBridge)' : 'Mode: Direct iOS Links (tel: / wa.me / Maps)', 'info');
+      showToast(state.execMode === 'shortcut' ? 'Mode: Apple Shortcut Bridge (JarvisBridge)' : 'Mode: Direct iOS Links (Universal Links / tel: / Maps)', 'info');
     }
 
     function changeSpeedMode(val) {
@@ -2630,15 +2942,6 @@ Output strict JSON only:
       saveSettings();
       playSfx('ack');
       showToast(state.dspEnabled ? 'Stark HUD Audio DSP: ON' : 'Stark HUD Audio DSP: OFF', 'info');
-    }
-
-    function testJarvisVoice() {
-      unlockIosAudioSynchronously();
-      const text = state.activeLang === 'si'
-        ? 'හෙලෝ මචන්, මම ජාවිස්. Audio සහ voice systems සුපිරියටම වැඩ කරනවා.'
-        : 'All systems nominal, sir. Audio playback and continuous listening are online.';
-      const returnState = state.fsm === FSM.SLEEPING ? FSM.SLEEPING : FSM.ACTIVE_LISTENING;
-      speakLocked(text, state.activeLang, returnState);
     }
 
     let toastTimer = null;

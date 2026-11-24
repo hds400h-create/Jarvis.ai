@@ -19,8 +19,8 @@
   <style>
     :root {
       --bg-deep: #030914;
-      --cyan: #00f0ff;
-      --amber: #ffb703;
+      --cyan: #00e5ff;
+      --gold: #f5b041;
       --sleep: #2563eb;
     }
 
@@ -43,16 +43,15 @@
     .font-hud { font-family: 'Orbitron', sans-serif; }
     .font-sinhala { font-family: 'Noto Sans Sinhala', 'Inter', sans-serif; }
 
-    /* Guaranteed hidden helper */
     .hidden { display: none !important; }
 
-    /* Deep Stark HUD Background + Grid */
+    /* Stark Industries Deep Navy/Black Grid Background */
     .hud-bg {
       background-color: #030914;
       background-image:
-        radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.14) 0%, rgba(3, 9, 20, 0.95) 56%, #02060d 100%),
-        linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+        radial-gradient(circle at 50% 28%, rgba(0, 229, 255, 0.14) 0%, rgba(3, 9, 20, 0.96) 56%, #02050c 100%),
+        linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
       background-size: 100% 100%, 34px 34px, 34px 34px;
     }
 
@@ -60,26 +59,26 @@
       pointer-events: none;
       background: repeating-linear-gradient(
         0deg,
-        rgba(0, 240, 255, 0.022) 0px,
-        rgba(0, 240, 255, 0.022) 1px,
+        rgba(0, 229, 255, 0.022) 0px,
+        rgba(0, 229, 255, 0.022) 1px,
         transparent 1px,
         transparent 3px
       );
     }
 
-    /* Glassmorphic Stark HUD Panels */
+    /* Glassmorphic Stark Panels */
     .hud-panel {
-      background: rgba(5, 16, 34, 0.86);
-      border: 1px solid rgba(0, 240, 255, 0.28);
-      box-shadow: 0 0 18px rgba(0, 240, 255, 0.09), inset 0 0 12px rgba(0, 240, 255, 0.04);
+      background: rgba(5, 16, 34, 0.88);
+      border: 1px solid rgba(0, 229, 255, 0.28);
+      box-shadow: 0 0 18px rgba(0, 229, 255, 0.09), inset 0 0 12px rgba(0, 229, 255, 0.04);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
 
-    .hud-panel-amber {
-      background: rgba(10, 14, 28, 0.96);
-      border: 1px solid rgba(255, 183, 3, 0.45);
-      box-shadow: 0 0 24px rgba(255, 183, 3, 0.14);
+    .hud-panel-gold {
+      background: rgba(9, 14, 28, 0.96);
+      border: 1px solid rgba(245, 176, 65, 0.48);
+      box-shadow: 0 0 24px rgba(245, 176, 65, 0.14);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
@@ -91,40 +90,40 @@
     .ring-inner { transform-origin: 100px 100px; animation: spinCW 10s linear infinite; transition: stroke 0.3s, opacity 0.3s; }
     .core-glow {
       transform-origin: 100px 100px;
-      filter: drop-shadow(0 0 14px rgba(0, 240, 255, 0.85));
+      filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.85));
       transition: all 0.28s ease;
     }
 
     /* ACTIVE_LISTENING State */
-    .state-listening .ring-outer { animation: spinCW 7.5s linear infinite; stroke: #00f0ff; opacity: 0.95; }
+    .state-listening .ring-outer { animation: spinCW 7.5s linear infinite; stroke: #00e5ff; opacity: 0.95; }
     .state-listening .ring-mid { animation: spinCCW 4.8s linear infinite; stroke: #38bdf8; opacity: 0.9; }
     .state-listening .ring-inner { animation: spinCW 3.2s linear infinite; stroke: #a5f3fc; opacity: 0.95; }
     .state-listening .core-glow {
-      stroke: #00f0ff;
-      fill: rgba(0, 240, 255, 0.26);
-      filter: drop-shadow(0 0 24px rgba(0, 240, 255, 1));
+      stroke: #00e5ff;
+      fill: rgba(0, 229, 255, 0.26);
+      filter: drop-shadow(0 0 24px rgba(0, 229, 255, 1));
       animation: listenPulse 1.3s ease-in-out infinite;
     }
 
     /* PROCESSING State */
-    .state-processing .ring-outer { animation: spinCW 2.6s linear infinite; stroke: #00f0ff; }
-    .state-processing .ring-mid { animation: spinCCW 1.8s linear infinite; stroke: #ffb703; }
+    .state-processing .ring-outer { animation: spinCW 2.6s linear infinite; stroke: #00e5ff; }
+    .state-processing .ring-mid { animation: spinCCW 1.8s linear infinite; stroke: #f5b041; }
     .state-processing .ring-inner { animation: spinCW 1.4s linear infinite; stroke: #7dd3fc; }
     .state-processing .core-glow {
-      stroke: #ffb703;
-      fill: rgba(255, 183, 3, 0.32);
-      filter: drop-shadow(0 0 26px rgba(0, 240, 255, 0.9)) drop-shadow(0 0 12px rgba(255, 183, 3, 0.85));
+      stroke: #f5b041;
+      fill: rgba(245, 176, 65, 0.32);
+      filter: drop-shadow(0 0 26px rgba(0, 229, 255, 0.9)) drop-shadow(0 0 12px rgba(245, 176, 65, 0.85));
       animation: thinkPulse 0.65s ease-in-out infinite;
     }
 
     /* SPEAKING State */
     .state-speaking .ring-outer { animation: spinCW 4.8s linear infinite; stroke: #ffffff; }
-    .state-speaking .ring-mid { animation: spinCCW 3.4s linear infinite; stroke: #00f0ff; }
-    .state-speaking .ring-inner { animation: spinCW 2.4s linear infinite; stroke: #ffb703; }
+    .state-speaking .ring-mid { animation: spinCCW 3.4s linear infinite; stroke: #00e5ff; }
+    .state-speaking .ring-inner { animation: spinCW 2.4s linear infinite; stroke: #f5b041; }
     .state-speaking .core-glow {
       stroke: #ffffff;
-      fill: rgba(0, 240, 255, 0.48);
-      filter: drop-shadow(0 0 30px rgba(0, 240, 255, 1)) drop-shadow(0 0 12px #ffffff);
+      fill: rgba(0, 229, 255, 0.48);
+      filter: drop-shadow(0 0 30px rgba(0, 229, 255, 1)) drop-shadow(0 0 12px #ffffff);
       animation: speakPulse 0.5s ease-in-out infinite;
     }
 
@@ -162,8 +161,8 @@
     .viz-bar {
       width: 3px;
       border-radius: 999px;
-      background: #00f0ff;
-      box-shadow: 0 0 8px #00f0ff;
+      background: #00e5ff;
+      box-shadow: 0 0 8px #00e5ff;
       animation: vizBounce 0.6s ease-in-out infinite;
     }
     .viz-bar:nth-child(2) { animation-delay: 0.12s; }
@@ -175,7 +174,7 @@
       50% { height: 22px; opacity: 1; }
     }
 
-    /* 1.2s Auto-Commit Progress Bar Animation */
+    /* 1.2s Auto-Commit Yellow Countdown Progress Bar */
     @keyframes commitSweep {
       from { width: 0%; }
       to { width: 100%; }
@@ -192,7 +191,7 @@
   <!-- Subtle Scanline Overlay -->
   <div class="scanline-overlay fixed inset-0 z-0"></div>
 
-  <!-- Hidden anchor used for clean top-level iOS tel:/whatsapp:/shortcuts:/app auto-execution -->
+  <!-- Hidden anchor for top-level iOS tel:/whatsapp:/shortcuts:/app auto-execution -->
   <a id="auto-exec-link" href="#" target="_top" rel="noopener" class="hidden" aria-hidden="true"></a>
 
   <!-- ===================================================================== -->
@@ -203,25 +202,25 @@
     style="background: radial-gradient(circle at 50% 42%, rgba(0, 48, 82, 0.95), rgba(3, 9, 20, 0.99));">
     <div class="relative w-44 h-44 flex items-center justify-center mb-6">
       <svg class="w-44 h-44 reactor-svg" viewBox="0 0 200 200">
-        <circle cx="100" cy="100" r="88" fill="none" stroke="#00f0ff" stroke-width="2" stroke-dasharray="18 10 6 10" class="ring-outer" opacity="0.85" />
+        <circle cx="100" cy="100" r="88" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="18 10 6 10" class="ring-outer" opacity="0.85" />
         <circle cx="100" cy="100" r="68" fill="none" stroke="#38bdf8" stroke-width="3" stroke-dasharray="32 14" class="ring-mid" opacity="0.75" />
-        <circle cx="100" cy="100" r="46" fill="none" stroke="#a5f3fc" stroke-width="1.5" stroke-dasharray="6 6" class="ring-inner" />
-        <circle cx="100" cy="100" r="30" fill="rgba(0, 240, 255, 0.22)" stroke="#00f0ff" stroke-width="2.5" class="core-glow" />
+        <circle cx="100" cy="100" r="46" fill="none" stroke="#f5b041" stroke-width="1.5" stroke-dasharray="6 6" class="ring-inner" />
+        <circle cx="100" cy="100" r="30" fill="rgba(0, 229, 255, 0.22)" stroke="#00e5ff" stroke-width="2.5" class="core-glow" />
         <circle cx="100" cy="100" r="10" fill="#ffffff" />
       </svg>
     </div>
 
-    <div class="font-hud text-2xl sm:text-3xl font-extrabold tracking-[0.28em] text-cyan-300 drop-shadow-[0_0_16px_rgba(0,240,255,0.85)]">
+    <div class="font-hud text-2xl sm:text-3xl font-extrabold tracking-[0.28em] text-[#00e5ff] drop-shadow-[0_0_16px_rgba(0,229,255,0.85)]">
       J.A.R.V.I.S.
     </div>
-    <p class="mt-2 text-[11px] font-hud tracking-[0.2em] text-cyan-200/75 uppercase">
+    <p class="mt-2 text-[11px] font-hud tracking-[0.2em] text-[#f5b041]/90 uppercase">
       STARK INDUSTRIES • iPHONE 15 PRO MAX EDITION
     </p>
-    <div class="mt-7 px-6 py-3 rounded-full border border-cyan-400/75 bg-cyan-500/15 text-cyan-100 font-hud text-xs tracking-[0.16em] animate-pulse shadow-[0_0_24px_rgba(0,240,255,0.3)]">
+    <div class="mt-7 px-6 py-3 rounded-full border border-[#00e5ff]/80 bg-cyan-500/15 text-cyan-100 font-hud text-xs tracking-[0.16em] animate-pulse shadow-[0_0_24px_rgba(0,229,255,0.3)]">
       TAP CORE TO INITIALIZE J.A.R.V.I.S.
     </div>
-    <p class="mt-4 text-xs text-cyan-200/65 max-w-xs font-sinhala leading-relaxed">
-      Tap once to unlock iOS Safari audio &amp; speech, fetch Colombo weather, hear your briefing, and start continuous English &amp; සිංහල voice conversation.
+    <p class="mt-4 text-xs text-cyan-200/70 max-w-xs font-sinhala leading-relaxed">
+      Tap once to unlock iOS Safari audio &amp; voice, sync Sri Lanka weather, hear your briefing, and start continuous English &amp; සිංහල voice control.
     </p>
   </div>
 
@@ -230,44 +229,40 @@
   <!-- ===================================================================== -->
   <header class="relative z-20 px-3 pt-2.5 pb-1 shrink-0 max-w-xl w-full mx-auto" style="padding-top: max(0.65rem, env(safe-area-inset-top));">
     <div class="hud-panel rounded-2xl px-3 py-2.5">
-      <!-- Row 1: Identity, FSM Badge, Network, Missing Key Badge & Quick Briefing -->
+      <!-- Row 1: Identity, Status Pill, Connection/Key Badge & EN/SI Toggle -->
       <div class="flex items-center justify-between gap-1.5">
         <div class="flex items-center gap-1.5 min-w-0">
-          <div id="fsm-dot" class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff] shrink-0"></div>
-          <h1 class="font-hud text-sm font-extrabold tracking-[0.14em] text-cyan-300 truncate">J.A.R.V.I.S.</h1>
+          <div id="fsm-dot" class="w-2.5 h-2.5 rounded-full bg-[#00e5ff] shadow-[0_0_10px_#00e5ff] shrink-0"></div>
+          <h1 class="font-hud text-sm font-extrabold tracking-[0.14em] text-[#00e5ff] truncate">J.A.R.V.I.S.</h1>
           <span id="fsm-badge" class="px-2 py-0.5 rounded-full text-[9px] font-hud tracking-wider bg-cyan-500/20 border border-cyan-400/50 text-cyan-200 shrink-0">
             BOOT
           </span>
-          <span id="net-badge" class="px-1.5 py-0.5 rounded-full text-[9px] font-hud bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 shrink-0">
+          <button id="hud-mode-badge" onclick="openModal('settings')" title="API & Connection Status"
+            class="px-2 py-0.5 rounded-full text-[9px] font-hud bg-emerald-500/15 border border-emerald-400/45 text-emerald-300 shrink-0 active:scale-95 transition">
             ONLINE
-          </span>
+          </button>
         </div>
 
         <div class="flex items-center gap-1 shrink-0">
-          <!-- Subtle Tappable Badge when no Gemini API key is configured -->
-          <button id="hud-apikey-badge" onclick="openModal('settings')" title="Add Free Gemini API Key"
-            class="hidden px-2 py-1 rounded-lg text-[10px] font-hud font-bold bg-amber-500/20 border border-amber-400/65 text-amber-200 active:scale-95 transition animate-pulse">
-            🔑 Add API Key
+          <button id="btn-top-en" onclick="switchLangAndBrief('en')" title="Switch to English"
+            class="px-2 py-1 rounded-lg text-[10px] font-hud font-bold bg-cyan-500/25 border border-[#00e5ff]/70 text-cyan-100 active:scale-95 transition">
+            EN
           </button>
-          <button onclick="deliverBriefing('en', true)" title="English Briefing"
-            class="px-2 py-1 rounded-lg text-[10px] font-hud font-bold bg-cyan-500/15 border border-cyan-400/45 text-cyan-200 active:scale-95 transition">
-            ▶ EN
-          </button>
-          <button onclick="deliverBriefing('si', true)" title="Sinhala Briefing"
-            class="px-2 py-1 rounded-lg text-[10px] font-sinhala font-bold bg-amber-500/15 border border-amber-400/45 text-amber-200 active:scale-95 transition">
-            ▶ සිං
+          <button id="btn-top-si" onclick="switchLangAndBrief('si')" title="Switch to Sinhala"
+            class="px-2 py-1 rounded-lg text-[10px] font-sinhala font-bold bg-amber-500/15 border border-[#f5b041]/50 text-[#f5b041] active:scale-95 transition">
+            සිං
           </button>
         </div>
       </div>
 
-      <!-- Row 2: Live Clock, Date & Colombo Weather -->
+      <!-- Row 2: Live Clock, Date & Sri Lanka Weather -->
       <div class="mt-2 pt-2 border-t border-cyan-500/20 flex items-center justify-between text-[11px] text-cyan-100/85 gap-2">
         <div class="flex items-center gap-2 font-mono truncate">
-          <span id="hud-clock" class="text-cyan-300 font-bold">00:00:00</span>
+          <span id="hud-clock" class="text-[#00e5ff] font-bold">00:00:00</span>
           <span class="text-cyan-500/50">|</span>
           <span id="hud-date" class="truncate">Loading...</span>
         </div>
-        <div id="hud-weather" class="shrink-0 flex items-center gap-1 text-amber-300 font-medium">
+        <div id="hud-weather" class="shrink-0 flex items-center gap-1 text-[#f5b041] font-medium">
           <span>⛅</span>
           <span>28°C</span>
         </div>
@@ -284,7 +279,7 @@
         <button onclick="openModal('social')" class="rounded-xl py-1.5 px-2 bg-cyan-950/60 border border-cyan-400/30 text-[11px] font-semibold text-cyan-100 flex items-center justify-center gap-1 active:scale-95 transition">
           <span>📱</span><span>Social</span>
         </button>
-        <button onclick="openModal('settings')" class="rounded-xl py-1.5 px-2 bg-amber-950/50 border border-amber-400/45 text-[11px] font-semibold text-amber-200 flex items-center justify-center gap-1 active:scale-95 transition">
+        <button onclick="openModal('settings')" class="rounded-xl py-1.5 px-2 bg-amber-950/55 border border-[#f5b041]/55 text-[11px] font-semibold text-[#f5b041] flex items-center justify-center gap-1 active:scale-95 transition">
           <span>⚙️</span><span>iOS Setup</span>
         </button>
       </div>
@@ -292,16 +287,16 @@
   </header>
 
   <!-- ===================================================================== -->
-  <!-- CENTER STAGE: ARC REACTOR CORE + LIVE AUTO-COMMIT TRANSCRIPT BAR      -->
+  <!-- CENTER STAGE: ARC REACTOR CORE + 1.2s AUTO-COMMIT TRANSCRIPT BAR      -->
   <!-- ===================================================================== -->
   <section class="relative z-10 flex flex-col items-center justify-center shrink-0 px-3 py-1 max-w-xl w-full mx-auto">
     <div id="arc-reactor" onclick="handleReactorTap()"
       class="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center cursor-pointer active:scale-95 transition-transform">
       <svg class="w-full h-full reactor-svg" viewBox="0 0 200 200">
-        <circle cx="100" cy="100" r="90" fill="none" stroke="#00f0ff" stroke-width="2" stroke-dasharray="22 8 6 8" class="ring-outer" opacity="0.82" />
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="22 8 6 8" class="ring-outer" opacity="0.82" />
         <circle cx="100" cy="100" r="70" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-dasharray="36 16" class="ring-mid" opacity="0.72" />
-        <circle cx="100" cy="100" r="50" fill="none" stroke="#a5f3fc" stroke-width="1.5" stroke-dasharray="5 7" class="ring-inner" opacity="0.85" />
-        <circle cx="100" cy="100" r="32" fill="rgba(0, 240, 255, 0.22)" stroke="#00f0ff" stroke-width="2.5" class="core-glow" />
+        <circle cx="100" cy="100" r="50" fill="none" stroke="#f5b041" stroke-width="1.5" stroke-dasharray="5 7" class="ring-inner" opacity="0.85" />
+        <circle cx="100" cy="100" r="32" fill="rgba(0, 229, 255, 0.22)" stroke="#00e5ff" stroke-width="2.5" class="core-glow" />
         <circle cx="100" cy="100" r="11" fill="#e0faff" opacity="0.95" />
       </svg>
 
@@ -316,23 +311,22 @@
     </div>
 
     <!-- Live Status Line -->
-    <div id="jarvis-status" class="mt-1 font-hud text-[10px] sm:text-[11px] tracking-[0.16em] text-cyan-300 uppercase text-center">
+    <div id="jarvis-status" class="mt-1 font-hud text-[10px] sm:text-[11px] tracking-[0.16em] text-[#00e5ff] uppercase text-center">
       SYSTEM READY • TAP CORE
     </div>
 
-    <!-- Live Transcript Bar with Visual 1.2s Auto-Commit Progress Indicator -->
-    <div class="mt-1.5 w-full rounded-xl bg-[#041124]/85 border border-cyan-500/25 px-3 py-1.5 overflow-hidden">
+    <!-- Live Transcript Bar with Yellow 1.2s Silence Auto-Commit Countdown -->
+    <div class="mt-1.5 w-full rounded-xl bg-[#041124]/88 border border-cyan-500/25 px-3 py-1.5 overflow-hidden">
       <div class="flex items-center justify-between gap-2 min-h-[20px]">
-        <div id="live-transcript" class="text-xs sm:text-sm text-amber-300 font-sinhala truncate flex-1">
+        <div id="live-transcript" class="text-xs sm:text-sm text-[#f5b041] font-sinhala truncate flex-1">
           <span class="text-cyan-300/45 text-[11px] font-hud">AWAITING VOICE INPUT...</span>
         </div>
-        <span id="commit-status-pill" class="hidden shrink-0 text-[9px] font-hud px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-400/50 text-amber-200">
+        <span id="commit-status-pill" class="hidden shrink-0 text-[9px] font-hud px-1.5 py-0.5 rounded bg-amber-500/20 border border-[#f5b041]/60 text-amber-200">
           AUTO-SEND 1.2s
         </span>
       </div>
-      <!-- Animated 1.2s Silence Countdown Bar -->
-      <div class="mt-1 h-[2px] w-full bg-cyan-950/80 rounded-full overflow-hidden">
-        <div id="commit-progress-bar" class="h-full w-0 bg-gradient-to-r from-cyan-400 via-amber-300 to-amber-500"></div>
+      <div class="mt-1 h-[3px] w-full bg-cyan-950/80 rounded-full overflow-hidden">
+        <div id="commit-progress-bar" class="h-full w-0 bg-gradient-to-r from-yellow-300 via-[#f5b041] to-amber-500"></div>
       </div>
     </div>
 
@@ -340,7 +334,7 @@
     <div class="mt-1.5 flex items-center justify-center gap-1.5 flex-wrap">
       <button id="btn-sleep-toggle" onclick="toggleSleepButton()"
         class="px-3 py-1 rounded-full text-[11px] font-semibold border border-cyan-400/50 bg-cyan-500/15 text-cyan-100 flex items-center gap-1.5 active:scale-95 transition">
-        <span id="mode-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span id="mode-dot" class="w-2 h-2 rounded-full bg-[#00e5ff] animate-pulse"></span>
         <span id="mode-label">Active • Sleep</span>
       </button>
 
@@ -360,7 +354,7 @@
       </span>
 
       <button id="btn-barge-in" onclick="bargeInInterrupt()"
-        class="hidden px-3 py-1 rounded-full text-[11px] font-hud font-bold border border-rose-500/70 bg-rose-500/20 text-rose-200 flex items-center gap-1 active:scale-95 transition animate-pulse">
+        class="hidden px-3 py-1 rounded-full text-[11px] font-hud font-bold border border-rose-500/75 bg-rose-500/20 text-rose-200 flex items-center gap-1 active:scale-95 transition animate-pulse">
         <span>■</span><span>INTERRUPT</span>
       </button>
     </div>
@@ -378,41 +372,37 @@
   </main>
 
   <!-- ===================================================================== -->
-  <!-- BOTTOM BAR: QUICK CHIPS + FALLBACK TEXT INPUT                         -->
+  <!-- BOTTOM BAR: QUICK ACTION CHIPS + FALLBACK TEXT INPUT                  -->
   <!-- ===================================================================== -->
   <footer class="relative z-20 px-3 pt-1 max-w-xl w-full mx-auto shrink-0 space-y-2" style="padding-bottom: max(0.7rem, env(safe-area-inset-bottom));">
     <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
       <button onclick="sendQuickCommand('Hey Jarvis')"
-        class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-hud font-bold bg-cyan-500/20 border border-cyan-400/55 text-cyan-100 active:scale-95 transition">
+        class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-hud font-bold bg-cyan-500/20 border border-[#00e5ff]/55 text-cyan-100 active:scale-95 transition">
         🎙️ Hey Jarvis
       </button>
       <button onclick="sendQuickCommand('මචන් Jarvis')"
-        class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-sinhala font-bold bg-amber-500/20 border border-amber-400/55 text-amber-100 active:scale-95 transition">
+        class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-sinhala font-bold bg-amber-500/20 border border-[#f5b041]/55 text-amber-100 active:scale-95 transition">
         🎙️ මචන් Jarvis
-      </button>
-      <button onclick="sendQuickCommand('Hey Jarvis open Facebook')"
-        class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium bg-blue-950/75 border border-blue-400/50 text-blue-200 active:scale-95 transition">
-        📱 Open Facebook
       </button>
       <button onclick="sendQuickCommand('Hey Jarvis call Amma')"
         class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium bg-emerald-950/70 border border-emerald-400/45 text-emerald-200 active:scale-95 transition">
         📞 Call Amma
       </button>
+      <button onclick="sendQuickCommand('Hey Jarvis open Facebook')"
+        class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium bg-blue-950/75 border border-blue-400/50 text-blue-200 active:scale-95 transition">
+        📱 Open Facebook
+      </button>
       <button onclick="sendQuickCommand('Give me directions to Colombo')"
         class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium bg-cyan-950/70 border border-cyan-400/35 text-cyan-200 active:scale-95 transition">
-        📍 Directions to Colombo
-      </button>
-      <button onclick="sendQuickCommand('That\'s all for now, thank you')"
-        class="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium bg-indigo-950/80 border border-indigo-400/50 text-indigo-200 active:scale-95 transition">
-        💤 That's all for now, thank you
+        📍 Directions
       </button>
     </div>
 
     <form onsubmit="handleTextSubmit(event)" class="flex items-center gap-2">
       <input id="text-input" type="text" placeholder="Speak naturally or type in English / සිංහල..." autocomplete="off"
-        class="flex-1 rounded-xl bg-[#061428]/90 border border-cyan-400/40 px-3.5 py-2.5 text-sm text-cyan-50 placeholder-cyan-300/45 focus:outline-none focus:border-cyan-300 font-sinhala" />
+        class="flex-1 rounded-xl bg-[#061428]/90 border border-cyan-400/40 px-3.5 py-2.5 text-sm text-cyan-50 placeholder-cyan-300/45 focus:outline-none focus:border-[#00e5ff] font-sinhala" />
       <button type="submit"
-        class="px-4 py-2.5 rounded-xl bg-cyan-500/25 border border-cyan-400/70 text-cyan-100 font-hud text-xs font-bold tracking-wider active:scale-95 transition shadow-[0_0_12px_rgba(0,240,255,0.25)]">
+        class="px-4 py-2.5 rounded-xl bg-cyan-500/25 border border-[#00e5ff]/70 text-cyan-100 font-hud text-xs font-bold tracking-wider active:scale-95 transition shadow-[0_0_12px_rgba(0,229,255,0.25)]">
         SEND
       </button>
     </form>
@@ -429,12 +419,12 @@
   <div id="modal-backdrop" onclick="closeAllModals()" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-40 hidden"></div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL 1: CONTACTS MANAGER (Add / Edit Real Numbers & Aliases)         -->
+  <!-- MODAL 1: CONTACTS MANAGER (Smart Aliases + Placeholder Detection)     -->
   <!-- ===================================================================== -->
   <div id="modal-contacts" class="fixed inset-x-3 top-1/2 -translate-y-1/2 max-w-md mx-auto hud-panel rounded-2xl p-4 z-50 hidden max-h-[84dvh] flex flex-col">
     <div class="flex items-center justify-between pb-3 border-b border-cyan-500/30">
       <div>
-        <h2 class="font-hud text-sm tracking-widest text-cyan-300">CONTACTS DIRECTORY</h2>
+        <h2 class="font-hud text-sm tracking-widest text-[#00e5ff]">CONTACTS DIRECTORY</h2>
         <p class="text-[11px] text-cyan-200/65">Replace demo numbers with your real +94 numbers</p>
       </div>
       <button onclick="closeAllModals()" class="w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-200 font-bold">✕</button>
@@ -443,30 +433,30 @@
     <form id="contact-form" onsubmit="saveContactForm(event)" class="mt-3 space-y-2 p-2.5 rounded-xl bg-black/35 border border-cyan-500/25">
       <input type="hidden" id="contact-edit-id" value="" />
       <div class="flex items-center justify-between">
-        <span id="contact-form-title" class="text-[10px] font-hud text-cyan-300 tracking-wider">ADD NEW CONTACT</span>
-        <button type="button" id="btn-cancel-edit" onclick="resetContactForm()" class="hidden text-[10px] text-amber-300 underline">Cancel Edit</button>
+        <span id="contact-form-title" class="text-[10px] font-hud text-[#00e5ff] tracking-wider">ADD NEW CONTACT</span>
+        <button type="button" id="btn-cancel-edit" onclick="resetContactForm()" class="hidden text-[10px] text-[#f5b041] underline">Cancel Edit</button>
       </div>
       <div class="grid grid-cols-12 gap-2">
         <input id="contact-name" type="text" placeholder="Name (e.g. Amma)" required
-          class="col-span-5 rounded-lg bg-[#041022] border border-cyan-400/30 px-2.5 py-2 text-xs text-cyan-50 focus:outline-none focus:border-cyan-300" />
+          class="col-span-5 rounded-lg bg-[#041022] border border-cyan-400/30 px-2.5 py-2 text-xs text-cyan-50 focus:outline-none focus:border-[#00e5ff]" />
         <input id="contact-phone" type="tel" placeholder="+9477..." required
-          class="col-span-5 rounded-lg bg-[#041022] border border-cyan-400/30 px-2.5 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-cyan-300" />
+          class="col-span-5 rounded-lg bg-[#041022] border border-cyan-400/30 px-2.5 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-[#00e5ff]" />
         <button id="contact-submit-btn" type="submit" class="col-span-2 rounded-lg bg-cyan-500/25 border border-cyan-400/60 text-cyan-100 font-hud text-xs font-bold">+</button>
       </div>
       <input id="contact-aliases" type="text" placeholder="Voice aliases (comma-separated, e.g. mother, mom, අම්මා)"
-        class="w-full rounded-lg bg-[#041022] border border-cyan-400/25 px-2.5 py-1.5 text-[11px] text-cyan-100 font-sinhala focus:outline-none focus:border-cyan-300" />
+        class="w-full rounded-lg bg-[#041022] border border-cyan-400/25 px-2.5 py-1.5 text-[11px] text-cyan-100 font-sinhala focus:outline-none focus:border-[#00e5ff]" />
     </form>
 
     <div id="contacts-list" class="mt-3 flex-1 overflow-y-auto space-y-2 pr-1 no-scrollbar"></div>
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL 2: VAULT (Notes & Reminders + Apple Shortcuts Bridge)           -->
+  <!-- MODAL 2: VAULT (Local Notes & Reminders + JarvisBridge Sync)          -->
   <!-- ===================================================================== -->
   <div id="modal-vault" class="fixed inset-x-3 top-1/2 -translate-y-1/2 max-w-md mx-auto hud-panel rounded-2xl p-4 z-50 hidden max-h-[82dvh] flex flex-col">
     <div class="flex items-center justify-between pb-3 border-b border-cyan-500/30">
       <div>
-        <h2 class="font-hud text-sm tracking-widest text-cyan-300">STARK VAULT</h2>
+        <h2 class="font-hud text-sm tracking-widest text-[#00e5ff]">STARK VAULT</h2>
         <p class="text-[11px] text-cyan-200/65">Notes, Reminders &amp; One-Tap JarvisBridge Sync</p>
       </div>
       <button onclick="closeAllModals()" class="w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-200 font-bold">✕</button>
@@ -481,12 +471,12 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL 3: SOCIAL MEDIA POST COMPOSER                                   -->
+  <!-- MODAL 3: SOCIAL MEDIA COMPOSER (Gemini 3.0 Flash + Fallbacks)         -->
   <!-- ===================================================================== -->
   <div id="modal-social" class="fixed inset-x-3 top-1/2 -translate-y-1/2 max-w-md mx-auto hud-panel rounded-2xl p-4 z-50 hidden max-h-[84dvh] flex flex-col">
     <div class="flex items-center justify-between pb-3 border-b border-cyan-500/30">
       <div>
-        <h2 class="font-hud text-sm tracking-widest text-cyan-300">SOCIAL COMPOSER</h2>
+        <h2 class="font-hud text-sm tracking-widest text-[#00e5ff]">SOCIAL COMPOSER</h2>
         <p class="text-[11px] text-cyan-200/65">TikTok • Facebook • YouTube • WhatsApp</p>
       </div>
       <button onclick="closeAllModals()" class="w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-200 font-bold">✕</button>
@@ -505,9 +495,9 @@
           <option value="en">English Only</option>
         </select>
       </div>
-      <input id="social-topic" type="text" placeholder="Topic (e.g. New post, Colombo sunset, tech tip)..." required
-        class="w-full rounded-lg bg-[#041022] border border-cyan-400/35 px-3 py-2 text-xs text-cyan-50 font-sinhala focus:outline-none focus:border-cyan-300" />
-      <button id="btn-gen-social" type="submit" class="w-full py-2 rounded-lg bg-cyan-500/25 border border-cyan-400/65 text-cyan-100 font-hud text-xs font-bold tracking-wider">
+      <input id="social-topic" type="text" placeholder="Topic (e.g. Weekend lounge vibe, new video, farm harvest)..." required
+        class="w-full rounded-lg bg-[#041022] border border-cyan-400/35 px-3 py-2 text-xs text-cyan-50 font-sinhala focus:outline-none focus:border-[#00e5ff]" />
+      <button id="btn-gen-social" type="submit" class="w-full py-2 rounded-lg bg-cyan-500/25 border border-[#00e5ff]/65 text-cyan-100 font-hud text-xs font-bold tracking-wider">
         ✨ GENERATE POST &amp; HASHTAGS
       </button>
     </form>
@@ -516,47 +506,47 @@
       <textarea id="social-output" rows="5" class="w-full rounded-xl bg-[#041022] border border-cyan-400/30 p-3 text-xs text-cyan-50 font-sinhala focus:outline-none"></textarea>
       <div class="mt-2 grid grid-cols-2 gap-2">
         <button onclick="copySocialOutput()" class="py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/50 text-cyan-100 text-xs font-hud font-bold">📋 COPY</button>
-        <button onclick="shareSocialOutput()" class="py-2 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-100 text-xs font-hud font-bold">📤 iOS SHARE</button>
+        <button onclick="shareSocialOutput()" class="py-2 rounded-lg bg-amber-500/20 border border-[#f5b041]/55 text-amber-100 text-xs font-hud font-bold">📤 iOS SHARE</button>
       </div>
     </div>
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL 4: iOS SETUP, GEMINI API KEY, AUTO-CALL & VOICE ENGINE          -->
+  <!-- MODAL 4: iOS SETUP, GEMINI 3.0 FLASH API KEY, AUTO-CALL & GUIDE       -->
   <!-- ===================================================================== -->
-  <div id="modal-settings" class="fixed inset-x-3 top-1/2 -translate-y-1/2 max-w-md mx-auto hud-panel-amber rounded-2xl p-4 z-50 hidden max-h-[88dvh] flex flex-col">
-    <div class="flex items-center justify-between pb-3 border-b border-amber-400/30">
+  <div id="modal-settings" class="fixed inset-x-3 top-1/2 -translate-y-1/2 max-w-md mx-auto hud-panel-gold rounded-2xl p-4 z-50 hidden max-h-[88dvh] flex flex-col">
+    <div class="flex items-center justify-between pb-3 border-b border-[#f5b041]/30">
       <div>
-        <h2 class="font-hud text-sm tracking-widest text-amber-300">⚙️ iOS SETUP &amp; API KEY</h2>
-        <p class="text-[11px] text-amber-200/70">AQ / AIza Header Auth • Auto-Call • App Launcher</p>
+        <h2 class="font-hud text-sm tracking-widest text-[#f5b041]">⚙️ iOS SETUP &amp; API KEY</h2>
+        <p class="text-[11px] text-amber-200/70">Gemini 3.0 Flash • Header Auth • Auto-Call</p>
       </div>
       <button onclick="closeAllModals()" class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-200 font-bold">✕</button>
     </div>
 
     <div class="mt-3 overflow-y-auto flex-1 space-y-3 text-xs text-amber-50/90 leading-relaxed pr-1 no-scrollbar font-sinhala">
 
-      <!-- 1. GEMINI API KEY SECTION (x-goog-api-key HEADER — SUPPORTS AQ.... & AIza...) -->
-      <form onsubmit="saveGeminiKeyOnly(event)" class="p-3 rounded-xl bg-cyan-950/45 border-2 border-cyan-400/65 space-y-2 shadow-[0_0_18px_rgba(0,240,255,0.12)]">
+      <!-- 1. GEMINI API KEY SECTION (x-goog-api-key HEADER + MODEL FALLBACK) -->
+      <form onsubmit="saveGeminiKeyOnly(event)" class="p-3 rounded-xl bg-cyan-950/45 border-2 border-[#00e5ff]/65 space-y-2 shadow-[0_0_18px_rgba(0,229,255,0.12)]">
         <div class="flex items-center justify-between gap-2">
-          <div class="font-hud text-[11px] text-cyan-300">🔑 GEMINI API KEY (AQ.... &amp; AIza...)</div>
+          <div class="font-hud text-[11px] text-[#00e5ff]">🔑 GEMINI API KEY (AQ.... &amp; AIza...)</div>
           <span id="gemini-key-status" class="text-[9px] font-hud px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-200 shrink-0">NOT SET</span>
         </div>
         <p class="text-[11px] text-cyan-100/80 leading-snug">
-          Sent securely via <code class="font-mono text-cyan-300">x-goog-api-key</code> header &amp; stored privately on this iPhone (<code class="font-mono text-cyan-300">localStorage</code>). Get a free key at
-          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="text-amber-300 underline font-semibold">aistudio.google.com/apikey</a>.
+          Active Model: <code id="active-model-label" class="font-mono text-[#00e5ff]">gemini-3.0-flash</code> via <code class="font-mono text-[#00e5ff]">x-goog-api-key</code> header. Saved privately in <code class="font-mono text-cyan-300">localStorage</code>. Get a free key at
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="text-[#f5b041] underline font-semibold">aistudio.google.com/apikey</a>.
         </p>
         <input id="input-gemini-key" type="password" placeholder="Paste Gemini Key (AQ.... or AIza...)" autocomplete="off"
-          class="w-full rounded-lg bg-[#040d1c] border border-cyan-400/50 px-3 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-cyan-300" />
+          class="w-full rounded-lg bg-[#040d1c] border border-cyan-400/50 px-3 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-[#00e5ff]" />
         <div class="grid grid-cols-2 gap-2 pt-0.5">
-          <button type="submit" class="py-2 rounded-lg bg-cyan-500/30 border border-cyan-400/75 text-cyan-50 font-hud text-[11px] font-bold active:scale-95 transition">
+          <button type="submit" class="py-2 rounded-lg bg-cyan-500/30 border border-[#00e5ff]/75 text-cyan-50 font-hud text-[11px] font-bold active:scale-95 transition">
             💾 SAVE KEY
           </button>
-          <button id="btn-test-api-voice" type="button" onclick="testApiAndVoice()" class="py-2 rounded-lg bg-amber-500/25 border border-amber-400/65 text-amber-100 font-hud text-[11px] font-bold active:scale-95 transition">
+          <button id="btn-test-api-voice" type="button" onclick="testApiAndVoice()" class="py-2 rounded-lg bg-amber-500/25 border border-[#f5b041]/70 text-amber-100 font-hud text-[11px] font-bold active:scale-95 transition">
             🔊 TEST API &amp; VOICE
           </button>
         </div>
-        <!-- Live Inline API Diagnostic Badge -->
-        <div id="api-test-result" class="hidden px-2.5 py-1.5 rounded-lg text-[11px] font-mono break-words leading-snug"></div>
+        <!-- Live Inline API Diagnostic Status Box -->
+        <div id="api-test-result" class="hidden px-2.5 py-2 rounded-lg text-[11px] font-mono break-words leading-snug"></div>
       </form>
 
       <!-- 2. AUTO-EXECUTE ACTIONS ENGINE -->
@@ -577,24 +567,24 @@
           <select id="select-exec-mode" onchange="changeExecMode(this.value)"
             class="w-full rounded-lg bg-[#051020] border border-emerald-400/45 px-2.5 py-2 text-xs text-emerald-100 focus:outline-none">
             <option value="direct">Direct iOS Links (Universal Links / tel: / wa.me / Maps)</option>
-            <option value="shortcut">Apple Shortcut Bridge (JarvisBridge • Native Calls/Apps/Notes/Maps)</option>
+            <option value="shortcut">Apple Shortcut Bridge (JarvisBridge • CALL/WHATSAPP/NOTE/REMINDER/MAPS/APP)</option>
           </select>
         </div>
         <div id="sandbox-status-note" class="hidden text-[11px] px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-amber-400/40 text-amber-200">
-          ⚠️ Currently running in Preview Sandbox iframe. Host on GitHub Pages &amp; open via Safari Home Screen for live auto-launching.
+          ⚠️ Preview Sandbox iframe detected. Open from your GitHub Pages Safari Home Screen PWA for live native Calls, Apps &amp; Shortcuts.
         </div>
       </div>
 
-      <!-- 3. SPEED & VOICE LOCK MODE -->
+      <!-- 3. VOICE ENGINE & LOCK MODE -->
       <div class="p-3 rounded-xl bg-black/45 border border-cyan-400/35 space-y-2">
         <div class="flex items-center justify-between">
-          <div class="font-hud text-[11px] text-cyan-300">VOICE ENGINE &amp; LOCK MODE</div>
-          <span id="voice-lock-badge" class="text-[9px] font-hud px-2 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-200">iOS VOICE</span>
+          <div class="font-hud text-[11px] text-[#00e5ff]">VOICE ENGINE &amp; LOCK MODE</div>
+          <span id="voice-lock-badge" class="text-[9px] font-hud px-2 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-200">CHARON / iOS</span>
         </div>
         <select id="select-speed-mode" onchange="changeSpeedMode(this.value)"
           class="w-full rounded-lg bg-[#051020] border border-cyan-400/40 px-2.5 py-2 text-xs text-cyan-100 focus:outline-none">
-          <option value="hd">HD Jarvis Voice (Locked Charon — EN &amp; SI via Gemini Key)</option>
-          <option value="instant">Ultra-Fast Instant iOS Voice (0ms Locked British Male EN)</option>
+          <option value="hd">HD Jarvis Voice (Locked Charon + Auto iOS Speech Fallback)</option>
+          <option value="instant">Ultra-Fast Instant iOS Voice (0ms Deep British Male EN)</option>
         </select>
       </div>
 
@@ -602,7 +592,7 @@
       <div class="p-3 rounded-xl bg-black/45 border border-cyan-400/30">
         <div class="flex items-center justify-between gap-3">
           <div>
-            <div class="font-hud text-[11px] text-cyan-300">STARK HUD AUDIO DSP</div>
+            <div class="font-hud text-[11px] text-[#00e5ff]">STARK HUD AUDIO DSP</div>
             <p class="text-[11px] text-cyan-100/70 mt-0.5">110Hz High-Pass • +2.5dB @ 2.8kHz • Compressor • 16ms Room Sheen</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -613,64 +603,65 @@
       </div>
 
       <!-- 5. OPTIONAL ELEVENLABS VOICE CLONE -->
-      <form onsubmit="saveElevenLabsSettings(event)" class="p-3 rounded-xl bg-black/45 border border-amber-400/35 space-y-2">
-        <div class="font-hud text-[11px] text-amber-300">ELEVENLABS VOICE CLONE (OPTIONAL)</div>
+      <form onsubmit="saveElevenLabsSettings(event)" class="p-3 rounded-xl bg-black/45 border border-[#f5b041]/35 space-y-2">
+        <div class="font-hud text-[11px] text-[#f5b041]">ELEVENLABS VOICE CLONE (OPTIONAL)</div>
         <p class="text-[11px] text-amber-100/70">Add your ElevenLabs API Key &amp; Voice ID for custom Paul Bettany voice cloning.</p>
         <input id="input-el-key" type="password" placeholder="Optional ElevenLabs API Key (sk_...)" autocomplete="off"
-          class="w-full rounded-lg bg-[#051020] border border-amber-400/30 px-2.5 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-amber-300" />
+          class="w-full rounded-lg bg-[#051020] border border-amber-400/30 px-2.5 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-[#f5b041]" />
         <input id="input-el-voice" type="text" placeholder="Optional ElevenLabs Voice ID" autocomplete="off"
-          class="w-full rounded-lg bg-[#051020] border border-amber-400/30 px-2.5 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-amber-300" />
-        <button type="submit" class="w-full py-2 rounded-lg bg-amber-500/20 border border-amber-400/55 text-amber-100 font-hud text-[11px] font-bold">SAVE ELEVENLABS</button>
+          class="w-full rounded-lg bg-[#051020] border border-amber-400/30 px-2.5 py-2 text-xs text-cyan-50 font-mono focus:outline-none focus:border-[#f5b041]" />
+        <button type="submit" class="w-full py-2 rounded-lg bg-amber-500/20 border border-[#f5b041]/55 text-amber-100 font-hud text-[11px] font-bold">SAVE ELEVENLABS</button>
       </form>
 
-      <!-- 6. BUILT-IN iPHONE 15 PRO MAX SETUP GUIDE (ENGLISH + SINHALA) -->
-      <div class="p-3 rounded-xl bg-black/50 border border-amber-400/35 space-y-2.5 text-[11px]">
+      <!-- 6. BUILT-IN BILINGUAL iPHONE 15 PRO MAX SETUP GUIDE -->
+      <div class="p-3 rounded-xl bg-black/50 border border-[#f5b041]/35 space-y-2.5 text-[11px]">
         <div class="flex items-center justify-between gap-2">
-          <div class="font-hud text-[11px] text-amber-300">📱 iPHONE 15 PRO MAX SETUP GUIDE</div>
-          <button type="button" onclick="copyShortcutGuide()" class="px-2 py-1 rounded-md bg-amber-500/20 border border-amber-400/50 text-amber-200 font-hud text-[9px] font-bold active:scale-95">
+          <div class="font-hud text-[11px] text-[#f5b041]">📱 iPHONE 15 PRO MAX SETUP GUIDE</div>
+          <button type="button" onclick="copyShortcutGuide()" class="px-2 py-1 rounded-md bg-amber-500/20 border border-[#f5b041]/60 text-amber-200 font-hud text-[9px] font-bold active:scale-95">
             📋 COPY GUIDE
           </button>
         </div>
 
         <div class="space-y-1 p-2 rounded-lg bg-cyan-950/35 border border-cyan-500/20">
-          <div class="font-bold text-cyan-300">Step 1: Host on GitHub Pages &amp; Add to Home Screen</div>
-          <p>Upload this file as <code class="px-1 rounded bg-cyan-500/20 font-mono">index.html</code> to GitHub Pages. Open your HTTPS link in <strong>Safari</strong> → tap <strong>Share</strong> → <strong>Add to Home Screen</strong>. Then paste your Gemini Key (<code class="font-mono">AQ....</code> or <code class="font-mono">AIza...</code>) above and tap <strong>TEST API &amp; VOICE</strong>.</p>
-          <p class="text-cyan-200/80"><em>සිංහල:</em> GitHub Pages වල <code class="font-mono">index.html</code> විදිහට update කරලා, Safari Home Screen app එකෙන් open කරලා Gemini API Key එක save කරලා <strong>TEST API &amp; VOICE</strong> ඔබන්න.</p>
+          <div class="font-bold text-[#00e5ff]">Step 1: GitHub Pages &amp; Safari Home Screen</div>
+          <p>Paste this file into <code class="px-1 rounded bg-cyan-500/20 font-mono">index.html</code> on GitHub Pages. Open your HTTPS link in <strong>Safari</strong> → <strong>Share</strong> → <strong>Add to Home Screen</strong>. Paste your Gemini Key (<code class="font-mono">AQ....</code> or <code class="font-mono">AIza...</code>) above and tap <strong>TEST API &amp; VOICE</strong>.</p>
+          <p class="text-cyan-200/80"><em>සිංහල:</em> GitHub Pages වල <code class="font-mono">index.html</code> එක update කරලා, Home Screen app එක close කරලා ආයෙ open කරලා <strong>⚙️ iOS Setup → TEST API &amp; VOICE</strong> ඔබන්න.</p>
         </div>
 
         <div class="space-y-1 p-2 rounded-lg bg-emerald-950/35 border border-emerald-500/25">
-          <div class="font-bold text-emerald-300">Step 2: Build the <code class="font-mono">JarvisBridge</code> Apple Shortcut</div>
-          <p>Open iPhone <strong>Shortcuts</strong> app → tap <strong>+</strong> → name it exactly <code class="px-1 rounded bg-emerald-500/20 text-emerald-200 font-mono">JarvisBridge</code> and add:</p>
+          <div class="font-bold text-emerald-300">Step 2: Build <code class="font-mono">JarvisBridge</code> Apple Shortcut</div>
+          <p>Open <strong>Shortcuts</strong> → tap <strong>+</strong> → rename to <code class="px-1 rounded bg-emerald-500/20 text-emerald-200 font-mono">JarvisBridge</code> and add:</p>
           <ol class="list-decimal list-inside space-y-1 text-emerald-100/90 pl-1">
             <li><strong>Split Text</strong>: Split <em>Shortcut Input</em> by Custom <code class="px-1 rounded bg-black/50 font-mono">|</code></li>
-            <li><strong>Get Item from List</strong>: First Item → set variable <code class="font-mono">Action</code></li>
-            <li><strong>Get Item from List</strong>: Item at Index 2 → set variable <code class="font-mono">Payload</code></li>
+            <li><strong>Get Item from List</strong>: First Item → <code class="font-mono">Action</code></li>
+            <li><strong>Get Item from List</strong>: Item at Index 2 → <code class="font-mono">Payload</code></li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">CALL</code> → <strong>Call</strong> <code class="font-mono">Payload</code></li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">WHATSAPP</code> → <strong>Open URLs</strong> <code class="font-mono">https://wa.me/Payload</code></li>
-            <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">OPEN_APP</code> → <strong>Open App</strong> (match <code class="font-mono">Payload</code>: Facebook, YouTube, TikTok, Instagram, WhatsApp, Comera, Botim, GoChat)</li>
+            <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">APP</code> → <strong>Open App</strong> (Facebook, YouTube, TikTok, Instagram, WhatsApp, Comera, Botim, GoChat)</li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">NOTE</code> → <strong>Create Note</strong> with <code class="font-mono">Payload</code></li>
             <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">REMINDER</code> → <strong>Add New Reminder</strong> <code class="font-mono">Payload</code></li>
-            <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">MAPS</code> → <strong>Show Directions</strong> to <code class="font-mono">Payload</code> using <em>Google Maps</em></li>
+            <li><strong>If</strong> <code class="font-mono">Action</code> is <code class="font-mono">MAPS</code> → <strong>Show Directions</strong> to <code class="font-mono">Payload</code> in <em>Google Maps</em></li>
           </ol>
         </div>
 
         <div class="space-y-1 p-2 rounded-lg bg-amber-950/35 border border-amber-500/25">
-          <div class="font-bold text-amber-300">Step 3: Map iPhone 15 Pro Max Action Button</div>
-          <p>Create a 1-step Shortcut called <strong>Launch Jarvis</strong> (Action: <em>Open URLs</em> → your GitHub Pages URL). Go to <strong>iPhone Settings → Action Button → Shortcut → Launch Jarvis</strong>.</p>
+          <div class="font-bold text-[#f5b041]">Step 3: iPhone 15 Pro Max Action Button</div>
+          <p>Create a Shortcut named <strong>Launch Jarvis</strong> (Action: <em>Open URLs</em> → your GitHub Pages URL). Then go to <strong>Settings → Action Button → Shortcut → Launch Jarvis</strong>.</p>
+          <p class="text-amber-200/80"><em>සිංහල:</em> Shortcuts වල <strong>Launch Jarvis</strong> හදලා iPhone Settings → Action Button එකට set කරගන්න.</p>
         </div>
       </div>
 
-      <!-- Hidden textarea for clean clipboard copy -->
-      <textarea id="shortcut-guide-copy-buf" class="sr-only" aria-hidden="true">J.A.R.V.I.S. iPhone 15 Pro Max Setup Guide:
+      <!-- Hidden buffer for clean clipboard copy -->
+      <textarea id="shortcut-guide-copy-buf" class="sr-only" aria-hidden="true">J.A.R.V.I.S. iPhone 15 Pro Max Setup Guide (English & Sinhala):
 1. Host jarvis_assistant.html as index.html on GitHub Pages, open in Safari -> Share -> Add to Home Screen.
-2. Get a free Gemini API Key (AQ.... or AIza...) at https://aistudio.google.com/apikey, save it in J.A.R.V.I.S. -> iOS Setup, and tap TEST API & VOICE.
+2. Get a free Gemini API Key (AQ.... or AIza...) at https://aistudio.google.com/apikey, save in J.A.R.V.I.S. -> iOS Setup, and tap TEST API & VOICE.
 3. Create Apple Shortcut named "JarvisBridge":
    - Split Shortcut Input by Custom "|"
    - Get First Item -> Action
    - Get Item at Index 2 -> Payload
    - If Action is CALL -> Call Payload
    - If Action is WHATSAPP -> Open URL https://wa.me/Payload
-   - If Action is OPEN_APP -> Open App matching Payload (Facebook, YouTube, TikTok, Instagram, WhatsApp, Comera, Botim, GoChat)
+   - If Action is APP -> Open App matching Payload (Facebook, YouTube, TikTok, Instagram, WhatsApp, Comera, Botim, GoChat)
    - If Action is NOTE -> Create Note with Payload
    - If Action is REMINDER -> Add New Reminder Payload
    - If Action is MAPS -> Show Directions to Payload in Google Maps
@@ -679,25 +670,28 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- J.A.R.V.I.S. CORE ENGINE (x-goog-api-key HEADER + DIRECT APP LAUNCHER)-->
+  <!-- J.A.R.V.I.S. CORE ENGINE (GEMINI 3.0 FLASH + HEADER AUTH + FALLBACKS) -->
   <!-- ===================================================================== -->
   <script>
     // =========================================================================
-    // 1. CONSTANTS, ENDPOINTS, APP LAUNCHER REGISTRY & 5-STATE FSM
+    // 1. CONSTANTS, MODEL FALLBACK CHAIN, APP REGISTRY & 5-STATE FSM
     // =========================================================================
-    const GEMINI_CHAT_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-    const GEMINI_TTS_URL  = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent";
-    const GEMINI_TTS_MODEL = "gemini-2.5-flash-preview-tts";
+    const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+    const GEMINI_CHAT_MODELS = [
+      'gemini-3.0-flash',
+      'gemini-2.5-flash-lite',
+      'gemini-2.0-flash'
+    ];
+    const GEMINI_TTS_MODEL = 'gemini-2.5-flash-preview-tts';
+    const GEMINI_TTS_URL   = `${GEMINI_API_BASE}/${GEMINI_TTS_MODEL}:generateContent`;
 
-    // Fixed, unchanging TTS voice lock — guarantees zero vocal drift
+    // Locked Charon voice profile
     const LOCKED_TTS_VOICE = "Charon";
     const LOCKED_TTS_DIRECTIVE = "Speak in a steady, calm, refined, natural British male voice at a consistent medium-low pitch and conversational pace. Read the following text naturally without changing vocal tone:";
 
-    // Detect iOS / iPadOS WebKit (iPhone 15 Pro Max Safari & PWA)
     const IS_IOS_WEBKIT = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-    // Detect if running inside an embedded preview iframe sandbox
     const IS_PREVIEW_SANDBOX = (() => {
       try { return window.self !== window.top; }
       catch (e) { return true; }
@@ -805,13 +799,13 @@
 
     const STORAGE_KEYS = {
       GEMINI_KEY: 'jarvis_gemini_key',
+      WORKING_MODEL: 'jarvis_working_model',
       CONTACTS: 'jarvis_v8_contacts',
       NOTES: 'jarvis_v8_notes',
       REMINDERS: 'jarvis_v8_reminders',
       SETTINGS: 'jarvis_v8_settings'
     };
 
-    // Pre-loaded editable Sri Lankan contacts with English & Sinhala voice aliases
     const DEFAULT_CONTACTS = [
       { id: 'c_amma', name: 'Amma', phone: '+94771234567', isPlaceholder: true, aliases: ['amma', 'mother', 'mom', 'mum', 'අම්මා'] },
       { id: 'c_thatha', name: 'Thatha', phone: '+94772345678', isPlaceholder: true, aliases: ['thatha', 'thaththa', 'father', 'dad', 'තාත්තා'] },
@@ -824,10 +818,15 @@
       activeLang: 'en',       // 'en' | 'si'
       speedMode: 'hd',        // 'hd' | 'instant'
       dspEnabled: true,
-      autoExecute: true,      // Auto-Execute Actions ON by default
+      autoExecute: true,
       execMode: 'direct',     // 'direct' | 'shortcut'
       elevenLabsKey: '',
       elevenLabsVoiceId: '',
+
+      // Active working Gemini chat model (persisted after successful response)
+      workingModel: GEMINI_CHAT_MODELS[0],
+      // If Gemini TTS endpoint returns 404/403/400, seamlessly bypass to iOS speech until key changes
+      ttsUnavailableForSession: false,
 
       // iOS Safari Speech Recognition Engine State
       micActive: false,
@@ -836,15 +835,15 @@
       siFailStreak: 0,
       forcePhoneticSiMic: false,
 
-      // iOS Auto-Commit Buffer & Duplicate-Commit Guard
+      // iOS 1.2s Auto-Commit Buffer & Duplicate-Commit Guard
       pendingTranscript: '',
       transcriptCommitted: false,
       silenceTimer: null,
 
-      // Rolling 12-turn human-like conversation memory (max 24 messages)
+      // Rolling 12-turn conversation memory
       chatHistory: [],
 
-      // Telemetry & User Vault
+      // Telemetry & Vault
       vaultTab: 'reminders',
       weather: {
         loaded: false,
@@ -858,9 +857,6 @@
       reminders: []
     };
 
-    /**
-     * Resolves the active Gemini API key cleanly (always trimmed).
-     */
     function getActiveGeminiKey() {
       let stored = '';
       try { stored = (localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '').trim(); } catch (e) {}
@@ -872,6 +868,25 @@
       return getActiveGeminiKey().length > 0;
     }
 
+    function getOrderedChatModels() {
+      const list = [];
+      if (state.workingModel && GEMINI_CHAT_MODELS.includes(state.workingModel)) {
+        list.push(state.workingModel);
+      }
+      for (const m of GEMINI_CHAT_MODELS) {
+        if (!list.includes(m)) list.push(m);
+      }
+      return list;
+    }
+
+    function setWorkingModel(modelName) {
+      if (!modelName) return;
+      state.workingModel = modelName;
+      try { localStorage.setItem(STORAGE_KEYS.WORKING_MODEL, modelName); } catch (e) {}
+      const lbl = document.getElementById('active-model-label');
+      if (lbl) lbl.textContent = modelName;
+    }
+
     function isContactPlaceholder(contact) {
       if (!contact) return false;
       const normalized = String(contact.phone || '').replace(/\s+/g, '');
@@ -880,6 +895,11 @@
 
     function loadState() {
       try {
+        const savedModel = localStorage.getItem(STORAGE_KEYS.WORKING_MODEL);
+        if (savedModel && GEMINI_CHAT_MODELS.includes(savedModel)) {
+          state.workingModel = savedModel;
+        }
+
         const c = localStorage.getItem(STORAGE_KEYS.CONTACTS) || localStorage.getItem('jarvis_v7_contacts');
         state.contacts = c ? JSON.parse(c) : JSON.parse(JSON.stringify(DEFAULT_CONTACTS));
         localStorage.setItem(STORAGE_KEYS.CONTACTS, JSON.stringify(state.contacts));
@@ -929,7 +949,8 @@
       const spd = document.getElementById('select-speed-mode');
       const gkey = document.getElementById('input-gemini-key');
       const gStatus = document.getElementById('gemini-key-status');
-      const hudKeyBadge = document.getElementById('hud-apikey-badge');
+      const hudModeBadge = document.getElementById('hud-mode-badge');
+      const modelLbl = document.getElementById('active-model-label');
       const ekey = document.getElementById('input-el-key');
       const evid = document.getElementById('input-el-voice');
       const badge = document.getElementById('voice-lock-badge');
@@ -944,10 +965,23 @@
       if (gkey) gkey.value = storedKey;
       if (ekey) ekey.value = state.elevenLabsKey;
       if (evid) evid.value = state.elevenLabsVoiceId;
+      if (modelLbl) modelLbl.textContent = state.workingModel;
 
-      if (hudKeyBadge) {
-        if (keyPresent) hudKeyBadge.classList.add('hidden');
-        else hudKeyBadge.classList.remove('hidden');
+      // Top HUD Badge: ONLINE / AUTH KEY ACTIVE / LOCAL / 🔑 Add API Key
+      if (hudModeBadge) {
+        if (!navigator.onLine) {
+          hudModeBadge.textContent = 'LOCAL';
+          hudModeBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud bg-amber-500/20 border border-amber-400/50 text-amber-300 shrink-0 active:scale-95 transition';
+        } else if (!keyPresent) {
+          hudModeBadge.textContent = '🔑 Add API Key';
+          hudModeBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud font-bold bg-amber-500/20 border border-[#f5b041]/70 text-amber-200 shrink-0 animate-pulse active:scale-95 transition';
+        } else if (storedKey.startsWith('AQ.')) {
+          hudModeBadge.textContent = 'AUTH KEY ACTIVE';
+          hudModeBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud bg-emerald-500/20 border border-emerald-400/55 text-emerald-300 shrink-0 active:scale-95 transition';
+        } else {
+          hudModeBadge.textContent = 'ONLINE';
+          hudModeBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud bg-emerald-500/15 border border-emerald-400/45 text-emerald-300 shrink-0 active:scale-95 transition';
+        }
       }
 
       if (gStatus) {
@@ -971,11 +1005,14 @@
         voiceLabel = 'LOCKED: ELEVENLABS';
         shortPill = '🔒 11LABS';
       } else if (state.speedMode === 'instant') {
-        voiceLabel = keyPresent ? 'INSTANT EN / CHARON SI' : 'INSTANT iOS VOICE';
+        voiceLabel = 'INSTANT iOS VOICE';
         shortPill = '⚡ FAST iOS';
-      } else if (keyPresent) {
+      } else if (keyPresent && !state.ttsUnavailableForSession) {
         voiceLabel = 'LOCKED: CHARON (HD)';
         shortPill = '🔒 CHARON';
+      } else if (keyPresent && state.ttsUnavailableForSession) {
+        voiceLabel = 'iOS SPEECH (FALLBACK)';
+        shortPill = '🔊 iOS VOICE';
       }
 
       if (badge) badge.textContent = voiceLabel;
@@ -987,7 +1024,7 @@
           execPill.className = 'cursor-pointer px-2 py-1 rounded-full text-[10px] font-hud border border-slate-500/40 bg-slate-900/60 text-slate-300 active:scale-95 transition';
         } else if (state.execMode === 'shortcut') {
           execPill.textContent = '⚡ BRIDGE: SHORTCUT';
-          execPill.className = 'cursor-pointer px-2 py-1 rounded-full text-[10px] font-hud border border-amber-400/50 bg-amber-950/45 text-amber-200 active:scale-95 transition';
+          execPill.className = 'cursor-pointer px-2 py-1 rounded-full text-[10px] font-hud border border-[#f5b041]/55 bg-amber-950/45 text-amber-200 active:scale-95 transition';
         } else {
           execPill.textContent = '⚡ AUTO: DIRECT';
           execPill.className = 'cursor-pointer px-2 py-1 rounded-full text-[10px] font-hud border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 active:scale-95 transition';
@@ -996,7 +1033,7 @@
     }
 
     // =========================================================================
-    // 2. CLOCK, DATE & LIVE COLOMBO WEATHER (Open-Meteo)
+    // 2. CLOCK, DATE & LIVE COLOMBO / KURUNEGALA WEATHER (Open-Meteo)
     // =========================================================================
     const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const DAYS_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1019,7 +1056,8 @@
     }
 
     async function fetchLiveWeather() {
-      let lat = 6.9271, lon = 79.8612; // Colombo, Sri Lanka default
+      // Default coordinates: Kurunegala / Colombo region, Sri Lanka
+      let lat = 7.4863, lon = 80.3647;
       if (!navigator.onLine) { renderWeatherUI(); return; }
       try {
         const pos = await new Promise((resolve, reject) => {
@@ -1104,19 +1142,19 @@
       if (nextState === FSM.ACTIVE_LISTENING) {
         reactor.classList.add('state-listening');
         badge.textContent = 'LISTENING';
-        badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud tracking-wider bg-cyan-500/20 border border-cyan-400/60 text-cyan-200 shrink-0';
-        dot.className = 'w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#00f0ff] shrink-0';
+        badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud tracking-wider bg-cyan-500/20 border border-[#00e5ff]/60 text-cyan-200 shrink-0';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-[#00e5ff] shadow-[0_0_10px_#00e5ff] shrink-0';
         viz.classList.remove('opacity-0');
         bargeBtn.classList.add('hidden');
         sleepBtn.className = 'px-3 py-1 rounded-full text-[11px] font-semibold border border-cyan-400/50 bg-cyan-500/15 text-cyan-100 flex items-center gap-1.5 active:scale-95 transition';
-        modeDot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-pulse';
+        modeDot.className = 'w-2 h-2 rounded-full bg-[#00e5ff] animate-pulse';
         modeLbl.textContent = 'Active • Sleep';
         statusEl.textContent = customStatusText || `LISTENING CONTINUOUSLY (${langTag})`;
       } else if (nextState === FSM.PROCESSING) {
         reactor.classList.add('state-processing');
         badge.textContent = 'THINKING';
-        badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud tracking-wider bg-amber-500/20 border border-amber-400/60 text-amber-200 shrink-0';
-        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_10px_#ffb703] shrink-0';
+        badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud tracking-wider bg-amber-500/20 border border-[#f5b041]/60 text-amber-200 shrink-0';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-[#f5b041] shadow-[0_0_10px_#f5b041] shrink-0';
         viz.classList.add('opacity-0');
         bargeBtn.classList.add('hidden');
         statusEl.textContent = customStatusText || 'PROCESSING...';
@@ -1145,6 +1183,25 @@
     function setActiveLanguage(lang) {
       state.activeLang = lang === 'si' ? 'si' : 'en';
       document.getElementById('lang-label').textContent = state.activeLang === 'si' ? 'සිං' : 'EN';
+      const enBtn = document.getElementById('btn-top-en');
+      const siBtn = document.getElementById('btn-top-si');
+      if (enBtn && siBtn) {
+        if (state.activeLang === 'en') {
+          enBtn.className = 'px-2 py-1 rounded-lg text-[10px] font-hud font-bold bg-cyan-500/30 border border-[#00e5ff]/80 text-cyan-50 active:scale-95 transition';
+          siBtn.className = 'px-2 py-1 rounded-lg text-[10px] font-sinhala font-bold bg-amber-500/10 border border-[#f5b041]/35 text-[#f5b041]/75 active:scale-95 transition';
+        } else {
+          enBtn.className = 'px-2 py-1 rounded-lg text-[10px] font-hud font-bold bg-cyan-500/10 border border-cyan-400/35 text-cyan-300/75 active:scale-95 transition';
+          siBtn.className = 'px-2 py-1 rounded-lg text-[10px] font-sinhala font-bold bg-amber-500/30 border border-[#f5b041]/85 text-amber-100 active:scale-95 transition';
+        }
+      }
+    }
+
+    function switchLangAndBrief(lang) {
+      unlockIosAudioSynchronously();
+      if (state.fsm === FSM.BOOT) {
+        document.getElementById('boot-overlay').classList.add('hidden');
+      }
+      deliverBriefing(lang, true);
     }
 
     function updateLiveTranscriptUI(text, showCommitCountdown = false) {
@@ -1190,6 +1247,10 @@
       return audioCtx;
     }
 
+    /**
+     * Synchronously unlocks BOTH Web Audio API (1-sample silent buffer) and
+     * window.speechSynthesis (silent utterance) directly inside a user tap.
+     */
     function unlockIosAudioSynchronously() {
       const ctx = getAudioCtx();
       if (ctx) {
@@ -1287,7 +1348,7 @@
     }
 
     // =========================================================================
-    // 5. BULLETPROOF VOICE ENGINE (x-goog-api-key HEADER + WATCHDOG)
+    // 5. GUARANTEED VOICE ENGINE (CHARON HD + STARK DSP + INSTANT iOS FALLBACK)
     // =========================================================================
     let lockedNativeMaleVoice = null;
     let activeSpeechCancel = null;
@@ -1345,10 +1406,8 @@
         };
 
         activeSpeechCancel = finish;
-
         const bufferMs = Math.ceil((audioBuffer.duration || 3) * 1000) + 1500;
-        const effectiveTimeout = Math.max(maxDurationMs, bufferMs);
-        hardTimer = setTimeout(finish, effectiveTimeout);
+        hardTimer = setTimeout(finish, Math.max(maxDurationMs, bufferMs));
 
         stopActiveBufferSource();
         const source = ctx.createBufferSource();
@@ -1356,6 +1415,7 @@
         activeBufferSource = source;
 
         if (state.dspEnabled) {
+          // Stark HUD DSP Chain: 110Hz High-Pass -> +2.5dB @ 2.8kHz -> 16ms Room Sheen -> DynamicsCompressor
           const highpass = ctx.createBiquadFilter();
           highpass.type = 'highpass';
           highpass.frequency.value = 110;
@@ -1417,6 +1477,10 @@
       });
     }
 
+    /**
+     * Guaranteed iOS Web Speech fallback wrapped in a Promise with hard timeout
+     * + 1.5s speechSynthesis.speaking poll so iOS Safari never freezes on SPEAKING.
+     */
     function speakNativeWithWatchdog(text, isSi, maxDurationMs) {
       return new Promise((resolve) => {
         if (!window.speechSynthesis || !text) { resolve(); return; }
@@ -1448,7 +1512,7 @@
             const voice = resolveLockedNativeVoice();
             if (voice) u.voice = voice;
             u.lang = 'en-GB';
-            u.pitch = 0.92;
+            u.pitch = 0.90;
             u.rate = 1.02;
           } else {
             const voices = window.speechSynthesis.getVoices();
@@ -1461,7 +1525,7 @@
               if (voice) u.voice = voice;
               u.lang = 'si-LK';
             }
-            u.pitch = 0.96;
+            u.pitch = 0.95;
             u.rate = 1.0;
           }
 
@@ -1469,6 +1533,7 @@
           u.onerror = finish;
           window.speechSynthesis.speak(u);
 
+          // 1.5s poll guard for iOS Safari where onend sometimes fails to fire
           pollDelayTimer = setTimeout(() => {
             if (settled) return;
             pollInterval = setInterval(() => {
@@ -1517,8 +1582,8 @@
           }
         }
 
-        // Tier 2: Locked Gemini TTS ('Charon') using x-goog-api-key header
-        if (!playedAudioBuffer && keyAvailable && navigator.onLine && (isSi || state.speedMode !== 'instant')) {
+        // Tier 2: Gemini TTS ('Charon') via x-goog-api-key header + Stark DSP
+        if (!playedAudioBuffer && keyAvailable && !state.ttsUnavailableForSession && navigator.onLine && (isSi || state.speedMode !== 'instant')) {
           const buf = await fetchLockedCharonAudio(text);
           if (myToken !== speechTurnToken) return;
           if (buf) {
@@ -1527,7 +1592,7 @@
           }
         }
 
-        // Tier 3: Unlocked iOS Web Speech API
+        // Tier 3: Guaranteed Seamless iOS Web Speech Fallback (never stays silent!)
         if (!playedAudioBuffer && myToken === speechTurnToken) {
           await speakNativeWithWatchdog(text, isSi, maxDurationMs);
         }
@@ -1558,7 +1623,7 @@
       if (!ctx) return null;
       try {
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 6000);
+        const tid = setTimeout(() => controller.abort(), 5500);
         const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(state.elevenLabsVoiceId)}`, {
           method: 'POST',
           headers: {
@@ -1582,8 +1647,9 @@
     }
 
     /**
-     * Fetches Gemini TTS ('Charon') using the x-goog-api-key HTTP header
-     * (never passes key in URL) so both AQ.... and AIza... keys work seamlessly.
+     * Fetches Gemini TTS ('Charon') using x-goog-api-key header.
+     * On HTTP 404/400/403, immediately returns null and marks TTS unavailable
+     * for this session so speakLocked falls back instantly to iOS Web Speech.
      */
     async function fetchLockedCharonAudio(text) {
       const apiKey = getActiveGeminiKey();
@@ -1604,49 +1670,44 @@
         model: GEMINI_TTS_MODEL
       };
 
-      const delays = [700];
-      for (let i = 0; i <= delays.length; i++) {
-        try {
-          const controller = new AbortController();
-          const tid = setTimeout(() => controller.abort(), 7500);
-          const res = await fetch(GEMINI_TTS_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': apiKey
-            },
-            body: JSON.stringify(payload),
-            signal: controller.signal
-          });
-          clearTimeout(tid);
+      try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 6000);
+        const res = await fetch(GEMINI_TTS_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+        clearTimeout(tid);
 
-          if (res.status === 401 || res.status === 403) {
-            return null;
-          }
-          if (!res.ok) {
-            if (i < delays.length) { await new Promise(r => setTimeout(r, delays[i])); continue; }
-            return null;
-          }
-          const json = await res.json();
-          const part = json?.candidates?.[0]?.content?.parts?.[0];
-          const b64 = part?.inlineData?.data;
-          const mime = part?.inlineData?.mimeType || 'audio/L16;rate=24000';
-          if (b64 && mime.startsWith('audio/')) {
-            const match = mime.match(/rate=(\d+)/);
-            const rate = match ? parseInt(match[1], 10) : 24000;
-            const pcm16 = new Int16Array(base64ToArrayBuffer(b64));
-            const buf = ctx.createBuffer(1, pcm16.length, rate);
-            const ch = buf.getChannelData(0);
-            for (let j = 0; j < pcm16.length; j++) ch[j] = pcm16[j] / 32768.0;
-            return buf;
-          }
+        if (res.status === 404 || res.status === 400 || res.status === 401 || res.status === 403) {
+          state.ttsUnavailableForSession = true;
+          syncSettingsUI();
           return null;
-        } catch (e) {
-          if (i < delays.length) await new Promise(r => setTimeout(r, delays[i]));
-          else return null;
         }
+        if (!res.ok) return null;
+
+        const json = await res.json();
+        const part = json?.candidates?.[0]?.content?.parts?.[0];
+        const b64 = part?.inlineData?.data;
+        const mime = part?.inlineData?.mimeType || 'audio/L16;rate=24000';
+        if (b64 && mime.startsWith('audio/')) {
+          const match = mime.match(/rate=(\d+)/);
+          const rate = match ? parseInt(match[1], 10) : 24000;
+          const pcm16 = new Int16Array(base64ToArrayBuffer(b64));
+          const buf = ctx.createBuffer(1, pcm16.length, rate);
+          const ch = buf.getChannelData(0);
+          for (let j = 0; j < pcm16.length; j++) ch[j] = pcm16[j] / 32768.0;
+          return buf;
+        }
+        return null;
+      } catch (e) {
+        return null;
       }
-      return null;
     }
 
     function base64ToArrayBuffer(b64) {
@@ -1657,7 +1718,7 @@
     }
 
     // =========================================================================
-    // 6. ROCK-SOLID iOS SAFARI SPEECH RECOGNITION ENGINE
+    // 6. iOS SAFARI SPEECH RECOGNITION (1.2s AUTO-COMMIT + BUFFER FLUSH)
     // =========================================================================
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
@@ -1742,7 +1803,7 @@
         recognition = new SpeechRec();
         const desiredLang = (state.activeLang === 'si' && !state.forcePhoneticSiMic) ? 'si-LK' : 'en-GB';
         recognition.lang = desiredLang;
-        recognition.continuous = false; // Single-utterance loop for iOS Safari reliability
+        recognition.continuous = false;
         recognition.interimResults = true;
         recognition.maxAlternatives = 1;
 
@@ -1774,6 +1835,7 @@
             updateLiveTranscriptUI(cleaned, true);
           }
 
+          // 1.2s Silence Auto-Commit Timer
           clearSilenceTimer();
           state.silenceTimer = setTimeout(() => {
             if (!state.transcriptCommitted && state.pendingTranscript.trim()) {
@@ -1819,6 +1881,7 @@
             state.siFailStreak = 0;
           }
 
+          // onend Buffer Flush: submit mid-sentence cutoffs without losing transcript
           if (!state.transcriptCommitted && state.pendingTranscript.trim()) {
             commitPendingTranscript();
             return;
@@ -1842,7 +1905,7 @@
       }
     }
 
-    // 1.5-Second Mic Auto-Restart Watchdog
+    // 1.5s Mic Auto-Restart Watchdog
     setInterval(() => {
       if ((state.fsm === FSM.ACTIVE_LISTENING || state.fsm === FSM.SLEEPING) && !state.micActive && !state.micBlocked) {
         startMicRecognition();
@@ -1943,8 +2006,7 @@
     }
 
     // =========================================================================
-    // 8. GEMINI 2.5 FLASH BRAIN (x-goog-api-key HEADER) + REAL ERROR DIAGNOSTICS
-    //    + FULL LOCAL SMART COMMAND ENGINE (WITH DIRECT APP LAUNCHER)
+    // 8. GEMINI 3.0 FLASH BRAIN (AUTO 404 FALLBACK ARRAY + x-goog-api-key)
     // =========================================================================
     function pushChatHistory(role, text) {
       if (!text) return;
@@ -1954,9 +2016,6 @@
       }
     }
 
-    /**
-     * Parses structured Gemini API error body into a clean human-readable diagnostic string.
-     */
     async function extractGeminiErrorMessage(res) {
       try {
         const errJson = await res.json();
@@ -1967,10 +2026,11 @@
     }
 
     /**
-     * Calls Gemini 2.5 Flash using the x-goog-api-key HTTP header (NEVER ?key= in URL).
-     * Throws an Error with exact HTTP/network diagnostics on failure.
+     * Core Gemini request wrapper with automatic HTTP 404 fallback across
+     * ['gemini-3.0-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'].
+     * Always authenticates via x-goog-api-key header (never URL query param).
      */
-    async function callGeminiFast(userText, lang) {
+    async function requestGeminiWithModelFallback(payload, preferFreshOrder = false) {
       const apiKey = getActiveGeminiKey();
       if (!apiKey) {
         const err = new Error('NO_API_KEY');
@@ -1978,6 +2038,56 @@
         throw err;
       }
 
+      const modelsToTry = preferFreshOrder ? [...GEMINI_CHAT_MODELS] : getOrderedChatModels();
+      let lastError = null;
+
+      for (let i = 0; i < modelsToTry.length; i++) {
+        const model = modelsToTry[i];
+        const url = `${GEMINI_API_BASE}/${model}:generateContent`;
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 8500);
+
+        let res;
+        try {
+          res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': apiKey
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal
+          });
+        } catch (netErr) {
+          clearTimeout(tid);
+          const err = new Error(netErr.name === 'AbortError' ? 'Request timed out (8.5s)' : `Network error: ${netErr.message}`);
+          err.code = 'NETWORK_ERROR';
+          throw err;
+        }
+        clearTimeout(tid);
+
+        if (res.ok) {
+          setWorkingModel(model);
+          const data = await res.json();
+          return { data, model };
+        }
+
+        const detail = await extractGeminiErrorMessage(res);
+        lastError = new Error(detail);
+        lastError.code = 'HTTP_ERROR';
+        lastError.httpStatus = res.status;
+
+        // Only auto-fallback to next model if HTTP 404 (model unavailable)
+        if (res.status === 404 && i < modelsToTry.length - 1) {
+          continue;
+        }
+        throw lastError;
+      }
+
+      throw lastError || new Error('All Gemini models failed.');
+    }
+
+    async function callGeminiFast(userText, lang) {
       const contactSummary = state.contacts
         .map(c => `${c.name} (${(c.aliases || []).join('/')})`)
         .join(', ');
@@ -2004,49 +2114,20 @@ Output strict JSON only:
         systemInstruction: { parts: [{ text: systemPrompt }] },
         generationConfig: {
           responseMimeType: 'application/json',
-          maxOutputTokens: 180,
+          maxOutputTokens: 200,
           temperature: 0.7
         }
       };
 
-      const controller = new AbortController();
-      const tid = setTimeout(() => controller.abort(), 8000);
-      let res;
-      try {
-        res = await fetch(GEMINI_CHAT_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-      } catch (netErr) {
-        clearTimeout(tid);
-        const err = new Error(netErr.name === 'AbortError' ? 'Request timed out (8s)' : `Network error: ${netErr.message}`);
-        err.code = 'NETWORK_ERROR';
-        throw err;
-      }
-      clearTimeout(tid);
-
-      if (!res.ok) {
-        const detail = await extractGeminiErrorMessage(res);
-        const err = new Error(detail);
-        err.code = 'HTTP_ERROR';
-        err.httpStatus = res.status;
-        throw err;
-      }
-
-      const data = await res.json();
+      const { data } = await requestGeminiWithModelFallback(payload, false);
       const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!raw) throw new Error('Empty JSON response from Gemini');
-      return JSON.parse(raw);
+
+      // Strip accidental markdown fences if any model returns them
+      const cleanedJson = raw.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
+      return JSON.parse(cleanedJson);
     }
 
-    /**
-     * Resolves an app key from English, Sinhala, or Singlish text.
-     */
     function detectAppInText(text) {
       const t = (text || '').toLowerCase();
       for (const appKey of Object.keys(APP_LAUNCHER_REGISTRY)) {
@@ -2059,16 +2140,14 @@ Output strict JSON only:
     }
 
     /**
-     * Full Local Smart Command Engine (handles Open App, Calls, WhatsApp, Maps,
+     * Local Smart Command Engine (Direct App Launcher, Calls, WhatsApp, Maps,
      * Notes, Reminders, Time, Weather, Greetings).
-     * `apiErrorDetail` ensures we NEVER show the misleading "Add API key" text
-     * when a key IS saved and encountered a real HTTP/network error.
+     * Never falsely tells the user to "Add your free Gemini API key" when a key IS saved.
      */
     function localSmartCommandRouter(text, lang, apiErrorDetail = '') {
       const t = text.toLowerCase();
 
       // 1. Direct App Launcher (English, Sinhala, Singlish)
-      //    e.g. "open Facebook", "launch YouTube", "Facebook එක open කරන්න", "YouTube අරින්න", "TikTok දාන්න"
       const hasOpenVerb = /(open|launch|start|go\s+to|run|show\s+me|අරින්න|දාන්න|ඕපන්|open\s*කරන්න|දාලා\s*දෙන්න)/i.test(t);
       const hasCallVerb = /(call|dial|phone|ring|කෝල්|අමතන්න)/i.test(t);
       const hasDirectionVerb = /(direction|navigate|route|way\s+to|පාර)/i.test(t);
@@ -2159,7 +2238,7 @@ Output strict JSON only:
         };
       }
 
-      // 8. Greetings & Casual Chat
+      // 8. Greetings
       if (/(good\s+morning|good\s+afternoon|good\s+evening|hello|hi|how\s+are\s+you|කොහොමද|සුභ\s+)/i.test(t)) {
         return {
           reply: lang === 'si'
@@ -2182,12 +2261,12 @@ Output strict JSON only:
         };
       }
 
-      // 9. Fallback: STRICTLY differentiate between "Key is Empty" vs "Key Saved but API Failed"
-      if (apiErrorDetail) {
+      // 9. Fallback: NEVER falsely say "Add API key" if a key IS saved
+      if (apiErrorDetail || hasGeminiKey()) {
         return {
           reply: lang === 'si'
-            ? `මචන්, Gemini AI සම්බන්ධතාවයේ පොඩි ගැටලුවක් ආවා. Calls, Apps, Maps, Notes සහ Reminders local engine එකෙන් වැඩ කරනවා.`
-            : `I ran into a temporary Gemini API issue, sir, so I'm handling commands locally. Check the diagnostic below or run Test API & Voice in iOS Setup.`,
+            ? `මචන්, Gemini API සම්බන්ධතාවයේ ගැටලුවක් ආවා. Calls, Apps, Maps, Notes සහ Reminders local engine එකෙන් වැඩ කරනවා.`
+            : `Gemini API returned an error, sir, so I'm running locally. Check the diagnostic below or tap Test API & Voice in iOS Setup.`,
           language: lang,
           action: 'chat',
           payload: {}
@@ -2205,10 +2284,9 @@ Output strict JSON only:
         };
       }
 
-      // Only show "Add your free Gemini API key" when jarvis_gemini_key is genuinely empty
       return {
         reply: lang === 'si'
-          ? `මචන් දැන් Local Mode එකේ ඉන්නේ. Calls, Apps (Facebook/YouTube/TikTok), Maps, Notes සහ Reminders දැන්ම වැඩ. Full AI chat සඳහා iOS Setup වලට free Gemini API key එක දාන්න.`
+          ? `මචන් දැන් Local Mode එකේ ඉන්නේ. Calls, Apps (Facebook/YouTube/TikTok), Maps, Notes සහ Reminders වැඩ. Full AI chat සඳහා iOS Setup වලට Gemini API key එක දාන්න.`
           : `I'm in local command mode, sir. Calls, App Launcher, Google Maps, Notes, and Reminders are ready. Add your free Gemini API key in iOS Setup for full AI conversation.`,
         language: lang,
         action: 'chat',
@@ -2217,7 +2295,7 @@ Output strict JSON only:
     }
 
     // =========================================================================
-    // 9. AUTO-CALL, DIRECT APP LAUNCHER & APPLE SHORTCUT BRIDGE ENGINE
+    // 9. AUTO-EXECUTE ACTIONS & APPLE SHORTCUT BRIDGE (JarvisBridge)
     // =========================================================================
     function buildJarvisBridgeUrl(actionType, payloadText) {
       const combined = `${actionType}|${payloadText}`;
@@ -2298,7 +2376,7 @@ Output strict JSON only:
           result = await callGeminiFast(query, lang);
         } catch (err) {
           usedLocal = true;
-          apiDiagnostic = `Gemini API Error (${err.message}) — using local engine`;
+          apiDiagnostic = `Gemini API Error (${err.message}) — local engine active`;
           result = localSmartCommandRouter(query, lang, err.message);
         }
       } else {
@@ -2359,19 +2437,16 @@ Output strict JSON only:
       // DIRECT APP LAUNCHER
       if (act === 'open_app') {
         const app = resolveAppEntry(p.app || res.app || '');
-        if (!app) {
-          return { html: '', autoUrl: null, isWebAppLink: false };
-        }
+        if (!app) return { html: '', autoUrl: null, isWebAppLink: false };
 
-        const bridgeUrl = buildJarvisBridgeUrl('OPEN_APP', app.shortcutName);
+        const bridgeUrl = buildJarvisBridgeUrl('APP', app.shortcutName);
 
-        // Comera / Botim / GoChat (no reliable public universal link — use JarvisBridge)
         if (!app.universalUrl) {
           const html = `
-            ${state.autoExecute ? `<div class="mt-1.5 text-[10px] font-hud text-amber-300/90">⚡ JARVISBRIDGE OPEN_APP (${escapeHtml(app.shortcutName)})</div>` : ''}
+            ${state.autoExecute ? `<div class="mt-1.5 text-[10px] font-hud text-[#f5b041]">⚡ JARVISBRIDGE APP (${escapeHtml(app.shortcutName)})</div>` : ''}
             <div class="mt-2 flex flex-wrap gap-1.5">
               <a href="${escapeHtml(bridgeUrl)}" target="_top"
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/60 text-amber-100 text-xs font-semibold">
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-[#f5b041]/60 text-amber-100 text-xs font-semibold">
                 ${app.icon} Launch ${escapeHtml(app.label)} via JarvisBridge
               </a>
             </div>
@@ -2379,10 +2454,9 @@ Output strict JSON only:
           return { html, autoUrl: bridgeUrl, isWebAppLink: false };
         }
 
-        // Standard apps (Facebook, YouTube, TikTok, Instagram, WhatsApp, Google Maps)
         const primaryUrl = useShortcut ? bridgeUrl : app.universalUrl;
         const autoTag = state.autoExecute
-          ? `<div class="mt-1.5 text-[10px] font-hud text-cyan-300/90">⚡ ${useShortcut ? 'JARVISBRIDGE OPEN_APP' : 'iOS APP LAUNCHER'} TRIGGERED</div>`
+          ? `<div class="mt-1.5 text-[10px] font-hud text-[#00e5ff]/90">⚡ ${useShortcut ? 'JARVISBRIDGE APP' : 'iOS APP LAUNCHER'} TRIGGERED</div>`
           : '';
 
         const html = `
@@ -2397,7 +2471,7 @@ Output strict JSON only:
               🚀 Native App
             </a>` : ''}
             ${!useShortcut ? `<a href="${escapeHtml(bridgeUrl)}" target="_top"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-amber-400/40 text-amber-200 text-xs">
+              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-[#f5b041]/45 text-amber-200 text-xs">
               ⚡ Shortcut
             </a>` : ''}
           </div>
@@ -2424,9 +2498,9 @@ Output strict JSON only:
             : (useShortcut ? bridgeCallUrl : directTelUrl);
 
           const demoBanner = isDemo
-            ? `<div class="mt-2 px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-amber-400/45 text-[10px] text-amber-200 flex items-center justify-between gap-2">
+            ? `<div class="mt-2 px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-[#f5b041]/45 text-[10px] text-amber-200 flex items-center justify-between gap-2">
                 <span>⚠️ Demo number (${escapeHtml(phone)}). Save your real number!</span>
-                <button onclick="openEditContact('${contact.id}')" class="shrink-0 px-2 py-0.5 rounded bg-amber-400/25 border border-amber-300/60 text-amber-100 font-bold">✏️ Edit</button>
+                <button onclick="openEditContact('${contact.id}')" class="shrink-0 px-2 py-0.5 rounded bg-amber-400/25 border border-amber-300/60 text-amber-100 font-bold">✏️ Edit Number</button>
               </div>`
             : '';
 
@@ -2443,7 +2517,7 @@ Output strict JSON only:
               ${act === 'call'
                 ? `<a href="${escapeHtml(useShortcut ? bridgeWaUrl : directWaUrl)}" target="_top" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-400/40 text-cyan-200 text-xs">💬 WhatsApp</a>`
                 : `<a href="${escapeHtml(useShortcut ? bridgeCallUrl : directTelUrl)}" target="_top" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-400/40 text-cyan-200 text-xs">📞 Phone Call</a>`}
-              <button onclick="openEditContact('${contact.id}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-amber-400/45 text-amber-200 text-xs font-medium">
+              <button onclick="openEditContact('${contact.id}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-[#f5b041]/45 text-amber-200 text-xs font-medium">
                 ✏️ Edit Number
               </button>
             </div>
@@ -2454,7 +2528,7 @@ Output strict JSON only:
         }
 
         return {
-          html: `<button onclick="openModal('contacts')" class="mt-2 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-200 text-xs font-semibold">⚠️ Add ${escapeHtml(name)} in Contacts</button>`,
+          html: `<button onclick="openModal('contacts')" class="mt-2 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-[#f5b041]/50 text-amber-200 text-xs font-semibold">⚠️ Add ${escapeHtml(name)} in Contacts</button>`,
           autoUrl: null,
           isWebAppLink: false
         };
@@ -2467,9 +2541,9 @@ Output strict JSON only:
         const primaryUrl = useShortcut ? bridgeMapsUrl : directMapsUrl;
 
         const html = `
-          ${state.autoExecute ? `<div class="mt-1.5 text-[10px] font-hud text-cyan-300/90">⚡ ${useShortcut ? 'JARVISBRIDGE MAPS' : 'GOOGLE MAPS'} LAUNCHED</div>` : ''}
+          ${state.autoExecute ? `<div class="mt-1.5 text-[10px] font-hud text-[#00e5ff]/90">⚡ ${useShortcut ? 'JARVISBRIDGE MAPS' : 'GOOGLE MAPS'} LAUNCHED</div>` : ''}
           <div class="mt-2 flex flex-wrap gap-1.5">
-            <a href="${escapeHtml(primaryUrl)}" target="_top" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-400/60 text-cyan-100 text-xs font-semibold">📍 Open Google Maps → ${escapeHtml(dest)}</a>
+            <a href="${escapeHtml(primaryUrl)}" target="_top" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 border border-[#00e5ff]/60 text-cyan-100 text-xs font-semibold">📍 Open Google Maps → ${escapeHtml(dest)}</a>
           </div>
           ${sandboxNotice}`;
 
@@ -2485,7 +2559,7 @@ Output strict JSON only:
         const scUrl = buildJarvisBridgeUrl('REMINDER', item.task);
         const html = `
           <div class="mt-2 flex flex-wrap gap-1.5">
-            <a href="${escapeHtml(scUrl)}" target="_top" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/60 text-amber-200 text-xs font-semibold">⚡ Sync to Apple Reminders</a>
+            <a href="${escapeHtml(scUrl)}" target="_top" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-[#f5b041]/60 text-amber-200 text-xs font-semibold">⚡ Sync to Apple Reminders</a>
             <button onclick="openModal('vault')" class="px-2.5 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-400/40 text-cyan-200 text-xs">Vault</button>
           </div>
           ${sandboxNotice}`;
@@ -2503,7 +2577,7 @@ Output strict JSON only:
         const scUrl = buildJarvisBridgeUrl('NOTE', notePayload);
         const html = `
           <div class="mt-2 flex flex-wrap gap-1.5">
-            <a href="${escapeHtml(scUrl)}" target="_top" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/60 text-amber-200 text-xs font-semibold">⚡ Sync to Apple Notes</a>
+            <a href="${escapeHtml(scUrl)}" target="_top" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-[#f5b041]/60 text-amber-200 text-xs font-semibold">⚡ Sync to Apple Notes</a>
             <button onclick="openModal('vault')" class="px-2.5 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-400/40 text-cyan-200 text-xs">Vault</button>
           </div>
           ${sandboxNotice}`;
@@ -2514,7 +2588,7 @@ Output strict JSON only:
       if (act === 'social_post') {
         const cap = p.caption || res.reply;
         return {
-          html: `<button onclick="openSocialWithText(${JSON.stringify(cap).replace(/"/g, '&quot;')})" class="mt-2 px-3 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-400/60 text-cyan-100 text-xs font-semibold">📱 Open in Social Composer</button>`,
+          html: `<button onclick="openSocialWithText(${JSON.stringify(cap).replace(/"/g, '&quot;')})" class="mt-2 px-3 py-1.5 rounded-lg bg-cyan-500/20 border border-[#00e5ff]/60 text-cyan-100 text-xs font-semibold">📱 Open in Social Composer</button>`,
           autoUrl: null,
           isWebAppLink: false
         };
@@ -2543,13 +2617,13 @@ Output strict JSON only:
       const log = document.getElementById('chat-log');
       const div = document.createElement('div');
       div.className = 'flex justify-start';
-      const tag = localMode ? '<span class="ml-1.5 text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-hud">LOCAL</span>' : '';
+      const tag = localMode ? '<span class="ml-1.5 text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-[#f5b041] font-hud">LOCAL</span>' : '';
       const diagHtml = diagnosticText
         ? `<div class="mt-2 px-2.5 py-1.5 rounded-lg bg-rose-950/60 border border-rose-400/45 text-[10px] font-mono text-rose-200 break-words leading-snug">⚠️ ${escapeHtml(diagnosticText)}</div>`
         : '';
       div.innerHTML = `
         <div class="max-w-[92%] rounded-2xl rounded-tl-sm px-3 py-2 bg-[#071930]/90 border border-cyan-500/30 text-cyan-100 font-sinhala">
-          <div class="text-[9px] font-hud tracking-widest text-cyan-400 mb-0.5">J.A.R.V.I.S.${tag}</div>
+          <div class="text-[9px] font-hud tracking-widest text-[#00e5ff] mb-0.5">J.A.R.V.I.S.${tag}</div>
           <div class="leading-relaxed">${escapeHtml(text)}</div>
           ${actionHtml}
           ${diagHtml}
@@ -2602,7 +2676,7 @@ Output strict JSON only:
       });
     }
 
-    // Contacts Manager with Quick Edit
+    // Contacts Manager
     function openEditContact(contactId) {
       openModal('contacts');
       const contact = state.contacts.find(c => c.id === contactId);
@@ -2640,17 +2714,17 @@ Output strict JSON only:
         const callHref = state.execMode === 'shortcut' ? buildJarvisBridgeUrl('CALL', c.phone) : `tel:${c.phone}`;
         const waHref = state.execMode === 'shortcut' ? buildJarvisBridgeUrl('WHATSAPP', clean) : `https://wa.me/${clean}`;
         return `
-          <div class="p-2.5 rounded-xl bg-black/40 border ${isDemo ? 'border-amber-400/45' : 'border-cyan-500/25'} flex items-center justify-between gap-2">
+          <div class="p-2.5 rounded-xl bg-black/40 border ${isDemo ? 'border-[#f5b041]/45' : 'border-cyan-500/25'} flex items-center justify-between gap-2">
             <div class="min-w-0">
               <div class="flex items-center gap-1.5">
                 <span class="text-xs font-bold text-cyan-100 truncate">${escapeHtml(c.name)}</span>
-                ${isDemo ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-hud">DEMO</span>` : ''}
+                ${isDemo ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-[#f5b041] font-hud">DEMO</span>` : ''}
               </div>
               <div class="text-[11px] font-mono text-cyan-300/80">${escapeHtml(c.phone)}</div>
               ${aliasesText ? `<div class="text-[10px] text-cyan-200/60 truncate font-sinhala">Aliases: ${escapeHtml(aliasesText)}</div>` : ''}
             </div>
             <div class="flex items-center gap-1 shrink-0">
-              <button onclick="openEditContact('${c.id}')" title="Edit Number" class="px-2 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-200 text-xs">✏️</button>
+              <button onclick="openEditContact('${c.id}')" title="Edit Number" class="px-2 py-1.5 rounded-lg bg-amber-500/20 border border-[#f5b041]/50 text-amber-200 text-xs">✏️</button>
               <a href="${escapeHtml(callHref)}" target="_top" class="px-2 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-400/50 text-emerald-200 text-xs">📞</a>
               <a href="${escapeHtml(waHref)}" target="_top" class="px-2 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-400/50 text-cyan-200 text-xs">💬</a>
               <button onclick="deleteContact('${c.id}')" class="px-2 py-1.5 rounded-lg bg-rose-500/15 border border-rose-400/40 text-rose-300 text-xs">✕</button>
@@ -2720,7 +2794,7 @@ Output strict JSON only:
           <div class="p-2.5 rounded-xl bg-black/40 border border-cyan-500/25 flex items-center justify-between gap-2">
             <div class="text-xs text-cyan-100 font-sinhala break-words flex-1">${escapeHtml(text)}</div>
             <div class="flex items-center gap-1 shrink-0">
-              <a href="${escapeHtml(scUrl)}" target="_top" class="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-200 text-[10px] font-hud">iOS</a>
+              <a href="${escapeHtml(scUrl)}" target="_top" class="px-2 py-1 rounded-lg bg-amber-500/20 border border-[#f5b041]/50 text-amber-200 text-[10px] font-hud">iOS</a>
               <button onclick="deleteVaultItem(${it.id})" class="px-2 py-1 rounded-lg bg-rose-500/15 border border-rose-400/40 text-rose-300 text-xs">✕</button>
             </div>
           </div>`;
@@ -2760,18 +2834,13 @@ Output strict JSON only:
       if (navigator.onLine && hasGeminiKey()) {
         try {
           const prompt = `Write a catchy ${platform} post caption with hashtags about "${topic}". Language: ${lang === 'si' ? 'Natural spoken Sinhala + English mix' : 'English'}. Return only the ready-to-post text.`;
-          const res = await fetch(GEMINI_CHAT_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': getActiveGeminiKey()
-            },
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-          });
-          if (res.ok) {
-            output = (await res.json())?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-          }
-        } catch (err) {}
+          const { data } = await requestGeminiWithModelFallback({
+            contents: [{ parts: [{ text: prompt }] }]
+          }, false);
+          output = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+        } catch (err) {
+          showToast(`Social API error: ${err.message}`, 'error');
+        }
       }
 
       if (!output) output = `${topic} 🔥\n\n#${platform.replace(/\s+/g, '')} #SriLanka`;
@@ -2823,6 +2892,9 @@ Output strict JSON only:
         if (val) localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, val);
         else localStorage.removeItem(STORAGE_KEYS.GEMINI_KEY);
       } catch (err) {}
+      // Reset session TTS bypass & model preference so new key is tested cleanly
+      state.ttsUnavailableForSession = false;
+      setWorkingModel(GEMINI_CHAT_MODELS[0]);
       syncSettingsUI();
       playSfx('ack');
       const resBox = document.getElementById('api-test-result');
@@ -2831,10 +2903,9 @@ Output strict JSON only:
     }
 
     /**
-     * Live API & Voice Tester:
-     * Saves any typed key first, runs a real gemini-2.5-flash request with x-goog-api-key header,
-     * shows green "✓ API Connected" or red "✗ HTTP <status>: <exact error message>",
-     * and then speaks a confirmation line.
+     * Live Diagnostic TEST API & VOICE Button:
+     * Probes models/gemini-3.0-flash (with automatic 404 fallback chain) via x-goog-api-key header,
+     * renders green "✓ API Connected (<model>)" or red exact HTTP error, then speaks a test line.
      */
     async function testApiAndVoice() {
       unlockIosAudioSynchronously();
@@ -2842,16 +2913,17 @@ Output strict JSON only:
       const typedKey = (inputEl ? inputEl.value : '').trim();
       if (typedKey) {
         try { localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, typedKey); } catch (e) {}
-        syncSettingsUI();
       }
+      state.ttsUnavailableForSession = false;
+      syncSettingsUI();
 
       const apiKey = getActiveGeminiKey();
       const resBox = document.getElementById('api-test-result');
       const btn = document.getElementById('btn-test-api-voice');
 
       if (!apiKey) {
-        resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-amber-950/70 border border-amber-400/55 text-amber-200';
-        resBox.textContent = '⚠️ No Gemini API Key saved. Testing local iOS voice only.';
+        resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-amber-950/70 border border-[#f5b041]/55 text-amber-200';
+        resBox.textContent = '⚠️ No Gemini API Key saved. Running local iOS voice test.';
         resBox.classList.remove('hidden');
         const returnState = state.fsm === FSM.SLEEPING ? FSM.SLEEPING : FSM.ACTIVE_LISTENING;
         speakLocked('Local voice test active, sir. Add a Gemini API key for full AI conversation.', 'en', returnState);
@@ -2860,49 +2932,36 @@ Output strict JSON only:
 
       btn.disabled = true;
       btn.textContent = '⏳ TESTING...';
-      resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-cyan-950/70 border border-cyan-400/45 text-cyan-200';
-      resBox.textContent = 'Testing gemini-2.5-flash via x-goog-api-key header...';
+      resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-cyan-950/70 border border-cyan-400/45 text-cyan-200';
+      resBox.textContent = 'Testing models/gemini-3.0-flash via x-goog-api-key header...';
       resBox.classList.remove('hidden');
 
       let apiOk = false;
-      try {
-        const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 8000);
-        const res = await fetch(GEMINI_CHAT_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': apiKey
-          },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: 'Reply with two words: Systems online.' }] }],
-            generationConfig: { maxOutputTokens: 16 }
-          }),
-          signal: controller.signal
-        });
-        clearTimeout(tid);
+      let connectedModel = GEMINI_CHAT_MODELS[0];
 
-        if (res.ok) {
-          apiOk = true;
-          resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-emerald-950/80 border border-emerald-400/65 text-emerald-200';
-          resBox.textContent = '✓ API Connected (gemini-2.5-flash + x-goog-api-key)';
-        } else {
-          const detail = await extractGeminiErrorMessage(res);
-          resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-rose-950/85 border border-rose-400/65 text-rose-200 break-words';
-          resBox.textContent = `✗ ${detail}`;
-        }
+      try {
+        const result = await requestGeminiWithModelFallback({
+          contents: [{ parts: [{ text: 'Reply with two words: Systems online.' }] }],
+          generationConfig: { maxOutputTokens: 16 }
+        }, true);
+
+        apiOk = true;
+        connectedModel = result.model;
+        resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-emerald-950/80 border border-emerald-400/65 text-emerald-200';
+        resBox.textContent = `✓ API Connected (${connectedModel})`;
       } catch (err) {
-        resBox.className = 'px-2.5 py-1.5 rounded-lg text-[11px] font-mono bg-rose-950/85 border border-rose-400/65 text-rose-200 break-words';
-        resBox.textContent = `✗ Network Error: ${err.name === 'AbortError' ? 'Timed out (8s)' : err.message}`;
+        resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-rose-950/85 border border-rose-400/65 text-rose-200 break-words';
+        resBox.textContent = `✗ ${err.message}`;
       }
 
       btn.disabled = false;
       btn.textContent = '🔊 TEST API & VOICE';
+      syncSettingsUI();
 
       const returnState = state.fsm === FSM.SLEEPING ? FSM.SLEEPING : FSM.ACTIVE_LISTENING;
       const spokenLine = state.activeLang === 'si'
-        ? (apiOk ? 'හෙලෝ මචන්, Gemini API එකයි කටහඬයි දෙකම සුපිරියටම සම්බන්ධ වුණා.' : 'මචන්, API connection එකේ error එකක් තියෙනවා, ඒත් local voice එක වැඩ.')
-        : (apiOk ? 'All systems nominal, sir. Gemini API and voice engine are connected.' : 'Voice engine active, sir, but the Gemini API returned an error. Please check the message on screen.');
+        ? (apiOk ? 'හෙලෝ මචන්, Gemini 3 Flash API එකයි කටහඬයි දෙකම සුපිරියටම සම්බන්ධ වුණා.' : 'මචන්, API connection එකේ error එකක් තියෙනවා, ඒත් කටහඬ වැඩ කරනවා.')
+        : (apiOk ? 'All systems nominal, sir. Gemini API and voice engine are online.' : 'Voice engine active, sir, but the Gemini API returned an error. Please check the message on screen.');
 
       speakLocked(spokenLine, state.activeLang, returnState);
     }
@@ -2934,7 +2993,7 @@ Output strict JSON only:
       state.speedMode = (val === 'instant') ? 'instant' : 'hd';
       saveSettings();
       playSfx('ack');
-      showToast(state.speedMode === 'instant' ? 'Ultra-Fast Instant iOS Voice Active' : 'HD Jarvis Voice Locked (Charon)', 'info');
+      showToast(state.speedMode === 'instant' ? 'Ultra-Fast Instant iOS Voice Active' : 'HD Jarvis Voice Locked (Charon + iOS Fallback)', 'info');
     }
 
     function toggleDspFilter(checked) {
@@ -2948,8 +3007,8 @@ Output strict JSON only:
     function showToast(msg, type = 'info') {
       const box = document.getElementById('toast-box');
       const styles = {
-        info: 'bg-cyan-950/95 border-cyan-400/70 text-cyan-100',
-        warn: 'bg-amber-950/95 border-amber-400/70 text-amber-100',
+        info: 'bg-cyan-950/95 border-[#00e5ff]/70 text-cyan-100',
+        warn: 'bg-amber-950/95 border-[#f5b041]/70 text-amber-100',
         error: 'bg-rose-950/95 border-rose-400/70 text-rose-100'
       };
       box.className = `fixed top-4 left-1/2 -translate-x-1/2 z-[70] px-4 py-2 rounded-full text-xs font-semibold border shadow-lg max-w-[92vw] truncate ${styles[type] || styles.info}`;
@@ -2959,28 +3018,16 @@ Output strict JSON only:
       toastTimer = setTimeout(() => box.classList.add('hidden'), 2800);
     }
 
-    function updateNetworkBadge() {
-      const b = document.getElementById('net-badge');
-      if (navigator.onLine) {
-        b.textContent = 'ONLINE';
-        b.className = 'px-1.5 py-0.5 rounded-full text-[9px] font-hud bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 shrink-0';
-      } else {
-        b.textContent = 'OFFLINE';
-        b.className = 'px-1.5 py-0.5 rounded-full text-[9px] font-hud bg-amber-500/20 border border-amber-400/50 text-amber-300 shrink-0';
-      }
-    }
-
     // =========================================================================
     // 11. INIT ON WINDOW LOAD
     // =========================================================================
-    window.addEventListener('online', () => { updateNetworkBadge(); fetchLiveWeather(); });
-    window.addEventListener('offline', updateNetworkBadge);
+    window.addEventListener('online', () => { syncSettingsUI(); fetchLiveWeather(); });
+    window.addEventListener('offline', syncSettingsUI);
 
     window.onload = function () {
       loadState();
       updateClock();
       setInterval(updateClock, 1000);
-      updateNetworkBadge();
       fetchLiveWeather();
     };
   </script>

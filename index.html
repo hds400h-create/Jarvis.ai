@@ -220,7 +220,7 @@
       TAP CORE TO INITIALIZE J.A.R.V.I.S.
     </div>
     <p class="mt-4 text-xs text-cyan-200/70 max-w-xs font-sinhala leading-relaxed">
-      Tap once to unlock iOS Safari audio &amp; voice, sync Sri Lanka weather, hear your briefing, and start continuous English &amp; සිංහල voice control.
+      Tap once to unlock iOS Safari audio &amp; voice, auto-discover live Gemini models, sync weather, and start continuous English &amp; සිංහල voice control.
     </p>
   </div>
 
@@ -471,7 +471,7 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL 3: SOCIAL MEDIA COMPOSER (Gemini 3.0 Flash + Fallbacks)         -->
+  <!-- MODAL 3: SOCIAL MEDIA COMPOSER (Live Auto-Discovered Model)           -->
   <!-- ===================================================================== -->
   <div id="modal-social" class="fixed inset-x-3 top-1/2 -translate-y-1/2 max-w-md mx-auto hud-panel rounded-2xl p-4 z-50 hidden max-h-[84dvh] flex flex-col">
     <div class="flex items-center justify-between pb-3 border-b border-cyan-500/30">
@@ -512,27 +512,27 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL 4: iOS SETUP, GEMINI 3.0 FLASH API KEY, AUTO-CALL & GUIDE       -->
+  <!-- MODAL 4: iOS SETUP, API KEY, LIVE AUTO-MODEL DISCOVERY & GUIDE        -->
   <!-- ===================================================================== -->
   <div id="modal-settings" class="fixed inset-x-3 top-1/2 -translate-y-1/2 max-w-md mx-auto hud-panel-gold rounded-2xl p-4 z-50 hidden max-h-[88dvh] flex flex-col">
     <div class="flex items-center justify-between pb-3 border-b border-[#f5b041]/30">
       <div>
         <h2 class="font-hud text-sm tracking-widest text-[#f5b041]">⚙️ iOS SETUP &amp; API KEY</h2>
-        <p class="text-[11px] text-amber-200/70">Gemini 3.0 Flash • Header Auth • Auto-Call</p>
+        <p class="text-[11px] text-amber-200/70">Live Auto-Model Discovery • Header Auth • Auto-Call</p>
       </div>
       <button onclick="closeAllModals()" class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-200 font-bold">✕</button>
     </div>
 
     <div class="mt-3 overflow-y-auto flex-1 space-y-3 text-xs text-amber-50/90 leading-relaxed pr-1 no-scrollbar font-sinhala">
 
-      <!-- 1. GEMINI API KEY SECTION (x-goog-api-key HEADER + MODEL FALLBACK) -->
-      <form onsubmit="saveGeminiKeyOnly(event)" class="p-3 rounded-xl bg-cyan-950/45 border-2 border-[#00e5ff]/65 space-y-2 shadow-[0_0_18px_rgba(0,229,255,0.12)]">
+      <!-- 1. GEMINI API KEY + LIVE AUTO-MODEL DISCOVERY SECTION -->
+      <form onsubmit="saveGeminiKeyOnly(event)" class="p-3 rounded-xl bg-cyan-950/45 border-2 border-[#00e5ff]/65 space-y-2.5 shadow-[0_0_18px_rgba(0,229,255,0.12)]">
         <div class="flex items-center justify-between gap-2">
           <div class="font-hud text-[11px] text-[#00e5ff]">🔑 GEMINI API KEY (AQ.... &amp; AIza...)</div>
           <span id="gemini-key-status" class="text-[9px] font-hud px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/50 text-amber-200 shrink-0">NOT SET</span>
         </div>
         <p class="text-[11px] text-cyan-100/80 leading-snug">
-          Active Model: <code id="active-model-label" class="font-mono text-[#00e5ff]">gemini-3.0-flash</code> via <code class="font-mono text-[#00e5ff]">x-goog-api-key</code> header. Saved privately in <code class="font-mono text-cyan-300">localStorage</code>. Get a free key at
+          Authenticates via <code class="font-mono text-[#00e5ff]">x-goog-api-key</code> header &amp; auto-discovers live models for your account. Stored privately in <code class="font-mono text-cyan-300">localStorage</code>. Get a key at
           <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="text-[#f5b041] underline font-semibold">aistudio.google.com/apikey</a>.
         </p>
         <input id="input-gemini-key" type="password" placeholder="Paste Gemini Key (AQ.... or AIza...)" autocomplete="off"
@@ -545,6 +545,25 @@
             🔊 TEST API &amp; VOICE
           </button>
         </div>
+
+        <!-- LIVE GEMINI MODEL DISCOVERY DROPDOWN -->
+        <div class="pt-2 border-t border-cyan-500/25 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <label for="select-live-model" class="font-hud text-[10px] text-[#00e5ff] tracking-wider">LIVE GEMINI MODEL</label>
+            <button id="btn-refresh-models" type="button" onclick="refreshLiveModelsUI()"
+              class="px-2 py-1 rounded-md bg-cyan-500/20 border border-cyan-400/50 text-cyan-100 font-hud text-[9px] font-bold active:scale-95 transition">
+              🔄 Refresh Models
+            </button>
+          </div>
+          <select id="select-live-model" onchange="changeSelectedModel(this.value)"
+            class="w-full rounded-lg bg-[#040d1c] border border-cyan-400/45 px-2.5 py-2 text-xs text-cyan-100 font-mono focus:outline-none focus:border-[#00e5ff]">
+            <option value="">Auto-Discover on Save / Test...</option>
+          </select>
+          <div id="tts-model-status" class="text-[10px] font-mono text-cyan-300/75 truncate">
+            TTS Engine: Auto-detecting live TTS / iOS Voice
+          </div>
+        </div>
+
         <!-- Live Inline API Diagnostic Status Box -->
         <div id="api-test-result" class="hidden px-2.5 py-2 rounded-lg text-[11px] font-mono break-words leading-snug"></div>
       </form>
@@ -624,8 +643,8 @@
 
         <div class="space-y-1 p-2 rounded-lg bg-cyan-950/35 border border-cyan-500/20">
           <div class="font-bold text-[#00e5ff]">Step 1: GitHub Pages &amp; Safari Home Screen</div>
-          <p>Paste this file into <code class="px-1 rounded bg-cyan-500/20 font-mono">index.html</code> on GitHub Pages. Open your HTTPS link in <strong>Safari</strong> → <strong>Share</strong> → <strong>Add to Home Screen</strong>. Paste your Gemini Key (<code class="font-mono">AQ....</code> or <code class="font-mono">AIza...</code>) above and tap <strong>TEST API &amp; VOICE</strong>.</p>
-          <p class="text-cyan-200/80"><em>සිංහල:</em> GitHub Pages වල <code class="font-mono">index.html</code> එක update කරලා, Home Screen app එක close කරලා ආයෙ open කරලා <strong>⚙️ iOS Setup → TEST API &amp; VOICE</strong> ඔබන්න.</p>
+          <p>Paste this file into <code class="px-1 rounded bg-cyan-500/20 font-mono">index.html</code> on GitHub Pages. Open your HTTPS link in <strong>Safari</strong> → <strong>Share</strong> → <strong>Add to Home Screen</strong>. Save your Gemini Key (<code class="font-mono">AQ....</code> or <code class="font-mono">AIza...</code>) above and tap <strong>TEST API &amp; VOICE</strong> to auto-discover live models.</p>
+          <p class="text-cyan-200/80"><em>සිංහල:</em> GitHub Pages වල <code class="font-mono">index.html</code> එක update කරලා, Home Screen app එක close කරලා ආයෙ open කරලා <strong>⚙️ iOS Setup → TEST API &amp; VOICE</strong> ඔබන්න — එතකොට ඔයාගේ account එකට වැඩ කරන live model එක auto තෝරගන්නවා.</p>
         </div>
 
         <div class="space-y-1 p-2 rounded-lg bg-emerald-950/35 border border-emerald-500/25">
@@ -654,7 +673,7 @@
       <!-- Hidden buffer for clean clipboard copy -->
       <textarea id="shortcut-guide-copy-buf" class="sr-only" aria-hidden="true">J.A.R.V.I.S. iPhone 15 Pro Max Setup Guide (English & Sinhala):
 1. Host jarvis_assistant.html as index.html on GitHub Pages, open in Safari -> Share -> Add to Home Screen.
-2. Get a free Gemini API Key (AQ.... or AIza...) at https://aistudio.google.com/apikey, save in J.A.R.V.I.S. -> iOS Setup, and tap TEST API & VOICE.
+2. Get a free Gemini API Key (AQ.... or AIza...) at https://aistudio.google.com/apikey, save in J.A.R.V.I.S. -> iOS Setup, and tap TEST API & VOICE (auto-discovers live models for your account).
 3. Create Apple Shortcut named "JarvisBridge":
    - Split Shortcut Input by Custom "|"
    - Get First Item -> Action
@@ -670,20 +689,14 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- J.A.R.V.I.S. CORE ENGINE (GEMINI 3.0 FLASH + HEADER AUTH + FALLBACKS) -->
+  <!-- J.A.R.V.I.S. CORE ENGINE (LIVE AUTO-MODEL DISCOVERY + HEADER AUTH)    -->
   <!-- ===================================================================== -->
   <script>
     // =========================================================================
-    // 1. CONSTANTS, MODEL FALLBACK CHAIN, APP REGISTRY & 5-STATE FSM
+    // 1. CONSTANTS, APP REGISTRY & 5-STATE FSM
     // =========================================================================
     const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
-    const GEMINI_CHAT_MODELS = [
-      'gemini-3.0-flash',
-      'gemini-2.5-flash-lite',
-      'gemini-2.0-flash'
-    ];
-    const GEMINI_TTS_MODEL = 'gemini-2.5-flash-preview-tts';
-    const GEMINI_TTS_URL   = `${GEMINI_API_BASE}/${GEMINI_TTS_MODEL}:generateContent`;
+    const DEFAULT_TTS_MODEL = "gemini-2.5-flash-preview-tts";
 
     // Locked Charon voice profile
     const LOCKED_TTS_VOICE = "Charon";
@@ -799,7 +812,8 @@
 
     const STORAGE_KEYS = {
       GEMINI_KEY: 'jarvis_gemini_key',
-      WORKING_MODEL: 'jarvis_working_model',
+      SELECTED_MODEL: 'jarvis_selected_model',
+      DISCOVERED_TTS: 'jarvis_discovered_tts_model',
       CONTACTS: 'jarvis_v8_contacts',
       NOTES: 'jarvis_v8_notes',
       REMINDERS: 'jarvis_v8_reminders',
@@ -823,9 +837,11 @@
       elevenLabsKey: '',
       elevenLabsVoiceId: '',
 
-      // Active working Gemini chat model (persisted after successful response)
-      workingModel: GEMINI_CHAT_MODELS[0],
-      // If Gemini TTS endpoint returns 404/403/400, seamlessly bypass to iOS speech until key changes
+      // Live Auto-Model Discovery State
+      selectedModel: '',
+      discoveredChatModels: [],  // Array of { id, displayName, score }
+      discoveredTtsModel: '',
+      discoveryCompleted: false,
       ttsUnavailableForSession: false,
 
       // iOS Safari Speech Recognition Engine State
@@ -868,23 +884,18 @@
       return getActiveGeminiKey().length > 0;
     }
 
-    function getOrderedChatModels() {
-      const list = [];
-      if (state.workingModel && GEMINI_CHAT_MODELS.includes(state.workingModel)) {
-        list.push(state.workingModel);
-      }
-      for (const m of GEMINI_CHAT_MODELS) {
-        if (!list.includes(m)) list.push(m);
-      }
-      return list;
+    function normalizeModelId(rawName) {
+      return String(rawName || '').replace(/^models\//i, '').trim();
     }
 
-    function setWorkingModel(modelName) {
-      if (!modelName) return;
-      state.workingModel = modelName;
-      try { localStorage.setItem(STORAGE_KEYS.WORKING_MODEL, modelName); } catch (e) {}
-      const lbl = document.getElementById('active-model-label');
-      if (lbl) lbl.textContent = modelName;
+    function setSelectedModel(modelId) {
+      const clean = normalizeModelId(modelId);
+      state.selectedModel = clean;
+      try {
+        if (clean) localStorage.setItem(STORAGE_KEYS.SELECTED_MODEL, clean);
+        else localStorage.removeItem(STORAGE_KEYS.SELECTED_MODEL);
+      } catch (e) {}
+      renderLiveModelDropdown();
     }
 
     function isContactPlaceholder(contact) {
@@ -895,10 +906,11 @@
 
     function loadState() {
       try {
-        const savedModel = localStorage.getItem(STORAGE_KEYS.WORKING_MODEL);
-        if (savedModel && GEMINI_CHAT_MODELS.includes(savedModel)) {
-          state.workingModel = savedModel;
-        }
+        const savedModel = localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL);
+        if (savedModel) state.selectedModel = normalizeModelId(savedModel);
+
+        const savedTts = localStorage.getItem(STORAGE_KEYS.DISCOVERED_TTS);
+        if (savedTts) state.discoveredTtsModel = normalizeModelId(savedTts);
 
         const c = localStorage.getItem(STORAGE_KEYS.CONTACTS) || localStorage.getItem('jarvis_v7_contacts');
         state.contacts = c ? JSON.parse(c) : JSON.parse(JSON.stringify(DEFAULT_CONTACTS));
@@ -939,6 +951,43 @@
       syncSettingsUI();
     }
 
+    function renderLiveModelDropdown() {
+      const sel = document.getElementById('select-live-model');
+      const ttsLbl = document.getElementById('tts-model-status');
+      if (!sel) return;
+
+      const models = state.discoveredChatModels || [];
+      if (models.length > 0) {
+        sel.innerHTML = models.map((m, idx) => {
+          const tag = idx === 0 ? ' ★ Recommended' : '';
+          return `<option value="${escapeHtml(m.id)}">${escapeHtml(m.id)}${tag}</option>`;
+        }).join('');
+
+        if (state.selectedModel && models.some(m => m.id === state.selectedModel)) {
+          sel.value = state.selectedModel;
+        } else {
+          sel.value = models[0].id;
+        }
+      } else if (state.selectedModel) {
+        sel.innerHTML = `<option value="${escapeHtml(state.selectedModel)}">${escapeHtml(state.selectedModel)} (Saved)</option>`;
+        sel.value = state.selectedModel;
+      } else {
+        sel.innerHTML = `<option value="">${hasGeminiKey() ? 'Tap 🔄 Refresh Models or Test API...' : 'Add Gemini API Key to discover models'}</option>`;
+      }
+
+      if (ttsLbl) {
+        if (state.ttsUnavailableForSession) {
+          ttsLbl.textContent = 'TTS Engine: iOS Web Speech (Fallback Active)';
+        } else if (state.discoveredTtsModel) {
+          ttsLbl.textContent = `Live TTS Model: ${state.discoveredTtsModel} (Charon)`;
+        } else if (hasGeminiKey()) {
+          ttsLbl.textContent = 'TTS Engine: Auto-detecting live TTS / iOS Voice';
+        } else {
+          ttsLbl.textContent = 'TTS Engine: iOS Web Speech (Local Mode)';
+        }
+      }
+    }
+
     function syncSettingsUI() {
       const keyPresent = hasGeminiKey();
       const storedKey = (() => { try { return (localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '').trim(); } catch (e) { return ''; } })();
@@ -950,7 +999,6 @@
       const gkey = document.getElementById('input-gemini-key');
       const gStatus = document.getElementById('gemini-key-status');
       const hudModeBadge = document.getElementById('hud-mode-badge');
-      const modelLbl = document.getElementById('active-model-label');
       const ekey = document.getElementById('input-el-key');
       const evid = document.getElementById('input-el-voice');
       const badge = document.getElementById('voice-lock-badge');
@@ -965,9 +1013,10 @@
       if (gkey) gkey.value = storedKey;
       if (ekey) ekey.value = state.elevenLabsKey;
       if (evid) evid.value = state.elevenLabsVoiceId;
-      if (modelLbl) modelLbl.textContent = state.workingModel;
 
-      // Top HUD Badge: ONLINE / AUTH KEY ACTIVE / LOCAL / 🔑 Add API Key
+      renderLiveModelDropdown();
+
+      // Top HUD Badge
       if (hudModeBadge) {
         if (!navigator.onLine) {
           hudModeBadge.textContent = 'LOCAL';
@@ -979,7 +1028,7 @@
           hudModeBadge.textContent = 'AUTH KEY ACTIVE';
           hudModeBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud bg-emerald-500/20 border border-emerald-400/55 text-emerald-300 shrink-0 active:scale-95 transition';
         } else {
-          hudModeBadge.textContent = 'ONLINE';
+          hudModeBadge.textContent = 'KEY ACTIVE';
           hudModeBadge.className = 'px-2 py-0.5 rounded-full text-[9px] font-hud bg-emerald-500/15 border border-emerald-400/45 text-emerald-300 shrink-0 active:scale-95 transition';
         }
       }
@@ -1033,7 +1082,166 @@
     }
 
     // =========================================================================
-    // 2. CLOCK, DATE & LIVE COLOMBO / KURUNEGALA WEATHER (Open-Meteo)
+    // 2. LIVE AUTO-MODEL DISCOVERY ENGINE (ELIMINATES HTTP 404 PERMANENTLY)
+    // =========================================================================
+
+    /**
+     * Scores a live Gemini model ID so the newest Flash model available on the
+     * user's account is automatically ranked #1.
+     */
+    function scoreChatModel(id) {
+      const lower = id.toLowerCase();
+      let score = 0;
+
+      // Must be a Gemini family model for highest priority
+      if (lower.startsWith('gemini-')) score += 1000;
+      else if (lower.includes('gemini')) score += 600;
+
+      // Prefer flash models for low-latency voice conversation
+      if (lower.includes('flash')) score += 500;
+      else if (lower.includes('pro')) score += 200;
+
+      // Parse semantic version (e.g. gemini-3.8-flash -> 3.8, gemini-2.5-flash -> 2.5)
+      const verMatch = lower.match(/gemini-(\d+)(?:\.(\d+))?/);
+      if (verMatch) {
+        const major = parseInt(verMatch[1], 10) || 0;
+        const minor = parseInt(verMatch[2] || '0', 10) || 0;
+        score += major * 120 + minor * 12;
+      }
+
+      // Bonus for explicit latest alias
+      if (lower === 'gemini-flash-latest') score += 310;
+
+      // Slight adjustments: standard flash > lite > preview/exp > 8b/thinking
+      if (lower.includes('lite')) score -= 18;
+      if (lower.includes('preview')) score -= 6;
+      if (lower.includes('exp')) score -= 25;
+      if (lower.includes('8b')) score -= 35;
+      if (lower.includes('thinking')) score -= 30;
+      if (lower.includes('image')) score -= 80;
+      if (lower.includes('audio')) score -= 80;
+      if (lower.includes('live')) score -= 90;
+
+      return score;
+    }
+
+    /**
+     * Calls GET https://generativelanguage.googleapis.com/v1beta/models
+     * using HTTP header 'x-goog-api-key': apiKey.
+     * Populates state.discoveredChatModels, detects live TTS model, and persists
+     * the optimal live chat model to localStorage ('jarvis_selected_model').
+     */
+    async function discoverLiveModels(forceSelectBest = false, excludeModelId = '') {
+      const apiKey = getActiveGeminiKey();
+      if (!apiKey) {
+        const err = new Error('NO_API_KEY');
+        err.code = 'NO_API_KEY';
+        throw err;
+      }
+
+      const controller = new AbortController();
+      const tid = setTimeout(() => controller.abort(), 8000);
+
+      let res;
+      try {
+        res = await fetch(`${GEMINI_API_BASE}?pageSize=100`, {
+          method: 'GET',
+          headers: {
+            'x-goog-api-key': apiKey
+          },
+          signal: controller.signal
+        });
+      } catch (netErr) {
+        clearTimeout(tid);
+        const err = new Error(netErr.name === 'AbortError' ? 'Model discovery timed out (8s)' : `Network error: ${netErr.message}`);
+        err.code = 'NETWORK_ERROR';
+        throw err;
+      }
+      clearTimeout(tid);
+
+      if (!res.ok) {
+        const detail = await extractGeminiErrorMessage(res);
+        const err = new Error(detail);
+        err.code = 'HTTP_ERROR';
+        err.httpStatus = res.status;
+        throw err;
+      }
+
+      const json = await res.json();
+      const rawModels = Array.isArray(json.models) ? json.models : [];
+
+      const chatCandidates = [];
+      const ttsCandidates = [];
+
+      for (const m of rawModels) {
+        const id = normalizeModelId(m.name);
+        if (!id) continue;
+        const methods = Array.isArray(m.supportedGenerationMethods) ? m.supportedGenerationMethods : [];
+        if (!methods.includes('generateContent')) continue;
+
+        const lower = id.toLowerCase();
+
+        // Detect live TTS models dynamically
+        if (lower.includes('tts')) {
+          ttsCandidates.push({ id, score: scoreChatModel(id) });
+          continue;
+        }
+
+        // Exclude non-chat models (embedding, aqa, imagen, veo, image-only, robotics, etc.)
+        if (/(embedding|embed|aqa|imagen|veo|bison|gecko|robotics|computer-use|image-generation|image-preview)/i.test(lower)) {
+          continue;
+        }
+
+        chatCandidates.push({
+          id,
+          displayName: m.displayName || id,
+          score: scoreChatModel(id)
+        });
+      }
+
+      // Rank best chat models first
+      chatCandidates.sort((a, b) => b.score - a.score);
+      ttsCandidates.sort((a, b) => b.score - a.score);
+
+      state.discoveredChatModels = chatCandidates;
+      state.discoveryCompleted = true;
+
+      // Store discovered live TTS model if present
+      if (ttsCandidates.length > 0) {
+        state.discoveredTtsModel = ttsCandidates[0].id;
+        state.ttsUnavailableForSession = false;
+        try { localStorage.setItem(STORAGE_KEYS.DISCOVERED_TTS, state.discoveredTtsModel); } catch (e) {}
+      } else {
+        state.discoveredTtsModel = '';
+        try { localStorage.removeItem(STORAGE_KEYS.DISCOVERED_TTS); } catch (e) {}
+      }
+
+      if (chatCandidates.length === 0) {
+        renderLiveModelDropdown();
+        throw new Error('No generateContent chat models found for this API key.');
+      }
+
+      const excludeClean = normalizeModelId(excludeModelId);
+      const validIds = chatCandidates.map(m => m.id);
+      const currentIsValid = state.selectedModel && validIds.includes(state.selectedModel) && state.selectedModel !== excludeClean;
+
+      if (forceSelectBest || !currentIsValid) {
+        const best = chatCandidates.find(m => m.id !== excludeClean) || chatCandidates[0];
+        setSelectedModel(best.id);
+      } else {
+        renderLiveModelDropdown();
+      }
+
+      syncSettingsUI();
+      return {
+        selectedModel: state.selectedModel,
+        chatModels: chatCandidates,
+        ttsModel: state.discoveredTtsModel
+      };
+    }
+
+    // =========================================================================
+    // 3. CLOCK, DATE & LIVE COLOMBO / KURUNEGALA WEATHER (Open-Meteo)
     // =========================================================================
     const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const DAYS_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1056,8 +1264,8 @@
     }
 
     async function fetchLiveWeather() {
-      // Default coordinates: Kurunegala / Colombo region, Sri Lanka
-      let lat = 7.4863, lon = 80.3647;
+      // Default coordinates: Colombo / Western Province, Sri Lanka
+      let lat = 6.9271, lon = 79.8612;
       if (!navigator.onLine) { renderWeatherUI(); return; }
       try {
         const pos = await new Promise((resolve, reject) => {
@@ -1122,7 +1330,7 @@
     }
 
     // =========================================================================
-    // 3. STRICT 5-STATE FSM CONTROLLER
+    // 4. STRICT 5-STATE FSM CONTROLLER
     // =========================================================================
     function transitionFSM(nextState, customStatusText) {
       state.fsm = nextState;
@@ -1231,7 +1439,7 @@
     }
 
     // =========================================================================
-    // 4. SYNCHRONOUS iOS AUDIO + SPEECH UNLOCK & STARK HUD DSP CHAIN
+    // 5. SYNCHRONOUS iOS AUDIO + SPEECH UNLOCK & STARK HUD DSP CHAIN
     // =========================================================================
     let audioCtx = null;
     let activeBufferSource = null;
@@ -1348,7 +1556,7 @@
     }
 
     // =========================================================================
-    // 5. GUARANTEED VOICE ENGINE (CHARON HD + STARK DSP + INSTANT iOS FALLBACK)
+    // 6. GUARANTEED VOICE ENGINE (CHARON HD + STARK DSP + INSTANT iOS FALLBACK)
     // =========================================================================
     let lockedNativeMaleVoice = null;
     let activeSpeechCancel = null;
@@ -1582,7 +1790,7 @@
           }
         }
 
-        // Tier 2: Gemini TTS ('Charon') via x-goog-api-key header + Stark DSP
+        // Tier 2: Gemini Live TTS ('Charon') via x-goog-api-key header + Stark DSP
         if (!playedAudioBuffer && keyAvailable && !state.ttsUnavailableForSession && navigator.onLine && (isSi || state.speedMode !== 'instant')) {
           const buf = await fetchLockedCharonAudio(text);
           if (myToken !== speechTurnToken) return;
@@ -1592,7 +1800,7 @@
           }
         }
 
-        // Tier 3: Guaranteed Seamless iOS Web Speech Fallback (never stays silent!)
+        // Tier 3: Guaranteed Seamless iOS Web Speech Fallback
         if (!playedAudioBuffer && myToken === speechTurnToken) {
           await speakNativeWithWatchdog(text, isSi, maxDurationMs);
         }
@@ -1647,15 +1855,25 @@
     }
 
     /**
-     * Fetches Gemini TTS ('Charon') using x-goog-api-key header.
-     * On HTTP 404/400/403, immediately returns null and marks TTS unavailable
-     * for this session so speakLocked falls back instantly to iOS Web Speech.
+     * Fetches Gemini TTS ('Charon') using x-goog-api-key header and dynamically
+     * discovered TTS model (if available). Immediately falls back to iOS Web Speech
+     * on 404/400/401/403.
      */
     async function fetchLockedCharonAudio(text) {
       const apiKey = getActiveGeminiKey();
       if (!apiKey) return null;
       const ctx = getAudioCtx();
       if (!ctx) return null;
+
+      // If discovery already ran and found no TTS model, skip straight to iOS voice
+      if (state.discoveryCompleted && !state.discoveredTtsModel) {
+        state.ttsUnavailableForSession = true;
+        syncSettingsUI();
+        return null;
+      }
+
+      const ttsModel = state.discoveredTtsModel || DEFAULT_TTS_MODEL;
+      const ttsUrl = `${GEMINI_API_BASE}/${ttsModel}:generateContent`;
 
       const payload = {
         contents: [{ parts: [{ text: `${LOCKED_TTS_DIRECTIVE} ${text}` }] }],
@@ -1667,13 +1885,13 @@
             }
           }
         },
-        model: GEMINI_TTS_MODEL
+        model: ttsModel
       };
 
       try {
         const controller = new AbortController();
         const tid = setTimeout(() => controller.abort(), 6000);
-        const res = await fetch(GEMINI_TTS_URL, {
+        const res = await fetch(ttsUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1718,7 +1936,7 @@
     }
 
     // =========================================================================
-    // 6. iOS SAFARI SPEECH RECOGNITION (1.2s AUTO-COMMIT + BUFFER FLUSH)
+    // 7. iOS SAFARI SPEECH RECOGNITION (1.2s AUTO-COMMIT + BUFFER FLUSH)
     // =========================================================================
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
@@ -1913,7 +2131,7 @@
     }, 1500);
 
     // =========================================================================
-    // 7. BOOT, TAP-TO-INTERRUPT & EXPLICIT SLEEP/WAKE
+    // 8. BOOT, TAP-TO-INTERRUPT & EXPLICIT SLEEP/WAKE
     // =========================================================================
     function bootJarvis() {
       if (state.fsm !== FSM.BOOT) return;
@@ -1924,8 +2142,12 @@
     }
 
     async function runBootSequence() {
-      transitionFSM(FSM.PROCESSING, 'SYNCING TELEMETRY & WEATHER...');
-      await fetchLiveWeather();
+      transitionFSM(FSM.PROCESSING, 'SYNCING TELEMETRY & LIVE MODELS...');
+      const tasks = [fetchLiveWeather()];
+      if (navigator.onLine && hasGeminiKey() && !state.discoveryCompleted) {
+        tasks.push(discoverLiveModels(false).catch(() => {}));
+      }
+      await Promise.all(tasks);
       await deliverBriefing('en', true);
     }
 
@@ -2006,7 +2228,7 @@
     }
 
     // =========================================================================
-    // 8. GEMINI 3.0 FLASH BRAIN (AUTO 404 FALLBACK ARRAY + x-goog-api-key)
+    // 9. GEMINI BRAIN WITH LIVE AUTO-MODEL DISCOVERY & AUTO-HEAL ON 404
     // =========================================================================
     function pushChatHistory(role, text) {
       if (!text) return;
@@ -2025,12 +2247,51 @@
       return `HTTP ${res.status} (${res.statusText || 'Request Rejected'})`;
     }
 
+    async function fetchGenerateContent(modelId, payload, apiKey) {
+      const cleanModel = normalizeModelId(modelId);
+      const url = `${GEMINI_API_BASE}/${cleanModel}:generateContent`;
+      const controller = new AbortController();
+      const tid = setTimeout(() => controller.abort(), 9000);
+
+      let res;
+      try {
+        res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+      } catch (netErr) {
+        clearTimeout(tid);
+        const err = new Error(netErr.name === 'AbortError' ? 'Request timed out (9s)' : `Network error: ${netErr.message}`);
+        err.code = 'NETWORK_ERROR';
+        throw err;
+      }
+      clearTimeout(tid);
+
+      if (!res.ok) {
+        const detail = await extractGeminiErrorMessage(res);
+        const err = new Error(detail);
+        err.code = 'HTTP_ERROR';
+        err.httpStatus = res.status;
+        throw err;
+      }
+
+      const data = await res.json();
+      return { data, model: cleanModel };
+    }
+
     /**
-     * Core Gemini request wrapper with automatic HTTP 404 fallback across
-     * ['gemini-3.0-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'].
-     * Always authenticates via x-goog-api-key header (never URL query param).
+     * Core Gemini request wrapper with Live Auto-Model Discovery + Auto-Heal on 404:
+     * 1. If no live model is selected yet, runs discoverLiveModels() first.
+     * 2. Sends POST generateContent with 'x-goog-api-key' header.
+     * 3. If HTTP 404 occurs (stale/retired model), re-runs discoverLiveModels(true, failedModel),
+     *    saves the new working model to localStorage, and retries seamlessly.
      */
-    async function requestGeminiWithModelFallback(payload, preferFreshOrder = false) {
+    async function requestGeminiLive(payload) {
       const apiKey = getActiveGeminiKey();
       if (!apiKey) {
         const err = new Error('NO_API_KEY');
@@ -2038,53 +2299,37 @@
         throw err;
       }
 
-      const modelsToTry = preferFreshOrder ? [...GEMINI_CHAT_MODELS] : getOrderedChatModels();
-      let lastError = null;
-
-      for (let i = 0; i < modelsToTry.length; i++) {
-        const model = modelsToTry[i];
-        const url = `${GEMINI_API_BASE}/${model}:generateContent`;
-        const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 8500);
-
-        let res;
-        try {
-          res = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': apiKey
-            },
-            body: JSON.stringify(payload),
-            signal: controller.signal
-          });
-        } catch (netErr) {
-          clearTimeout(tid);
-          const err = new Error(netErr.name === 'AbortError' ? 'Request timed out (8.5s)' : `Network error: ${netErr.message}`);
-          err.code = 'NETWORK_ERROR';
-          throw err;
-        }
-        clearTimeout(tid);
-
-        if (res.ok) {
-          setWorkingModel(model);
-          const data = await res.json();
-          return { data, model };
-        }
-
-        const detail = await extractGeminiErrorMessage(res);
-        lastError = new Error(detail);
-        lastError.code = 'HTTP_ERROR';
-        lastError.httpStatus = res.status;
-
-        // Only auto-fallback to next model if HTTP 404 (model unavailable)
-        if (res.status === 404 && i < modelsToTry.length - 1) {
-          continue;
-        }
-        throw lastError;
+      if (!state.selectedModel) {
+        await discoverLiveModels(true);
       }
 
-      throw lastError || new Error('All Gemini models failed.');
+      const firstModel = state.selectedModel;
+      try {
+        return await fetchGenerateContent(firstModel, payload, apiKey);
+      } catch (err) {
+        // Auto-heal on HTTP 404: re-discover live models and try top candidates
+        if (err.httpStatus === 404) {
+          const discovered = await discoverLiveModels(true, firstModel);
+          const candidates = discovered.chatModels
+            .map(m => m.id)
+            .filter(id => id !== firstModel)
+            .slice(0, 3);
+
+          let lastErr = err;
+          for (const candidateModel of candidates) {
+            try {
+              const res = await fetchGenerateContent(candidateModel, payload, apiKey);
+              setSelectedModel(candidateModel);
+              return res;
+            } catch (retryErr) {
+              lastErr = retryErr;
+              if (retryErr.httpStatus !== 404) throw retryErr;
+            }
+          }
+          throw lastErr;
+        }
+        throw err;
+      }
     }
 
     async function callGeminiFast(userText, lang) {
@@ -2119,11 +2364,10 @@ Output strict JSON only:
         }
       };
 
-      const { data } = await requestGeminiWithModelFallback(payload, false);
+      const { data } = await requestGeminiLive(payload);
       const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!raw) throw new Error('Empty JSON response from Gemini');
 
-      // Strip accidental markdown fences if any model returns them
       const cleanedJson = raw.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
       return JSON.parse(cleanedJson);
     }
@@ -2142,7 +2386,7 @@ Output strict JSON only:
     /**
      * Local Smart Command Engine (Direct App Launcher, Calls, WhatsApp, Maps,
      * Notes, Reminders, Time, Weather, Greetings).
-     * Never falsely tells the user to "Add your free Gemini API key" when a key IS saved.
+     * Never falsely tells the user to "Add API key" when a key IS saved.
      */
     function localSmartCommandRouter(text, lang, apiErrorDetail = '') {
       const t = text.toLowerCase();
@@ -2295,7 +2539,7 @@ Output strict JSON only:
     }
 
     // =========================================================================
-    // 9. AUTO-EXECUTE ACTIONS & APPLE SHORTCUT BRIDGE (JarvisBridge)
+    // 10. AUTO-EXECUTE ACTIONS & APPLE SHORTCUT BRIDGE (JarvisBridge)
     // =========================================================================
     function buildJarvisBridgeUrl(actionType, payloadText) {
       const combined = `${actionType}|${payloadText}`;
@@ -2598,7 +2842,7 @@ Output strict JSON only:
     }
 
     // =========================================================================
-    // 10. UI HELPERS: TRANSCRIPT, MODALS, CONTACTS, VAULT, SOCIAL, SETTINGS
+    // 11. UI HELPERS: TRANSCRIPT, MODALS, CONTACTS, VAULT, SOCIAL, SETTINGS
     // =========================================================================
     function escapeHtml(s) {
       return String(s || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
@@ -2666,7 +2910,12 @@ Output strict JSON only:
         renderContacts();
       }
       if (name === 'vault') renderVault();
-      if (name === 'settings') syncSettingsUI();
+      if (name === 'settings') {
+        syncSettingsUI();
+        if (hasGeminiKey() && navigator.onLine && state.discoveredChatModels.length === 0) {
+          discoverLiveModels(false).catch(() => {});
+        }
+      }
     }
 
     function closeAllModals() {
@@ -2834,9 +3083,9 @@ Output strict JSON only:
       if (navigator.onLine && hasGeminiKey()) {
         try {
           const prompt = `Write a catchy ${platform} post caption with hashtags about "${topic}". Language: ${lang === 'si' ? 'Natural spoken Sinhala + English mix' : 'English'}. Return only the ready-to-post text.`;
-          const { data } = await requestGeminiWithModelFallback({
+          const { data } = await requestGeminiLive({
             contents: [{ parts: [{ text: prompt }] }]
-          }, false);
+          });
           output = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
         } catch (err) {
           showToast(`Social API error: ${err.message}`, 'error');
@@ -2884,7 +3133,8 @@ Output strict JSON only:
       copySocialOutput();
     }
 
-    function saveGeminiKeyOnly(e) {
+    // Settings Handlers (Key Save, Model Selection, Refresh Models, Test API & Voice)
+    async function saveGeminiKeyOnly(e) {
       e.preventDefault();
       unlockIosAudioSynchronously();
       const val = document.getElementById('input-gemini-key').value.trim();
@@ -2892,20 +3142,87 @@ Output strict JSON only:
         if (val) localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, val);
         else localStorage.removeItem(STORAGE_KEYS.GEMINI_KEY);
       } catch (err) {}
-      // Reset session TTS bypass & model preference so new key is tested cleanly
+
       state.ttsUnavailableForSession = false;
-      setWorkingModel(GEMINI_CHAT_MODELS[0]);
+      state.discoveryCompleted = false;
+      state.discoveredChatModels = [];
+      setSelectedModel('');
       syncSettingsUI();
       playSfx('ack');
+
       const resBox = document.getElementById('api-test-result');
-      if (resBox) resBox.classList.add('hidden');
-      showToast(val ? 'Gemini API Key Saved Privately!' : 'Gemini API Key Cleared (Local Mode)', 'info');
+      if (!val) {
+        if (resBox) resBox.classList.add('hidden');
+        showToast('Gemini API Key Cleared (Local Mode)', 'info');
+        return;
+      }
+
+      showToast('Key Saved! Discovering live models...', 'info');
+      if (navigator.onLine) {
+        try {
+          const info = await discoverLiveModels(true);
+          if (resBox) {
+            resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-emerald-950/80 border border-emerald-400/65 text-emerald-200';
+            resBox.textContent = `✓ Discovered ${info.chatModels.length} live models. Active: ${info.selectedModel}`;
+            resBox.classList.remove('hidden');
+          }
+        } catch (err) {
+          if (resBox) {
+            resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-rose-950/85 border border-rose-400/65 text-rose-200 break-words';
+            resBox.textContent = `✗ Discovery Error: ${err.message}`;
+            resBox.classList.remove('hidden');
+          }
+        }
+      }
+    }
+
+    function changeSelectedModel(val) {
+      if (!val) return;
+      setSelectedModel(val);
+      playSfx('ack');
+      showToast(`Active Model: ${val}`, 'info');
+    }
+
+    async function refreshLiveModelsUI() {
+      unlockIosAudioSynchronously();
+      const inputEl = document.getElementById('input-gemini-key');
+      const typedKey = (inputEl ? inputEl.value : '').trim();
+      if (typedKey) {
+        try { localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, typedKey); } catch (e) {}
+      }
+
+      const btn = document.getElementById('btn-refresh-models');
+      const resBox = document.getElementById('api-test-result');
+
+      if (!hasGeminiKey()) {
+        showToast('Paste and save your Gemini API key first.', 'warn');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Loading...';
+      try {
+        const info = await discoverLiveModels(true);
+        resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-emerald-950/80 border border-emerald-400/65 text-emerald-200';
+        resBox.textContent = `✓ Found ${info.chatModels.length} live models. Selected: ${info.selectedModel}`;
+        resBox.classList.remove('hidden');
+        playSfx('ack');
+      } catch (err) {
+        resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-rose-950/85 border border-rose-400/65 text-rose-200 break-words';
+        resBox.textContent = `✗ ${err.message}`;
+        resBox.classList.remove('hidden');
+      }
+      btn.disabled = false;
+      btn.textContent = '🔄 Refresh Models';
+      syncSettingsUI();
     }
 
     /**
      * Live Diagnostic TEST API & VOICE Button:
-     * Probes models/gemini-3.0-flash (with automatic 404 fallback chain) via x-goog-api-key header,
-     * renders green "✓ API Connected (<model>)" or red exact HTTP error, then speaks a test line.
+     * 1. Runs live model discovery first (GET /v1beta/models via x-goog-api-key).
+     * 2. Sends a real generateContent test to the discovered model (with 404 auto-heal).
+     * 3. Displays green "✓ API Connected (<exact-model-id>)" or exact red HTTP error.
+     * 4. Speaks a test confirmation using Charon / iOS Voice.
      */
     async function testApiAndVoice() {
       unlockIosAudioSynchronously();
@@ -2933,17 +3250,20 @@ Output strict JSON only:
       btn.disabled = true;
       btn.textContent = '⏳ TESTING...';
       resBox.className = 'px-2.5 py-2 rounded-lg text-[11px] font-mono bg-cyan-950/70 border border-cyan-400/45 text-cyan-200';
-      resBox.textContent = 'Testing models/gemini-3.0-flash via x-goog-api-key header...';
+      resBox.textContent = 'Step 1/2: Discovering live Gemini models via x-goog-api-key...';
       resBox.classList.remove('hidden');
 
       let apiOk = false;
-      let connectedModel = GEMINI_CHAT_MODELS[0];
+      let connectedModel = '';
 
       try {
-        const result = await requestGeminiWithModelFallback({
+        const discovered = await discoverLiveModels(false);
+        resBox.textContent = `Step 2/2: Testing ${discovered.selectedModel}...`;
+
+        const result = await requestGeminiLive({
           contents: [{ parts: [{ text: 'Reply with two words: Systems online.' }] }],
           generationConfig: { maxOutputTokens: 16 }
-        }, true);
+        });
 
         apiOk = true;
         connectedModel = result.model;
@@ -2960,8 +3280,8 @@ Output strict JSON only:
 
       const returnState = state.fsm === FSM.SLEEPING ? FSM.SLEEPING : FSM.ACTIVE_LISTENING;
       const spokenLine = state.activeLang === 'si'
-        ? (apiOk ? 'හෙලෝ මචන්, Gemini 3 Flash API එකයි කටහඬයි දෙකම සුපිරියටම සම්බන්ධ වුණා.' : 'මචන්, API connection එකේ error එකක් තියෙනවා, ඒත් කටහඬ වැඩ කරනවා.')
-        : (apiOk ? 'All systems nominal, sir. Gemini API and voice engine are online.' : 'Voice engine active, sir, but the Gemini API returned an error. Please check the message on screen.');
+        ? (apiOk ? 'හෙලෝ මචන්, Gemini API එකයි කටහඬයි දෙකම සුපිරියටම සම්බන්ධ වුණා.' : 'මචන්, API connection එකේ error එකක් තියෙනවා, ඒත් කටහඬ වැඩ කරනවා.')
+        : (apiOk ? 'All systems nominal, sir. Gemini API and voice engine are online.' : 'Voice engine active, sir, but the Gemini API returned an error. Please check the diagnostic on screen.');
 
       speakLocked(spokenLine, state.activeLang, returnState);
     }
@@ -3019,9 +3339,15 @@ Output strict JSON only:
     }
 
     // =========================================================================
-    // 11. INIT ON WINDOW LOAD
+    // 12. INIT ON WINDOW LOAD
     // =========================================================================
-    window.addEventListener('online', () => { syncSettingsUI(); fetchLiveWeather(); });
+    window.addEventListener('online', () => {
+      syncSettingsUI();
+      fetchLiveWeather();
+      if (hasGeminiKey() && !state.discoveryCompleted) {
+        discoverLiveModels(false).catch(() => {});
+      }
+    });
     window.addEventListener('offline', syncSettingsUI);
 
     window.onload = function () {
@@ -3029,6 +3355,9 @@ Output strict JSON only:
       updateClock();
       setInterval(updateClock, 1000);
       fetchLiveWeather();
+      if (navigator.onLine && hasGeminiKey()) {
+        discoverLiveModels(false).catch(() => {});
+      }
     };
   </script>
 </body>
